@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { uniqBy, chunk, flatten } from 'lodash/fp'
+import { uniqBy, chunk, flatten, trimCharsEnd } from 'lodash/fp'
 import { Card as ArkhamDBCard, getCards } from './get-card-data'
-import { scenarios } from "./scenarios"
 import * as schema from "./schema"
+import { campaigns } from './data'
 
 dotenv.config({ path: '.env' })
 
@@ -63,8 +63,13 @@ const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, c
             encounterPosition: c.encounter_position,
             position: c.position,
             text: c.text,
+            backText: c.back_text,
             flavor: c.flavor,
-            traits: c.traits,
+            traits: c.traits?.split(" ")
+                .map(v => v.trim())
+                .filter(v => v.length)
+                .map(v => trimCharsEnd(".", v)),
+            traitsText: c.traits,
             url: c.url,
             imagesrc: c.imagesrc,
             backimagesrc: c.backimagesrc,
@@ -90,31 +95,58 @@ const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, c
             )))
 }
 
-const insertScenarios = async () => {
-    await db.insert(schema.scenario).values(scenarios)
-        .onConflictDoUpdate({ target: schema.scenario.scenarioCode, set: { updatedAt: new Date() } })
+const insertCampaigns = async () => {
+    await db.insert(schema.campaign).values(campaigns)
+        .onConflictDoUpdate({ target: schema.campaign.campaignCode, set: { updatedAt: new Date() } })
         .returning({
-            id: schema.scenario.id,
-            name: schema.scenario.name
+            id: schema.campaign.id,
+            name: schema.campaign.name
         })
 
+    await db.insert(schema.scenario).values(campaigns.flatMap(campaign => campaign.scenarios.map(
+        scenario => ({
+            ...scenario,
+            packCode: campaign.packCode,
+            campaignCode: campaign.campaignCode
+        })
+    ))).onConflictDoUpdate({ target: schema.scenario.scenarioCode, set: { updatedAt: new Date() } })
+
     await db.insert(schema.encounterSetsToScenarios).values(
-        scenarios.flatMap(
+        campaigns.flatMap(campaign => campaign.scenarios.flatMap(
             scenario => scenario.encounterCodes.map(
                 encounterCode => ({
                     scenarioCode: scenario.scenarioCode,
                     encounterCode
                 })
-            ))
+            )))
     ).onConflictDoNothing()
 }
+
+// const insertScenarios = async () => {
+//     await db.insert(schema.scenario).values(scenarios)
+//         .onConflictDoUpdate({ target: schema.scenario.scenarioCode, set: { updatedAt: new Date() } })
+//         .returning({
+//             id: schema.scenario.id,
+//             name: schema.scenario.name
+//         })
+
+//     await db.insert(schema.encounterSetsToScenarios).values(
+//         scenarios.flatMap(
+//             scenario => scenario.encounterCodes.map(
+//                 encounterCode => ({
+//                     scenarioCode: scenario.scenarioCode,
+//                     encounterCode
+//                 })
+//             ))
+//     ).onConflictDoNothing()
+// }
 
 const main = async () => {
     const cards = await getCards()
     const packs = await insertPacks(cards)
     const sets = await insertEncounterSets(cards)
     await insertCards(cards)
-    await insertScenarios()
+    await insertCampaigns()
 }
 
 main()

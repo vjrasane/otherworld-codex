@@ -26,6 +26,7 @@ const Card = inexact({
     encounter_position: optional(number),
     position: optional(number),
     text: optional(string),
+    back_text: optional(string),
     flavor: optional(string),
     pack_code: optional(string),
     pack_name: optional(string),
@@ -34,16 +35,17 @@ const Card = inexact({
     imagesrc: optional(string),
     backimagesrc: optional(string),
     back_flavor: optional(string),
-    traits: optional(string
-        .transform((value) => value.split(" "))
-        .transform(
-            (values) => values.map((value) => value.trim()))
-        .transform(
-            (values) => values.filter((value) => value.length > 0)
-        ).transform(
-            values => values.map(value => trimCharsEnd(".", value))
-        )
-    ),
+    traits: optional(string),
+    // traits: optional(string
+    //     .transform((value) => value.split(" "))
+    //     .transform(
+    //         (values) => values.map((value) => value.trim()))
+    //     .transform(
+    //         (values) => values.filter((value) => value.length > 0)
+    //     ).transform(
+    //         values => values.map(value => trimCharsEnd(".", value))
+    //     )
+    // ),
 });
 
 export type Card = DecoderType<typeof Card>;

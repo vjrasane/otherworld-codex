@@ -8,6 +8,69 @@
       "when": 1731795768443,
       "tag": "0000_last_harrier",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732037009853,
+      "tag": "0001_yellow_killraven",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732039987398,
+      "tag": "0002_clammy_mulholland_black",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732042034418,
+      "tag": "0003_sloppy_gauntlet",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1732042400918,
+      "tag": "0004_mean_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1732042507663,
+      "tag": "0005_salty_mandarin",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1732042643845,
+      "tag": "0006_deep_shinobi_shaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1732042998500,
+      "tag": "0007_mushy_karma",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1732043371636,
+      "tag": "0008_needy_miss_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1732043872472,
+      "tag": "0009_many_blue_marvel",
+      "breakpoints": true
     }
   ]
 }

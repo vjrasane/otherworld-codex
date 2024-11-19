@@ -1,0 +1,3 @@
+ALTER TABLE "cards" ADD COLUMN "back_text" text;--> statement-breakpoint
+ALTER TABLE "cards" ADD COLUMN "content_search" "tsvector" GENERATED ALWAYS AS (setweight(to_tsvector('english', "cards"."text" || "cards"."back_text"), 'B')) STORED;--> statement-breakpoint
+ALTER TABLE "cards" ADD COLUMN "traits_search" "tsvector" GENERATED ALWAYS AS (setweight(to_tsvector('english', "cards"."traits_text"), 'C')) STORED;
