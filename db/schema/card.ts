@@ -5,8 +5,8 @@ import { encounterSet } from "./encounter-set"
 import { pack } from "./pack"
 
 export const card = pgTable('cards', {
-    id: serial('id').primaryKey(),
-    name: varchar('name', { length: 255 }).notNull(),
+    cardId: serial('card_id').primaryKey(),
+    cardName: varchar('card_name', { length: 255 }).notNull(),
     realName: varchar('real_name', { length: 255 }),
     cardCode: varchar('card_code', { length: 255 }).notNull().unique(),
     typeCode: varchar('type_code', { length: 255 }).notNull(),
@@ -42,7 +42,7 @@ export const card = pgTable('cards', {
     // )
     fullTextSearch: tsVector("fullTextSearch", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
-        setweight(to_tsvector('english', coalesce(${card.name}, '')), 'A') || 
+        setweight(to_tsvector('english', coalesce(${card.cardName}, '')), 'A') || 
         setweight(to_tsvector('english', coalesce(${card.realName}, '')), 'A') ||
         setweight(to_tsvector('english', coalesce(${card.text}, '')), 'C') ||
         setweight(to_tsvector('english', coalesce(${card.backText}, '')), 'C') ||

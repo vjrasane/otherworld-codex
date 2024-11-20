@@ -53,7 +53,7 @@ const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, c
     const cards_ = cards.map((c) => {
         if (!c.pack_code) throw new Error(`Pack code not found for card ${c.code}`)
         return ({
-            name: c.name,
+            cardName: c.name,
             realName: c.real_name,
             cardCode: c.code,
             typeCode: c.type_code,
@@ -89,7 +89,7 @@ const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, c
                         set: { updatedAt: new Date() }
                     })
                     .returning({
-                        id: schema.card.id,
+                        id: schema.card.cardId,
                         cardCode: schema.card.cardCode
                     })
             )))
