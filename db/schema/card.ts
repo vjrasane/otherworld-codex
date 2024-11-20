@@ -40,7 +40,7 @@ export const card = pgTable('cards', {
     // traitsSearch: tsVector("traits_search", { dimensions: 3 }).generatedAlwaysAs(
     //     (): SQL => sql`setweight(to_tsvector('english', coalesce(${card.traitsText}, '')), 'B')`
     // )
-    fullTextSearch: tsVector("fullTextSearch", { dimensions: 3 }).generatedAlwaysAs(
+    fullTextSearch: tsVector("full_text_search", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
         setweight(to_tsvector('english', coalesce(${card.cardName}, '')), 'A') || 
         setweight(to_tsvector('english', coalesce(${card.realName}, '')), 'A') ||

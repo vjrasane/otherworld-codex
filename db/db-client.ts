@@ -35,13 +35,16 @@ export const search = async (query: string) => {
     //   setweight(to_tsvector('english', ${s.card.text}), 'B')), to_tsquery('english', ${query})`;
 
     const results = await db.select({
-        ...getTableColumns(s.card),
+        type: s.searchView.type,
+        id: s.searchView.id,
+        code: s.searchView.code,
+        name: s.searchView.name,
         // rank: sql`ts_rank(${s.card.nameSearch} || ${s.card.contentSearch}, plainto_tsquery('english', ${query}))`,
         // rankCd: sql`ts_rank_cd(${s.card.nameSearch} || ${s.card.contentSearch}, plainto_tsquery('english', ${query}))`
-        rank: sql`ts_rank(${s.card.fullTextSearch}, plainto_tsquery('english', ${query}))`
+        rank: sql`ts_rank(${s.searchView.fullTextSearch}, plainto_tsquery('english', ${query}))`
     })
-        .from(s.card)
-        .where(sql`${s.card.fullTextSearch} @@ plainto_tsquery('english', ${query})`)
+        .from(s.searchView)
+        .where(sql`${s.searchView.fullTextSearch} @@ plainto_tsquery('english', ${query})`)
         // .where(sql`(${s.card.nameSearch} || ${s.card.contentSearch}) @@ plainto_tsquery('english', ${query})`)
         // .where(sql`(
         //     setweight(to_tsvector('english', ${s.card.name}), 'A') || 

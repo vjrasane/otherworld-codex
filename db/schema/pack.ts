@@ -11,7 +11,7 @@ export const pack = pgTable('packs', {
     packName: varchar('pack_name', { length: 255 }).notNull(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 
-    fullTextSearch: tsVector("fullTextSearch", { dimensions: 3 }).generatedAlwaysAs(
+    fullTextSearch: tsVector("full_text_search", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
         setweight(to_tsvector('english', coalesce(${pack.packName}, '')), 'A')
         )`

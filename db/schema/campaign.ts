@@ -11,7 +11,7 @@ export const campaign = pgTable('campaigns', {
     campaignName: varchar('campaign_name', { length: 255 }).notNull(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 
-    fullTextSearch: tsVector("fullTextSearch", { dimensions: 3 }).generatedAlwaysAs(
+    fullTextSearch: tsVector("full_text_search", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
         setweight(to_tsvector('english', coalesce(${campaign.campaignName}, '')), 'A')
         )`

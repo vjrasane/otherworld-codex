@@ -5,5 +5,7 @@ export * from "./encounter-set"
 export * from "./encounterSetsToScenarios"
 export * from "./card"
 
+export * from "./views"
+
 
 

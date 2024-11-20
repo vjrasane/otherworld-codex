@@ -1,13 +1,16 @@
 import { getScenarioEncounterCards, search } from "./db/db-client"
 
+const [, , ...args] = process.argv
+
 const main = async () => {
     // const cards = await getScenarioEncounterCards("the_gathering")
-    const cards = await search("ancient evils")
-    console.log(cards.map(c => ({
-        name: c.name,
-        text: c.text,
-        rank: c.rank
-    })))
+    const results = await search(args.join(" "))
+    console.log(results)
+    // console.log(cards.map(c => ({
+
+    //     name: c.name,
+    //     rank: c.rank
+    // })))
 }
 
 main()
