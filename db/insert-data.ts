@@ -24,7 +24,7 @@ const insertPacks = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, p
         .values(packs)
         .onConflictDoUpdate({ target: schema.pack.packCode, set: { updatedAt: new Date() } })
         .returning({
-            id: schema.pack.id,
+            id: schema.pack.packId,
             packCode: schema.pack.packCode
         })
     return inserted
@@ -44,7 +44,7 @@ const insertEncounterSets = async (cards: ArkhamDBCard[]): Promise<Array<{ id: n
     return await db.insert(schema.encounterSet).values(sets)
         .onConflictDoUpdate({ target: schema.encounterSet.encounterCode, set: { updatedAt: new Date() } })
         .returning({
-            id: schema.encounterSet.id,
+            id: schema.encounterSet.encounterId,
             encounterCode: schema.encounterSet.encounterCode
         })
 }
@@ -99,8 +99,8 @@ const insertCampaigns = async () => {
     await db.insert(schema.campaign).values(campaigns)
         .onConflictDoUpdate({ target: schema.campaign.campaignCode, set: { updatedAt: new Date() } })
         .returning({
-            id: schema.campaign.id,
-            name: schema.campaign.name
+            id: schema.campaign.campaignId,
+            name: schema.campaign.campaignName
         })
 
     await db.insert(schema.scenario).values(campaigns.flatMap(campaign => campaign.scenarios.map(
