@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { uniqBy, chunk, flatten, trimCharsEnd } from 'lodash/fp'
-import { Card as ArkhamDBCard, getCards } from './get-card-data'
-import * as schema from "./schema"
-import { campaigns } from './data'
+import { Card as ArkhamDBCard, getCards } from '../db/get-card-data'
+import * as schema from "../db/schema"
+import { campaigns } from '../db/data'
 
 dotenv.config({ path: '.env' })
 

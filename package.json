@@ -11,18 +11,24 @@
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
     "sync": "npm run generate && npm run migrate",
-    "init": "npx ts-node ./db/insert-data.ts"
+    "init": "npx ts-node ./scripts/insert-data.ts"
   },
   "dependencies": {
+    "@radix-ui/react-aspect-ratio": "^1.1.0",
     "axios": "^1.7.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "decoders": "^2.5.0",
     "drizzle-orm": "^0.36.3",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.460.0",
     "next": "15.0.3",
     "postgres": "^3.4.5",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
-    "runtypes": "^6.7.0"
+    "runtypes": "^6.7.0",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.13",

@@ -50,6 +50,9 @@ export const card = pgTable('cards', {
         setweight(to_tsvector('english', coalesce(${card.flavor}, '')), 'D') ||
         setweight(to_tsvector('english', coalesce(${card.backflavor}, '')), 'D')
         )`
+    ),
+    imageUrl: text('image_url').generatedAlwaysAs(
+        (): SQL => sql`'https://arkhamdb.com' || coalesce(${card.imagesrc}, '')`
     )
 
 },

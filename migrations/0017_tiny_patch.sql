@@ -1,0 +1,1 @@
+ALTER TABLE "cards" ADD COLUMN "image_url" text GENERATED ALWAYS AS ('https://arkhamdb.com' || coalesce("cards"."imagesrc", '')) STORED;
