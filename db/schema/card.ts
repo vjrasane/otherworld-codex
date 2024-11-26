@@ -30,16 +30,6 @@ export const card = pgTable('cards', {
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     quantity: integer('quantity'),
 
-
-    // nameSearch: tsVector("name_search", { dimensions: 3 }).generatedAlwaysAs(
-    //     (): SQL => sql`setweight(to_tsvector('english', ${card.name}), 'A')`
-    // ),
-    // contentSearch: tsVector("content_search", { dimensions: 3 }).generatedAlwaysAs(
-    //     (): SQL => sql`setweight(to_tsvector('english', coalesce(${card.text}, '') || coalesce(${card.backText}, '')), 'D')`
-    // ),
-    // traitsSearch: tsVector("traits_search", { dimensions: 3 }).generatedAlwaysAs(
-    //     (): SQL => sql`setweight(to_tsvector('english', coalesce(${card.traitsText}, '')), 'B')`
-    // )
     fullTextSearch: tsVector("full_text_search", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
         setweight(to_tsvector('english', coalesce(${card.cardName}, '')), 'A') || 

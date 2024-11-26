@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FunctionComponent } from "react";
 
-import { config } from "@/app.config";
+import { appConfig } from "@/app.config";
 
 export const Navbar: FunctionComponent = async () => {
   return (
@@ -11,11 +11,8 @@ export const Navbar: FunctionComponent = async () => {
     >
       <div className="flex items-center">
         <Link href="/">
-          <h1
-            className="text-xl md:text-3xl font-bold
-          font-super-comic text-orange-400"
-          >
-            {config.appName.toUpperCase()}
+          <h1 className="text-xl md:text-3xl font-teutonic">
+            {appConfig.appName.toUpperCase()}
           </h1>
         </Link>
       </div>

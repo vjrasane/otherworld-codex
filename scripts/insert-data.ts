@@ -104,8 +104,9 @@ const insertCampaigns = async () => {
         })
 
     await db.insert(schema.scenario).values(campaigns.flatMap(campaign => campaign.scenarios.map(
-        scenario => ({
+        (scenario) => ({
             ...scenario,
+            scenarioPrefix: scenario.scenarioPrefix,
             packCode: campaign.packCode,
             campaignCode: campaign.campaignCode
         })

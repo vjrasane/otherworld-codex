@@ -1,10 +1,9 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { desc, eq, getTableColumns, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 import * as s from './schema'
 import { Card } from './schema'
-
-import "dotenv/config"
 import { array, DecoderType, number, object, string } from 'decoders'
+import "dotenv/config"
 
 const { DATABASE_URL } = process.env
 
@@ -19,6 +18,31 @@ export const getScenarioEncounterCards = async (scenarioCode: string): Promise<C
     const cards = results.map(({ cards }) => cards).filter((c) => !!c)
     return cards
 }
+
+export const getCardByCode = async (code: string) => {
+    const card = await db.query.card.findFirst({
+        where: eq(s.card.cardCode, code),
+        with: {
+            encounterSet: {
+                with: {
+                    encounterSetsToScenarios: {
+                        with: {
+                            scenario: {
+                                with: {
+                                    campaign: true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            pack: true
+        }
+    })
+
+    return card ?? null
+}
+
 const SearchResult = object({
     id: number,
     type: string,
@@ -40,6 +64,6 @@ export const search = async (query: string): Promise<SearchResult[]> => {
         .from(s.searchView)
         .where(sql`${s.searchView.fullTextSearch} @@ plainto_tsquery('english', ${query})`)
         .orderBy(t => desc(t.rank))
-        .limit(3)
+        .limit(10)
     return array(SearchResult).verify(results)
 }

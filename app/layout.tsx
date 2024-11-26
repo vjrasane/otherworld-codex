@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { config } from "@/app.config";
+import { appConfig } from "@/app.config";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,10 +13,15 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+const teutonic = localFont({
+  src: "./fonts/Teutonic.ttf",
+  variable: "--font-teutonic",
+  weight: "400",
+});
 
 export const metadata: Metadata = {
-  title: config.appName,
-  description: config.description,
+  title: appConfig.appName,
+  description: appConfig.description,
 };
 
 export default function RootLayout({
@@ -27,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${teutonic.variable} antialiased`}
       >
         {children}
       </body>

@@ -5,6 +5,7 @@ import { FunctionComponent } from "react";
 
 import { search, SearchResult } from "@/db/db-client";
 import { Page } from "@/lib/pagination";
+import Link from "next/link";
 
 const getSearchResults = async (
   searchTerm: string | undefined,
@@ -21,22 +22,22 @@ const SearchResultCard: FunctionComponent<{
 }> = async ({ result }) => {
   return (
     <Card className="flex flex-col cursor-pointer hover:bg-secondary/75 transition-colors">
-      {/* <Link href={`/contests/${contest.id}`}> */}
-      <CardHeader>
-        <CardTitle>{result.name}</CardTitle>
-        {/* <CardDescription>{result.description}</CardDescription> */}
-      </CardHeader>
-      <CardContent>
-        <AspectRatio ratio={16 / 9}>
-          <Image
-            className="rounded-md object-cover"
-            src={result.imageUrl}
-            alt={result.name}
-            fill
-          />
-        </AspectRatio>
-      </CardContent>
-      {/* </Link> */}
+      <Link href={`/card/${result.code}`}>
+        <CardHeader>
+          <CardTitle>{result.name}</CardTitle>
+          {/* <CardDescription>{result.description}</CardDescription> */}
+        </CardHeader>
+        <CardContent>
+          <AspectRatio ratio={16 / 9}>
+            <Image
+              className="rounded-md object-cover"
+              src={result.imageUrl}
+              alt={result.name}
+              fill
+            />
+          </AspectRatio>
+        </CardContent>
+      </Link>
     </Card>
   );
 };
