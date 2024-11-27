@@ -141,6 +141,13 @@
       "when": 1732649829260,
       "tag": "0019_petite_black_panther",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1732733081546,
+      "tag": "0020_absurd_yellow_claw",
+      "breakpoints": true
     }
   ]
 }

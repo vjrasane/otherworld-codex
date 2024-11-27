@@ -23,6 +23,11 @@ export const getCardByCode = async (code: string) => {
     const card = await db.query.card.findFirst({
         where: eq(s.card.cardCode, code),
         with: {
+            traitsToCards: {
+                with: {
+                    trait: true
+                }
+            },
             encounterSet: {
                 with: {
                     encounterSetsToScenarios: {

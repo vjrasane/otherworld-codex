@@ -58,6 +58,15 @@ const CardPage: FunctionComponent<{
           alt={card.cardName}
         />
       </div>
+      <div>
+        {card.traitsToCards
+          .map(({ trait }) => trait?.traitName)
+          .map((trait) => (
+            <span key={trait} className="mr-2">
+              {trait}
+            </span>
+          ))}
+      </div>
       <div>{card.encounterSet?.encounterName}</div>
       {entries(scenariosByCampaign).map(([campaign, scenarios]) => {
         return (

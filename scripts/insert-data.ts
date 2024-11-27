@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { uniqBy, chunk, flatten, trimCharsEnd } from 'lodash/fp'
+import { chunk, trimCharsEnd, uniq, uniqBy } from 'lodash/fp'
+import { campaigns } from '../db/data'
 import { Card as ArkhamDBCard, getCards } from '../db/get-card-data'
 import * as schema from "../db/schema"
-import { campaigns } from '../db/data'
 
 dotenv.config({ path: '.env' })
 
@@ -49,7 +49,17 @@ const insertEncounterSets = async (cards: ArkhamDBCard[]): Promise<Array<{ id: n
         })
 }
 
-const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, cardCode: string }>> => {
+const getCardTraits = (c: ArkhamDBCard): string[] => {
+    const traits = c.traits?.split(" ").map(v => v.trim()).filter(v => v.length).map(v => trimCharsEnd(".", v))
+    if (!traits) return []
+    return traits
+}
+
+const insertCards = async (cards: ArkhamDBCard[]) => {
+    const traits = uniq(cards.flatMap(getCardTraits)).map((trait) => ({ traitName: trait }))
+    await db.insert(schema.trait).values(traits)
+        .onConflictDoNothing()
+
     const cards_ = cards.map((c) => {
         if (!c.pack_code) throw new Error(`Pack code not found for card ${c.code}`)
         return ({
@@ -65,10 +75,6 @@ const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, c
             text: c.text,
             backText: c.back_text,
             flavor: c.flavor,
-            traits: c.traits?.split(" ")
-                .map(v => v.trim())
-                .filter(v => v.length)
-                .map(v => trimCharsEnd(".", v)),
             traitsText: c.traits,
             url: c.url,
             imagesrc: c.imagesrc,
@@ -80,19 +86,25 @@ const insertCards = async (cards: ArkhamDBCard[]): Promise<Array<{ id: number, c
             encounterCode: c.encounter_code,
         })
     })
-    return flatten(
-        await Promise.all(
-            chunk(1000, cards_).map(
-                (chunk) => db.insert(schema.card).values(chunk)
-                    .onConflictDoUpdate({
-                        target: schema.card.cardCode,
-                        set: { updatedAt: new Date() }
-                    })
-                    .returning({
-                        id: schema.card.cardId,
-                        cardCode: schema.card.cardCode
-                    })
-            )))
+    await Promise.all(
+        chunk(1000, cards_).map(
+            (chunk) => db.insert(schema.card).values(chunk)
+                .onConflictDoUpdate({
+                    target: schema.card.cardCode,
+                    set: { updatedAt: new Date() }
+                })
+        ))
+
+    const traitsToCards = cards.flatMap((c) => {
+        const traits = getCardTraits(c)
+        return traits.map((trait) => ({ traitName: trait, cardCode: c.code }))
+    })
+    await Promise.all(
+        chunk(1000, traitsToCards).map(
+            chunk => db.insert(schema.traitsToCards).values(chunk)
+                .onConflictDoNothing()
+        )
+    )
 }
 
 const insertCampaigns = async () => {
@@ -123,29 +135,10 @@ const insertCampaigns = async () => {
     ).onConflictDoNothing()
 }
 
-// const insertScenarios = async () => {
-//     await db.insert(schema.scenario).values(scenarios)
-//         .onConflictDoUpdate({ target: schema.scenario.scenarioCode, set: { updatedAt: new Date() } })
-//         .returning({
-//             id: schema.scenario.id,
-//             name: schema.scenario.name
-//         })
-
-//     await db.insert(schema.encounterSetsToScenarios).values(
-//         scenarios.flatMap(
-//             scenario => scenario.encounterCodes.map(
-//                 encounterCode => ({
-//                     scenarioCode: scenario.scenarioCode,
-//                     encounterCode
-//                 })
-//             ))
-//     ).onConflictDoNothing()
-// }
-
 const main = async () => {
     const cards = await getCards()
-    const packs = await insertPacks(cards)
-    const sets = await insertEncounterSets(cards)
+    await insertPacks(cards)
+    await insertEncounterSets(cards)
     await insertCards(cards)
     await insertCampaigns()
 }

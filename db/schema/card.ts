@@ -1,8 +1,9 @@
-import { SQL, sql, relations, InferSelectModel } from "drizzle-orm"
+import { InferSelectModel, relations, SQL, sql } from "drizzle-orm"
 import { index, integer, json, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core"
 import { tsVector } from "./common"
 import { encounterSet } from "./encounter-set"
 import { pack } from "./pack"
+import { traitsToCards } from "./traitsToCards"
 
 export const card = pgTable('cards', {
     cardId: serial('card_id').primaryKey(),
@@ -18,7 +19,6 @@ export const card = pgTable('cards', {
     text: text('text'),
     backText: text('back_text'),
     flavor: text('flavor'),
-    traits: text("traits").array(),
     traitsText: text("traits_text"),
     url: text('url').notNull(),
     imagesrc: text('imagesrc'),
@@ -46,24 +46,10 @@ export const card = pgTable('cards', {
     )
 
 },
-    t => [index('idx_card_search').using("gin", t.fullTextSearch)
-
-        // sql`(${t.nameSearch} || ${t.contentSearch})`)
-    ]
-
-    //     t => ({
-    //         searchIndex: index('card_search_index').using('gin', sql`(
-    //    setweight(to_tsvector('english', ${t.name}), 'A') ||
-    //    setweight(to_tsvector('english', ${t.realName}), 'A') ||
-    //    setweight(to_tsvector('english', ${t.text}), 'B') ||
-    //    setweight(to_tsvector('english', ${t.traitsText}), 'C') ||
-    //    setweight(to_tsvector('english', ${t.backflavor}), 'D') ||
-    //    setweight(to_tsvector('english', ${t.flavor}), 'D')
-    //     )`)
-    // })
+    t => [index('idx_card_search').using("gin", t.fullTextSearch)]
 )
 
-export const cardRelations = relations(card, ({ one }) => ({
+export const cardRelations = relations(card, ({ one, many }) => ({
     encounterSet: one(encounterSet, {
         fields: [card.encounterCode],
         references: [encounterSet.encounterCode]
@@ -71,7 +57,8 @@ export const cardRelations = relations(card, ({ one }) => ({
     pack: one(pack, {
         fields: [card.packCode],
         references: [pack.packCode]
-    })
+    }),
+    traitsToCards: many(traitsToCards)
 }))
 
 
