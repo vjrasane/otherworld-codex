@@ -148,6 +148,27 @@
       "when": 1732733081546,
       "tag": "0020_absurd_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1732737921139,
+      "tag": "0021_many_proudstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1732738413109,
+      "tag": "0022_third_jubilee",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1732738679653,
+      "tag": "0023_broken_white_queen",
+      "breakpoints": true
     }
   ]
 }

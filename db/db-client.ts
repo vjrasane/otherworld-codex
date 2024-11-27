@@ -53,7 +53,7 @@ const SearchResult = object({
     type: string,
     code: string,
     name: string,
-    imageUrl: string
+    imagesrc: string
 })
 export type SearchResult = DecoderType<typeof SearchResult>
 
@@ -63,7 +63,7 @@ export const search = async (query: string): Promise<SearchResult[]> => {
         id: s.searchView.id,
         code: s.searchView.code,
         name: s.searchView.name,
-        imageUrl: s.searchView.imageUrl,
+        imagesrc: s.searchView.imagesrc,
         rank: sql`ts_rank(${s.searchView.fullTextSearch}, plainto_tsquery('english', ${query}))`
     })
         .from(s.searchView)

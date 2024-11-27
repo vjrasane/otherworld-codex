@@ -43,6 +43,8 @@ const CardPage: FunctionComponent<{
     scenarios
   );
 
+  const imageUrl = card.imagesrc ? "https://arkhamdb.com" + card.imagesrc : "";
+
   return (
     <div>
       <Head>
@@ -52,11 +54,7 @@ const CardPage: FunctionComponent<{
       <h1>{card.cardName}</h1>
       <p>{card.text}</p>
       <div className="py-4">
-        <img
-          className="mx-auto"
-          src={card.imageUrl ?? ""}
-          alt={card.cardName}
-        />
+        <img className="mx-auto" src={imageUrl} alt={card.cardName} />
       </div>
       <div>
         {card.traitsToCards
