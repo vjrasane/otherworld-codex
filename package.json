@@ -14,21 +14,28 @@
     "init": "npx ts-node ./scripts/insert-data.ts"
   },
   "dependencies": {
+    "@nextui-org/react": "^2.4.8",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
-    "axios": "^1.7.7",
+    "@react-stately/data": "^3.12.0",
+    "add": "^2.0.6",
+    "axios": "^1.7.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "decoders": "^2.5.0",
     "drizzle-orm": "^0.36.3",
+    "framer-motion": "^11.12.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
     "postgres": "^3.4.5",
+    "query-string": "^9.1.1",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "runtypes": "^6.7.0",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "use-debounced-effect": "^2.0.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.13",

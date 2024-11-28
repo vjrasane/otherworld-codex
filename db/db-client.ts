@@ -57,18 +57,19 @@ const SearchResult = object({
 })
 export type SearchResult = DecoderType<typeof SearchResult>
 
-export const search = async (query: string): Promise<SearchResult[]> => {
+export const search = async (query: string, limit: number): Promise<SearchResult[]> => {
+    const searchValue = query.split(" ").map(w => w.trim()).filter(w => w.length).map(w => w + ":*").join(" & ")
     const results = await db.select({
         type: s.searchView.type,
         id: s.searchView.id,
         code: s.searchView.code,
         name: s.searchView.name,
         imageUrl: s.searchView.imageUrl,
-        rank: sql`ts_rank(${s.searchView.fullTextSearch}, plainto_tsquery('english', ${query}))`
+        rank: sql`ts_rank(${s.searchView.fullTextSearch}, to_tsquery('english', ${searchValue}))`
     })
         .from(s.searchView)
-        .where(sql`${s.searchView.fullTextSearch} @@ plainto_tsquery('english', ${query})`)
+        .where(sql`${s.searchView.fullTextSearch} @@ to_tsquery('english', ${searchValue})`)
         .orderBy(t => desc(t.rank))
-        .limit(10)
+        .limit(limit)
     return array(SearchResult).verify(results)
 }

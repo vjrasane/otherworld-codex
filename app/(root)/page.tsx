@@ -6,6 +6,7 @@ import { FunctionComponent } from "react";
 import { search, SearchResult } from "@/db/db-client";
 import { Page } from "@/lib/pagination";
 import Link from "next/link";
+import encounter from "@/app/images/encounter.jpg";
 
 const getSearchResults = async (
   searchTerm: string | undefined,
@@ -14,13 +15,12 @@ const getSearchResults = async (
   if (!searchTerm) {
     return [];
   }
-  return search(searchTerm ?? "");
+  return search(searchTerm ?? "", 10);
 };
 
 const SearchResultCard: FunctionComponent<{
   result: SearchResult;
 }> = async ({ result }) => {
-
   return (
     <Card className="flex flex-col cursor-pointer hover:bg-secondary/75 transition-colors">
       <Link href={`/card/${result.code}`}>
@@ -32,8 +32,7 @@ const SearchResultCard: FunctionComponent<{
           <AspectRatio ratio={16 / 9}>
             <Image
               className="rounded-md object-cover"
-              /* @ts-expect-error */
-              src={result.imageUrl}
+              src={result.imageUrl || encounter}
               alt={result.name}
               fill
             />

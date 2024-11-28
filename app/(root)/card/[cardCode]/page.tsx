@@ -45,16 +45,13 @@ const CardPage: FunctionComponent<{
 
   return (
     <div>
-      <Head>
-        <title>{card.cardName}</title>
-        <meta property="og:title" content={card.cardName} key="title" />
-      </Head>
       <h1>{card.cardName}</h1>
       <p>{card.text}</p>
       <div className="py-4">
         <img
           className="mx-auto"
-          src={card.imageUrl ?? ""}
+          /* @ts-expect-error */
+          src={card.imageUrl || null}
           alt={card.cardName}
         />
       </div>
