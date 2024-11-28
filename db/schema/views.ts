@@ -16,7 +16,7 @@ export const searchView = pgView('search_view').as(
             id: sql`${card.cardId}`.as('id'),
             code: sql`${card.cardCode}`.as('code'),
             name: sql`${card.cardName}`.as('name'),
-            imagesrc: sql`${card.imagesrc}`.as('imagesrc'),
+            imageUrl: sql`${card.imageUrl}`.as('imageUrl'),
             fullTextSearch: sql`${card.fullTextSearch}`.as('full_text_search'),
         }
     ).from(card).unionAll(
@@ -25,7 +25,7 @@ export const searchView = pgView('search_view').as(
             id: pack.packId,
             code: pack.packCode,
             name: pack.packName,
-            imagesrc: card.imagesrc,
+            imageUrl: card.imageUrl,
             fullTextSearch: pack.fullTextSearch,
         }).from(pack).leftJoin(card,
             and(
@@ -39,7 +39,7 @@ export const searchView = pgView('search_view').as(
             id: campaign.campaignId,
             code: campaign.campaignCode,
             name: campaign.campaignName,
-            imagesrc: card.imagesrc,
+            imageUrl: card.imageUrl,
             fullTextSearch: campaign.fullTextSearch,
         }).from(campaign)
             .leftJoin(scenario, eq(campaign.campaignCode, scenario.campaignCode))
@@ -55,7 +55,7 @@ export const searchView = pgView('search_view').as(
             id: scenario.scenarioId,
             code: scenario.scenarioCode,
             name: scenario.scenarioName,
-            imagesrc: card.imagesrc,
+            imageUrl: card.imageUrl,
             fullTextSearch: scenario.fullTextSearch,
         }).from(scenario)
             .leftJoin(encounterSetsToScenarios, eq(scenario.scenarioCode, encounterSetsToScenarios.scenarioCode))
@@ -71,7 +71,7 @@ export const searchView = pgView('search_view').as(
             id: encounterSet.encounterId,
             code: encounterSet.encounterCode,
             name: encounterSet.encounterName,
-            imagesrc: card.imagesrc,
+            imageUrl: card.imageUrl,
             fullTextSearch: encounterSet.fullTextSearch,
         }).from(encounterSet).leftJoin(
             card, eq(encounterSet.encounterCode, card.encounterCode)
@@ -82,7 +82,7 @@ export const searchView = pgView('search_view').as(
             id: trait.traitId,
             code: trait.traitName,
             name: trait.traitName,
-            imagesrc: card.imagesrc,
+            imageUrl: card.imageUrl,
             fullTextSearch: trait.fullTextSearch,
         }).from(trait)
             .leftJoin(traitsToCards, eq(trait.traitName, traitsToCards.traitName))

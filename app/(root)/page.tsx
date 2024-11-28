@@ -21,9 +21,6 @@ const SearchResultCard: FunctionComponent<{
   result: SearchResult;
 }> = async ({ result }) => {
 
-  const imageUrl = result.imagesrc
-    ? "https://arkhamdb.com" + result.imagesrc
-    : "";
   return (
     <Card className="flex flex-col cursor-pointer hover:bg-secondary/75 transition-colors">
       <Link href={`/card/${result.code}`}>
@@ -35,7 +32,8 @@ const SearchResultCard: FunctionComponent<{
           <AspectRatio ratio={16 / 9}>
             <Image
               className="rounded-md object-cover"
-              src={imageUrl}
+              /* @ts-expect-error */
+              src={result.imageUrl}
               alt={result.name}
               fill
             />

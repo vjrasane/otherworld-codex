@@ -29,7 +29,9 @@ export const card = pgTable('cards', {
     packCode: varchar('pack_code', { length: 255 }).notNull().references(() => pack.packCode, { onDelete: 'cascade' }),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     quantity: integer('quantity'),
-
+    imageUrl: text('image_url').generatedAlwaysAs(
+        (): SQL => sql`case when ${card.imagesrc} is not null then 'https://arkhamdb.com' || ${card.imagesrc} else null end`
+    ),
     fullTextSearch: tsVector("full_text_search", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
         setweight(to_tsvector('english', coalesce(${card.cardName}, '')), 'A') || 

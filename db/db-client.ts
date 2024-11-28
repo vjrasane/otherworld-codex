@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { desc, eq, sql } from 'drizzle-orm'
 import * as s from './schema'
 import { Card } from './schema'
-import { array, DecoderType, number, object, string } from 'decoders'
+import { array, DecoderType, nullable, number, object, string } from 'decoders'
 import "dotenv/config"
 
 const { DATABASE_URL } = process.env
@@ -53,7 +53,7 @@ const SearchResult = object({
     type: string,
     code: string,
     name: string,
-    imagesrc: string
+    imageUrl: nullable(string)
 })
 export type SearchResult = DecoderType<typeof SearchResult>
 
@@ -63,7 +63,7 @@ export const search = async (query: string): Promise<SearchResult[]> => {
         id: s.searchView.id,
         code: s.searchView.code,
         name: s.searchView.name,
-        imagesrc: s.searchView.imagesrc,
+        imageUrl: s.searchView.imageUrl,
         rank: sql`ts_rank(${s.searchView.fullTextSearch}, plainto_tsquery('english', ${query}))`
     })
         .from(s.searchView)

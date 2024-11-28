@@ -169,6 +169,20 @@
       "when": 1732738679653,
       "tag": "0023_broken_white_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1732810679669,
+      "tag": "0024_illegal_tigra",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1732810873224,
+      "tag": "0025_tough_komodo",
+      "breakpoints": true
     }
   ]
 }
