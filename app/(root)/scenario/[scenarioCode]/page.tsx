@@ -1,10 +1,10 @@
 "use server";
 import { appConfig } from "@/app.config";
-import { getCardByCode, getScenarioByCode } from "@/db/db-client";
+import { getScenarioByCode } from "@/db/db-client";
 import { DecoderType, object, string } from "decoders";
-import { entries, first, groupBy } from "lodash/fp";
+import { round } from "lodash";
+import { entries, groupBy, orderBy, sortBy, sumBy } from "lodash/fp";
 import { Metadata } from "next";
-import Head from "next/head";
 import { redirect } from "next/navigation";
 import { FunctionComponent } from "react";
 
@@ -35,13 +35,41 @@ const ScenarioPage: FunctionComponent<{
   const scenario = await getScenarioByCode(scenarioCode);
   if (!scenario) redirect("/");
 
-  const encounterSets = scenario.encounterSetsToScenarios.map(
-    ({ encounterSet }) => encounterSet
+  // const encounterSets = scenario.encounterSetsToScenarios.map(
+  //   ({ encounterSet }) => encounterSet
+  // );
+
+  const cards = scenario.encounterSets.flatMap((set) => set.cards);
+  type Card = (typeof cards)[number];
+
+  const cardsByType = groupBy((card) => card.typeCode, cards);
+  const encounterCards = [
+    ...(cardsByType["enemy"] ?? []),
+    ...(cardsByType["treacery"] ?? []),
+  ];
+  const encounterCardCount = sumBy(
+    (card: Card) => card.quantity ?? 1,
+    encounterCards
+  );
+  const cardsByTrait = encounterCards.reduce(
+    (acc: Record<string, number>, card: Card): Record<string, number> => {
+      card.traits.forEach((trait) => {
+        if (!trait) return acc;
+        if (!acc[trait]) {
+          acc[trait] = 0;
+        }
+        acc[trait] += card.quantity ?? 1;
+      });
+      return acc;
+    },
+    {}
   );
 
-  const imageUrl = encounterSets
-    .flatMap((set) => set.cards)
-    .find((card) => card.typeCode === "scenario")?.imageUrl;
+  const imageUrl = cards.find((card) => card.typeCode === "scenario")?.imageUrl;
+
+  // const traits = cards.flatMap((card) =>
+  //   card.traitsToCards.map(({ trait }) => trait?.traitName)
+  // );
 
   return (
     <div>
@@ -54,10 +82,39 @@ const ScenarioPage: FunctionComponent<{
           alt={scenario.scenarioName}
         />
       </div>
-      {encounterSets.map((encounterSet) => {
+      {encounterCardCount}
+      {orderBy(
+        ([, traitCards]) => traitCards,
+        "desc",
+        entries(cardsByTrait)
+      ).map(([trait, traitCards]) => {
+        return (
+          <div>
+            {trait} {traitCards}{" "}
+            {round((traitCards / encounterCardCount) * 100, 1)}%
+          </div>
+        );
+      })}
+      {scenario.encounterSets.map((encounterSet) => {
         return (
           <div key={encounterSet.encounterCode}>
             <h2>{encounterSet.encounterName}</h2>
+            {encounterSet.cards.map((card) => {
+              return (
+                <div key={card.cardCode}>
+                  <div className="py-4">
+                    <img
+                      className="mx-auto"
+                      /* @ts-expect-error */
+                      src={card.imageUrl || null}
+                      alt={card.cardName}
+                    />
+                    {card.typeCode}
+                    <div>{card.traits.join(", ")}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         );
       })}

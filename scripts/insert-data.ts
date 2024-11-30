@@ -51,7 +51,7 @@ const insertEncounterSets = async (cards: ArkhamDBCard[]): Promise<Array<{ id: n
 }
 
 const getCardTraits = (c: ArkhamDBCard): string[] => {
-    const traits = c.traits?.split(" ").map(v => v.trim()).filter(v => v.length).map(v => trimCharsEnd(".", v))
+    const traits = c.traits?.split(".").map(v => v.trim()).filter(v => v.length).map(v => trimCharsEnd(".", v))
     if (!traits) return []
     return traits
 }
