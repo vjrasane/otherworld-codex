@@ -3,7 +3,7 @@ import { serial, varchar, timestamp, index, pgTable } from "drizzle-orm/pg-core"
 import { tsVector } from "./common";
 import { pack } from "./pack";
 import { card } from "./card";
-import { encounterSetsToScenarios } from "./encounterSetsToScenarios";
+import { encounterSetsToScenarios } from "./encounter-sets-to-scenarios";
 
 export const encounterSet = pgTable('encounter_sets', {
     encounterId: serial('encounter_id').primaryKey(),

@@ -1,0 +1,1 @@
+ALTER TABLE "encounter_sets_to_scenarios" ADD COLUMN "position" integer;

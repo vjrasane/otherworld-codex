@@ -4,6 +4,7 @@ import { chunk, trimCharsEnd, uniq, uniqBy } from 'lodash/fp'
 import { campaigns } from '../db/data'
 import { Card as ArkhamDBCard, getCards } from '../db/get-card-data'
 import * as schema from "../db/schema"
+import { sql } from 'drizzle-orm'
 
 dotenv.config({ path: '.env' })
 
@@ -127,12 +128,16 @@ const insertCampaigns = async () => {
     await db.insert(schema.encounterSetsToScenarios).values(
         campaigns.flatMap(campaign => campaign.scenarios.flatMap(
             scenario => scenario.encounterCodes.map(
-                encounterCode => ({
+                (encounterCode, index) => ({
                     scenarioCode: scenario.scenarioCode,
+                    position: index + 1,
                     encounterCode
                 })
             )))
-    ).onConflictDoNothing()
+    ).onConflictDoUpdate({
+        target: [schema.encounterSetsToScenarios.scenarioCode, schema.encounterSetsToScenarios.encounterCode],
+        set: { position: sql`excluded.position` }
+    })
 }
 
 const main = async () => {

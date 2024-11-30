@@ -64,7 +64,7 @@ export const SearchField = () => {
     >
       {(item) => (
         <AutocompleteItem key={item.code} className="capitalize">
-          {item.name}
+          {item.name} {item.type}
         </AutocompleteItem>
       )}
     </Autocomplete>

@@ -4,6 +4,7 @@ import { tsVector } from "./common";
 import { scenario } from "./scenario";
 import { encounterSet } from "./encounter-set";
 import { card } from "./card";
+import { campaign } from "./campaign";
 
 export const pack = pgTable('packs', {
     packId: serial('pack_id').primaryKey(),
@@ -23,6 +24,7 @@ export const pack = pgTable('packs', {
 export const packRelations = relations(pack, ({ many }) => ({
     encounterSets: many(encounterSet),
     cards: many(card),
+    campaign: many(campaign),
     scenarios: many(scenario)
 }))
 

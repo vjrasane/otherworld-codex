@@ -1,9 +1,10 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { desc, eq, sql } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
 import * as s from './schema'
 import { Card } from './schema'
 import { array, DecoderType, nullable, number, object, string } from 'decoders'
 import "dotenv/config"
+import { first, groupBy, uniqBy } from 'lodash/fp'
 
 const { DATABASE_URL } = process.env
 
@@ -17,6 +18,85 @@ export const getScenarioEncounterCards = async (scenarioCode: string): Promise<C
         .where(eq(s.scenario.scenarioCode, scenarioCode))
     const cards = results.map(({ cards }) => cards).filter((c) => !!c)
     return cards
+}
+
+export const getScenarioByCode = async (code: string) => {
+    // const results = await db.select({
+    //     scenario: s.scenario,
+    //     // campaign: s.campaign,
+    //     // card: s.card,
+    //     encounterSet: s.encounterSet,
+    //     // traitName: s.trait.traitName,
+    //     // cardCount: count(s.card.cardId),
+    //     // traitCount: count(s.trait.traitName)
+    //     encounterSetsToScenarios: s.encounterSetsToScenarios
+    // }).from(s.scenario)
+    //     // .leftJoin(s.campaign, eq(s.scenario.campaignCode, s.campaign.campaignCode))
+    //     .leftJoin(
+    //         s.encounterSetsToScenarios, eq(s.scenario.scenarioCode, s.encounterSetsToScenarios.scenarioCode)
+    //     ).leftJoin(
+    //         s.encounterSet, eq(s.encounterSetsToScenarios.encounterCode, s.encounterSet.encounterCode)
+    //         // ).leftJoin(
+    //         //     s.card, eq(s.encounterSet.encounterCode, s.card.encounterCode)
+    //         // ).leftJoin(
+    //         //     s.traitsToCards, eq(s.card.cardCode, s.traitsToCards.cardCode)
+    //         // ).leftJoin(
+    //         //     s.trait, eq(s.traitsToCards.traitName, s.trait.traitName)
+    //         // ).groupBy(
+    //         //     s.trait.traitName
+    //     ).where(eq(s.scenario.scenarioCode, code))
+
+    // const scenario = first(results)?.scenario
+    // if (!scenario) return null
+
+    // // const campaigns = uniqBy("campaignCode", results.map(({ campaign }) => campaign).filter((c) => !!c))
+    // const campaigns: never[] = []
+
+    // // const cards = values(groupBy(({ card }) => card?.cardCode, results)).map((cardResults) => {
+    // //     const card = first(cardResults)?.card
+    // //     if (!card) return
+    // //     // const traits = uniq(cardResults.map(({ trait }) => trait?.traitName).filter((t) => !!t))
+    // //     return { ...card, traits }
+    // // }).filter((c) => !!c)
+
+    // // const cardsByEncounterCode = groupBy("encounterCode", uniqBy("cardCode", results.map(({ card }) => card).filter((c) => !!c)))
+
+    // // const encounterSets = uniqBy("encounterCode", results.map(({ encounterSet }) => encounterSet).filter((e) => !!e)).map(
+    // //     (encounterSet) => ({ ...encounterSet, cards: cardsByEncounterCode[encounterSet.encounterCode] ?? [] })
+    // // )
+    // const encounterSets = results.map(({ encounterSet }) => encounterSet).filter((e) => !!e)
+    // const encounterSetsToScenarios = results.map(({ encounterSetsToScenarios }) => encounterSetsToScenarios).filter((e) => !!e)
+    // console.log({ scenario, campaigns, encounterSets, encounterSetsToScenarios })
+
+    // return { ...scenario, campaigns, encounterSets, encounterSetsToScenarios }
+
+
+
+    const scenario = await db.query.scenario.findFirst({
+        where: eq(s.scenario.scenarioCode, code),
+        with: {
+            campaign: true,
+            pack: true,
+            encounterSetsToScenarios: {
+                with: {
+                    encounterSet: {
+                        with: {
+                            cards: {
+                                // with: {
+                                //     traitsToCards: {
+                                //         with: {
+                                //             trait: true
+                                //         }
+                                //     }
+                                // }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+    return scenario
 }
 
 export const getCardByCode = async (code: string) => {

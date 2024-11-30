@@ -183,6 +183,41 @@
       "when": 1732810873224,
       "tag": "0025_tough_komodo",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1732974360944,
+      "tag": "0026_nostalgic_smiling_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1732974527384,
+      "tag": "0027_red_pete_wisdom",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1732975966826,
+      "tag": "0028_slimy_mockingbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1732976409156,
+      "tag": "0029_shocking_spirit",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1732976684063,
+      "tag": "0030_fancy_magik",
+      "breakpoints": true
     }
   ]
 }

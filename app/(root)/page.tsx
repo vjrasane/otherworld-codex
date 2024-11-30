@@ -23,7 +23,7 @@ const SearchResultCard: FunctionComponent<{
 }> = async ({ result }) => {
   return (
     <Card className="flex flex-col cursor-pointer hover:bg-secondary/75 transition-colors">
-      <Link href={`/card/${result.code}`}>
+      <Link href={`/${result.type}/${result.code}`}>
         <CardHeader>
           <CardTitle>{result.name}</CardTitle>
           {/* <CardDescription>{result.description}</CardDescription> */}

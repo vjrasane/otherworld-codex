@@ -1,10 +1,10 @@
 "use server";
 import { appConfig } from "@/app.config";
 import { getCardByCode } from "@/db/db-client";
+import { Scenario } from "@/db/schema";
 import { DecoderType, object, string } from "decoders";
 import { entries, groupBy } from "lodash/fp";
 import { Metadata } from "next";
-import Head from "next/head";
 import { redirect } from "next/navigation";
 import { FunctionComponent } from "react";
 
@@ -38,7 +38,7 @@ const CardPage: FunctionComponent<{
   const scenarios = card.encounterSet?.encounterSetsToScenarios.map(
     ({ scenario }) => scenario
   );
-  const scenariosByCampaign = groupBy(
+  const scenariosByCampaign: Record<string, Scenario[]> = groupBy(
     ({ campaign }) => campaign?.campaignName,
     scenarios
   );
@@ -67,7 +67,7 @@ const CardPage: FunctionComponent<{
       <div>{card.encounterSet?.encounterName}</div>
       {entries(scenariosByCampaign).map(([campaign, scenarios]) => {
         return (
-          <div>
+          <div key={campaign}>
             <div>{campaign}</div>
             {scenarios.map(({ scenarioName }) => {
               return <div key={scenarioName}>{scenarioName}</div>;

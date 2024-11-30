@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, primaryKey, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, primaryKey, varchar } from "drizzle-orm/pg-core";
 import { encounterSet } from "./encounter-set";
 import { scenario } from "./scenario";
 
@@ -7,6 +7,7 @@ import { scenario } from "./scenario";
 export const encounterSetsToScenarios = pgTable('encounter_sets_to_scenarios', {
     encounterCode: varchar('encounter_code', { length: 255 }).notNull().references(() => encounterSet.encounterCode, { onDelete: 'cascade' }),
     scenarioCode: varchar('scenario_code', { length: 255 }).notNull().references(() => scenario.scenarioCode, { onDelete: 'cascade' }),
+    position: integer('position').notNull().default(1),
 },
     (t) => [primaryKey({ columns: [t.encounterCode, t.scenarioCode] })])
 
