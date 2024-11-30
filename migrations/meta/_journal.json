@@ -218,6 +218,20 @@
       "when": 1732976684063,
       "tag": "0030_fancy_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1732993785564,
+      "tag": "0031_early_callisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1732993867305,
+      "tag": "0032_nice_rocket_raccoon",
+      "breakpoints": true
     }
   ]
 }

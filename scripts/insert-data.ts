@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
+import { sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { chunk, trimCharsEnd, uniq, uniqBy } from 'lodash/fp'
 import { campaigns } from '../db/data'
 import { Card as ArkhamDBCard, getCards } from '../db/get-card-data'
 import * as schema from "../db/schema"
-import { sql } from 'drizzle-orm'
 
 dotenv.config({ path: '.env' })
 
@@ -117,13 +117,20 @@ const insertCampaigns = async () => {
         })
 
     await db.insert(schema.scenario).values(campaigns.flatMap(campaign => campaign.scenarios.map(
-        (scenario) => ({
+        (scenario, index) => ({
             ...scenario,
             scenarioPrefix: scenario.scenarioPrefix,
             packCode: campaign.packCode,
-            campaignCode: campaign.campaignCode
+            campaignCode: campaign.campaignCode,
+            position: index + 1
         })
-    ))).onConflictDoUpdate({ target: schema.scenario.scenarioCode, set: { updatedAt: new Date() } })
+    ))).onConflictDoUpdate({
+        target: schema.scenario.scenarioCode,
+        set: {
+            position: sql`excluded.position`,
+            updatedAt: new Date()
+        }
+    })
 
     await db.insert(schema.encounterSetsToScenarios).values(
         campaigns.flatMap(campaign => campaign.scenarios.flatMap(

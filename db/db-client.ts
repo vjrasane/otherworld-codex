@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { first, groupBy, uniqBy, values } from 'lodash/fp'
 import * as s from './schema'
 import { Card } from './schema'
+import { mapValues } from 'lodash'
 
 const { DATABASE_URL } = process.env
 
@@ -107,6 +108,113 @@ export const getScenarioByCode = async (code: string) => {
     //     }
     // })
     // return scenario
+
+}
+
+// const aggregate = () => { }
+
+// aggregate(
+//     {
+//         entity: (row) => row.campaign,
+//         with: {
+//             pack: row => one(row.pack),
+//             scenarios: row => many(row.scenario.scenarioCode, {
+//                 entity: row => row.scenario,
+//                 with: {
+//                     encounterSets: row => many(row.encounterSet.encounterCode, {
+//                         entity: row => row.encounterSet,
+//                         with: {
+//                             cards: row => many(row.card.cardCode, {
+//                                 entity: row => row.card,
+//                                 with: {
+//                                     traits: row => many(row.trait.traitName)
+//                                 }
+//                             })
+//                         }
+//                     })
+//                 }
+//             })
+//         }
+//     }
+// )
+
+export const getCampaignByCode = async (code: string) => {
+    const result = await db.select({
+        campaign: s.campaign,
+        pack: s.pack,
+        scenario: s.scenario,
+        encounterSet: s.encounterSet,
+        card: s.card,
+        trait: s.trait
+    }).from(s.campaign).
+        innerJoin(
+            s.pack, eq(s.campaign.packCode, s.pack.packCode)
+        ).innerJoin(
+            s.scenario, eq(s.campaign.campaignCode, s.scenario.campaignCode)
+        ).innerJoin(
+            s.encounterSetsToScenarios, eq(s.scenario.scenarioCode, s.encounterSetsToScenarios.scenarioCode)
+        ).innerJoin(
+            s.encounterSet, eq(s.encounterSetsToScenarios.encounterCode, s.encounterSet.encounterCode)
+        ).innerJoin(
+            s.card, eq(s.encounterSet.encounterCode, s.card.encounterCode)
+        ).innerJoin(
+            s.traitsToCards, eq(s.card.cardCode, s.traitsToCards.cardCode)
+        ).innerJoin(
+            s.trait, eq(s.traitsToCards.traitName, s.trait.traitName)
+        )
+        .orderBy(asc(s.scenario.position))
+        .where(eq(s.campaign.campaignCode, code))
+    type Card = s.Card & { traits: Record<string, string> }
+    type EncounterSet = s.EncounterSet & { cards: Record<string, Card> }
+    type Scenario = s.Scenario & { encounterSets: Record<string, EncounterSet> }
+    type Campaign = s.Campaign & { pack: s.Pack, scenarios: Record<string, Scenario> }
+    const campaigns = result.reduce((acc: Record<string, Campaign>, row) => {
+        const campaign: Campaign = acc[row.campaign.campaignCode] =
+            acc[row.campaign.campaignCode] ?? {
+                ...row.campaign,
+                pack: row.pack,
+                scenarios: {}
+            }
+
+        const scenario: Scenario = campaign.scenarios[row.scenario.scenarioCode] =
+            campaign.scenarios[row.scenario.scenarioCode] ?? {
+                ...row.scenario,
+                encounterSets: {}
+            }
+
+        const encounterSet: EncounterSet = scenario.encounterSets[row.encounterSet.encounterCode] =
+            scenario.encounterSets[row.encounterSet.encounterCode] ?? {
+                ...row.encounterSet,
+                cards: {}
+            }
+
+        const card: Card = encounterSet.cards[row.card.cardCode] =
+            encounterSet.cards[row.card.cardCode] ?? {
+                ...row.card,
+                traits: {}
+            }
+
+        card.traits[row.trait.traitName]
+            = card.traits[row.trait.traitName] ?? row.trait.traitName
+
+        return acc
+    }, {})
+
+    const [campaign, ...rest] = values(campaigns)
+    if (!campaign || rest.length) return null
+    return {
+        ...campaign,
+        scenarios: values(campaign.scenarios).map((scenario) => ({
+            ...scenario,
+            encounterSets: values(scenario.encounterSets).map((encounterSet) => ({
+                ...encounterSet,
+                cards: values(encounterSet.cards).map((card) => ({
+                    ...card,
+                    traits: values(card.traits)
+                }))
+            }))
+        }))
+    }
 }
 
 export const getCardByCode = async (code: string) => {

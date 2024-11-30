@@ -14,6 +14,8 @@ export const scenario = pgTable('scenarios', {
     campaignCode: varchar('campaign_code', { length: 255 }).references(() => campaign.campaignCode, { onDelete: 'cascade' }),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 
+    position: integer('position').notNull().default(1),
+
     fullTextSearch: tsVector("full_text_search", { dimensions: 3 }).generatedAlwaysAs(
         (): SQL => sql`(
         setweight(to_tsvector('english', coalesce(${scenario.scenarioName}, '')), 'A')
