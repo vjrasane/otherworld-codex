@@ -1,1 +1,0 @@
-ALTER TABLE "scenarios" ADD COLUMN "scenario_prefix" varchar(255);

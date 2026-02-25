@@ -3,7 +3,7 @@ import { appConfig } from "@/app.config";
 import { getScenarioByCode } from "@/db/db-client";
 import { DecoderType, object, string } from "decoders";
 import { round } from "lodash";
-import { entries, groupBy, orderBy, sortBy, sumBy } from "lodash/fp";
+import { entries, groupBy, orderBy, sumBy } from "lodash/fp";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { FunctionComponent } from "react";
@@ -35,10 +35,6 @@ const ScenarioPage: FunctionComponent<{
   const scenario = await getScenarioByCode(scenarioCode);
   if (!scenario) redirect("/");
 
-  // const encounterSets = scenario.encounterSetsToScenarios.map(
-  //   ({ encounterSet }) => encounterSet
-  // );
-
   const cards = scenario.encounterSets.flatMap((set) => set.cards);
   type Card = (typeof cards)[number];
 
@@ -65,12 +61,6 @@ const ScenarioPage: FunctionComponent<{
     {}
   );
 
-  const imageUrl = cards.find((card) => card.typeCode === "scenario")?.imageUrl;
-
-  // const traits = cards.flatMap((card) =>
-  //   card.traitsToCards.map(({ trait }) => trait?.traitName)
-  // );
-
   return (
     <div>
       <h1>{scenario.scenarioName}</h1>
@@ -78,7 +68,7 @@ const ScenarioPage: FunctionComponent<{
         <img
           className="mx-auto"
           /* @ts-expect-error */
-          src={imageUrl || null}
+          src={scenario.imageUrl || null}
           alt={scenario.scenarioName}
         />
       </div>

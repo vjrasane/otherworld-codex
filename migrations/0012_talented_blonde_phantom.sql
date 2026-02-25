@@ -1,1 +1,0 @@
-CREATE VIEW "public"."search_view" AS (select text 'card' as "type", "card_id", "fullTextSearch" from "cards");

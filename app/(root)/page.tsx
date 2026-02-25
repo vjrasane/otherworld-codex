@@ -49,7 +49,7 @@ const SearchResultsGrid: FunctionComponent<{
   return (
     <div className="grid grid-cols-1 min-[500px]:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
       {results.map((c) => (
-        <SearchResultCard key={c.id} result={c} />
+        <SearchResultCard key={c.code} result={c} />
       ))}
     </div>
   );

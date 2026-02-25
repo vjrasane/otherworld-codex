@@ -38,7 +38,7 @@ const CampaignPage: FunctionComponent<{
       <div>
         {campaign.scenarios.map((s) => (
           <div>
-            {s.scenarioName} {s.order}
+            {s.scenarioName} {s.position}
           </div>
         ))}
       </div>
