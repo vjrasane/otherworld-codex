@@ -40,7 +40,7 @@ export default function Search() {
   }, [entries]);
 
   useEffect(() => {
-    fetch("/search-index.json")
+    fetch(`${import.meta.env.BASE_URL}search-index.json`)
       .then((r) => r.json())
       .then(setEntries);
   }, []);
