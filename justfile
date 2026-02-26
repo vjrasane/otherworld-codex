@@ -1,10 +1,7 @@
 set dotenv-load
 
-fetch-cards:
-    go run ./cmd/fetch
+build:
+    cd web && npx astro build
 
-db-generate:
-    sqlc generate
-
-db-seed:
-    go run ./cmd/seed
+dev:
+    cd web && npx astro preview

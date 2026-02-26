@@ -1,0 +1,171 @@
+---
+import Base from "../../layouts/Base.astro";
+import CardImage from "../../components/CardImage.astro";
+import { getAllCards } from "../../data";
+import type { Card } from "../../data";
+
+export function getStaticPaths() {
+  return getAllCards().map((c) => ({
+    params: { code: c.code },
+    props: { card: c },
+  }));
+}
+
+interface Props {
+  card: Card;
+}
+
+const { card } = Astro.props;
+
+const traits = card.traits
+  ?.split(".")
+  .map((t) => t.trim())
+  .filter(Boolean);
+
+function formatText(text: string): string {
+  return text
+    .replace(/\[(\w+)\]/g, '<span class="icon">[$1]</span>')
+    .replace(/\n/g, "<br>");
+}
+---
+
+<Base title={card.name}>
+  <div class="card-detail">
+    <div class="image-column">
+      <CardImage imageUrl={card.imageUrl} name={card.name} typeCode={card.typeCode} />
+    </div>
+    <div class="info-column">
+      <div class="type-line">
+        <span class="type-name">{card.typeName}</span>
+        {card.factionName && <span class="faction">· {card.factionName}</span>}
+      </div>
+      <h1>
+        {card.name}
+        {card.subname && <span class="subname">{card.subname}</span>}
+      </h1>
+
+      {
+        traits && traits.length > 0 && (
+          <div class="traits">
+            {traits.map((t) => (
+              <span class="trait">{t}</span>
+            ))}
+          </div>
+        )
+      }
+
+      {card.text && <div class="card-text" set:html={formatText(card.text)} />}
+
+      {card.flavor && <div class="flavor">{card.flavor}</div>}
+
+      <dl class="stats">
+        {card.cost !== undefined && <><dt>Cost</dt><dd>{card.cost}</dd></>}
+        {card.health !== undefined && <><dt>Health</dt><dd>{card.health}</dd></>}
+        {card.sanity !== undefined && <><dt>Sanity</dt><dd>{card.sanity}</dd></>}
+        {card.skillWillpower !== undefined && <><dt>Willpower</dt><dd>{card.skillWillpower}</dd></>}
+        {card.skillIntellect !== undefined && <><dt>Intellect</dt><dd>{card.skillIntellect}</dd></>}
+        {card.skillCombat !== undefined && <><dt>Combat</dt><dd>{card.skillCombat}</dd></>}
+        {card.skillAgility !== undefined && <><dt>Agility</dt><dd>{card.skillAgility}</dd></>}
+      </dl>
+
+      <div class="meta">
+        {card.slot && <div>Slot: {card.slot}</div>}
+        <div>Pack: {card.packName}</div>
+        {card.encounterName && <div>Encounter: <a href={`/encounters/${card.encounterCode}`}>{card.encounterName}</a></div>}
+        {card.isUnique && <div>Unique</div>}
+        {card.quantity > 1 && <div>Quantity: {card.quantity}</div>}
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .card-detail {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 640px) {
+    .card-detail {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .image-column {
+    user-select: none;
+  }
+
+  .type-line {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .subname {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .trait {
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 0.15rem 0.5rem;
+    background: var(--bg-2);
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+
+  .card-text {
+    margin-bottom: 0.75rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .flavor {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .stats dt {
+    color: var(--text-muted);
+  }
+
+  .stats dd {
+    font-weight: 600;
+  }
+
+  .meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+</style>
+

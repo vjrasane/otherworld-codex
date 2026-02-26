@@ -1,0 +1,123 @@
+---
+import Base from "../../layouts/Base.astro";
+import CardImage from "../../components/CardImage.astro";
+import { getAllCampaigns, getEncounterSet, getEncounterCards } from "../../data";
+import type { Scenario } from "../../data";
+
+export function getStaticPaths() {
+  const campaigns = getAllCampaigns();
+  const paths: { params: { code: string }; props: { scenario: Scenario } }[] = [];
+  for (const c of campaigns) {
+    for (const s of c.scenarios) {
+      paths.push({ params: { code: s.code }, props: { scenario: s } });
+    }
+  }
+  return paths;
+}
+
+interface Props {
+  scenario: Scenario;
+}
+
+const { scenario } = Astro.props;
+---
+
+<Base title={scenario.name}>
+  <nav class="breadcrumb">
+    <a href={`/campaigns/${scenario.campaignCode}`}>{scenario.campaignName}</a>
+    <span>›</span>
+  </nav>
+  {scenario.prefix && <div class="prefix">{scenario.prefix}</div>}
+  <h1>{scenario.name}</h1>
+
+  <div class="encounter-sections">
+    {
+      scenario.encounterCodes.map((ec) => {
+        const es = getEncounterSet(ec);
+        if (!es) return null;
+        const cards = getEncounterCards(ec);
+        return (
+          <section class="encounter-section">
+            <h2>
+              <a href={`/encounters/${es.code}`}>{es.name}</a>
+            </h2>
+            <div class="card-grid">
+              {cards.map((card) => (
+                <a href={`/cards/${card.code}`} class="card-link">
+                  <CardImage
+                    imageUrl={card.imageUrl}
+                    name={card.name}
+                    typeCode={card.typeCode}
+                  />
+                  <div class="card-name">{card.name}</div>
+                </a>
+              ))}
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+</Base>
+
+<style>
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .prefix {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  .encounter-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .encounter-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .encounter-section h2 a {
+    color: var(--text-primary);
+  }
+
+  .encounter-section h2 a:hover {
+    color: var(--accent);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .card-link {
+    color: var(--text-primary);
+  }
+
+  .card-link:hover {
+    color: var(--accent);
+  }
+
+  .card-name {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>

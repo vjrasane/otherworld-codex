@@ -1,0 +1,130 @@
+---
+import Base from "../../layouts/Base.astro";
+import CardImage from "../../components/CardImage.astro";
+import { getAllEncounterSets, getAllCampaigns } from "../../data";
+import type { EncounterSet, Scenario } from "../../data";
+
+interface EncounterPageProps {
+  encounterSet: EncounterSet;
+  scenarios: Scenario[];
+}
+
+export function getStaticPaths() {
+  const allEncounters = getAllEncounterSets();
+  const campaigns = getAllCampaigns();
+
+  return allEncounters.map((es) => {
+    const scenarios: Scenario[] = [];
+    for (const c of campaigns) {
+      for (const s of c.scenarios) {
+        if (s.encounterCodes.includes(es.code)) {
+          scenarios.push(s);
+        }
+      }
+    }
+    return {
+      params: { code: es.code },
+      props: { encounterSet: es, scenarios } as EncounterPageProps,
+    };
+  });
+}
+
+const { encounterSet, scenarios } = Astro.props as EncounterPageProps;
+---
+
+<Base title={encounterSet.name}>
+  <h1>{encounterSet.name}</h1>
+
+  {
+    scenarios.length > 0 && (
+      <div class="scenarios">
+        <h2>Appears in</h2>
+        <div class="scenario-list">
+          {scenarios.map((s) => (
+            <a href={`/scenarios/${s.code}`} class="scenario-link">
+              <span class="scenario-campaign">{s.campaignName}</span>
+              <span>›</span>
+              <span>{s.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <div class="card-grid">
+    {
+      encounterSet.cards.map((card) => (
+        <a href={`/cards/${card.code}`} class="card-link">
+          <CardImage
+            imageUrl={card.imageUrl}
+            name={card.name}
+            typeCode={card.typeCode}
+          />
+          <div class="card-name">{card.name}</div>
+        </a>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  .scenarios {
+    margin-bottom: 1.5rem;
+  }
+
+  .scenarios h2 {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .scenario-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .scenario-link:hover {
+    color: var(--accent);
+  }
+
+  .scenario-campaign {
+    color: var(--text-muted);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .card-link {
+    color: var(--text-primary);
+  }
+
+  .card-link:hover {
+    color: var(--accent);
+  }
+
+  .card-name {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>

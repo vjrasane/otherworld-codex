@@ -1,0 +1,59 @@
+---
+import "../styles/global.css";
+import Search from "../components/Search";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | Otherworld Codex</title>
+  </head>
+  <body>
+    <header class="header">
+      <a href="/" class="logo">Otherworld Codex</a>
+      <Search client:load />
+    </header>
+    <main class="main">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .logo:hover {
+    color: var(--accent);
+  }
+
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+  }
+</style>
