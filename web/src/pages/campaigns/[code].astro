@@ -27,7 +27,7 @@ const { campaign } = Astro.props;
           <a href={routes.scenario(s.code)} class="scenario-header">
             <img src={routes.icon(s.code)} alt="" class="scenario-icon" />
             <div class="scenario-info">
-              {s.prefix && <div class="scenario-prefix">{s.prefix}</div>}
+              {s.header && <div class="scenario-header-label">{s.header}</div>}
               <div class="scenario-name">{s.name}</div>
               <div class="encounter-count">
                 {s.encounterCodes.length} encounter set
@@ -93,7 +93,7 @@ const { campaign } = Astro.props;
     filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
   }
 
-  .scenario-prefix {
+  .scenario-header-label {
     color: var(--text-muted);
     font-size: 0.8rem;
   }

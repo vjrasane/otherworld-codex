@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Search from "../components/Search";
+import { routes } from "../routes";
 
 interface Props {
   title: string;
@@ -18,7 +19,7 @@ const { title } = Astro.props;
   </head>
   <body>
     <header class="header">
-      <a href="/" class="logo">Otherworld Codex</a>
+      <a href={routes.index} class="logo">Otherworld Codex</a>
       <Search client:load />
     </header>
     <main class="main">

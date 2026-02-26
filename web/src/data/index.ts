@@ -41,7 +41,8 @@ export interface EncounterSet {
 export interface Scenario {
   code: string;
   name: string;
-  prefix?: string;
+  header?: string;
+  order: number;
   campaignCode: string;
   campaignName: string;
   encounterCodes: string[];
@@ -146,13 +147,15 @@ const campaigns: Campaign[] = campaignsJson.map((raw: RawCampaign) => {
     return {
       code: s.scenarioCode,
       name: s.scenarioName,
-      prefix: s.scenarioPrefix,
+      header: s.scenarioHeader || undefined,
+      order: s.scenarioOrder,
       campaignCode: raw.campaignCode,
       campaignName: raw.campaignName,
       encounterCodes: s.encounterCodes,
       imageUrl: imageCard?.imageUrl,
     };
   });
+  scenarios.sort((a, b) => a.order - b.order);
   const imageUrl = scenarios[0]?.imageUrl;
   return {
     code: raw.campaignCode,

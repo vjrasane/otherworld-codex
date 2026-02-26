@@ -4,8 +4,21 @@
     "campaignName": "The Night of the Zealot",
     "scenarios": [
       {
+        "scenarioCode": "torch",
+        "scenarioName": "The Gathering",
+        "encounterCodes": [
+          "ancient_evils",
+          "chilling_cold",
+          "ghouls",
+          "rats",
+          "striking_fear",
+          "torch"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
         "scenarioCode": "arkham",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "The Midnight Masks",
         "encounterCodes": [
           "arkham",
@@ -14,11 +27,12 @@
           "locked_doors",
           "nightgaunts",
           "pentagram"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
         "scenarioCode": "tentacles",
-        "scenarioPrefix": "Scenario III",
         "scenarioName": "The Devourer Below",
         "encounterCodes": [
           "agents_of_cthulhu",
@@ -30,20 +44,9 @@
           "pentagram",
           "striking_fear",
           "tentacles"
-        ]
-      },
-      {
-        "scenarioCode": "torch",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "The Gathering",
-        "encounterCodes": [
-          "ancient_evils",
-          "chilling_cold",
-          "ghouls",
-          "rats",
-          "striking_fear",
-          "torch"
-        ]
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       }
     ]
   },
@@ -52,33 +55,7 @@
     "campaignName": "The Dunwich Legacy",
     "scenarios": [
       {
-        "scenarioCode": "blood_on_the_altar",
-        "scenarioPrefix": "Scenario IV",
-        "scenarioName": "Blood on the Altar",
-        "encounterCodes": [
-          "ancient_evils",
-          "blood_on_the_altar",
-          "dunwich",
-          "naomis_crew",
-          "nightgaunts",
-          "whippoorwills"
-        ]
-      },
-      {
-        "scenarioCode": "essex_county_express",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "The Essex County Express",
-        "encounterCodes": [
-          "ancient_evils",
-          "essex_county_express",
-          "pentagram",
-          "striking_fear",
-          "the_beyond"
-        ]
-      },
-      {
         "scenarioCode": "extracurricular_activity",
-        "scenarioPrefix": "Scenario I-A",
         "scenarioName": "Extracurricular Activity",
         "encounterCodes": [
           "agents_of_yog",
@@ -89,23 +66,12 @@
           "sorcery",
           "the_beyond",
           "whippoorwills"
-        ]
-      },
-      {
-        "scenarioCode": "lost_in_time_and_space",
-        "scenarioPrefix": "Scenario VII",
-        "scenarioName": "Lost in Time and Space",
-        "encounterCodes": [
-          "agents_of_yog",
-          "hideous_abominations",
-          "lost_in_time_and_space",
-          "sorcery",
-          "the_beyond"
-        ]
+        ],
+        "scenarioOrder": 1.1,
+        "scenarioHeader": "Scenario I-A"
       },
       {
         "scenarioCode": "the_house_always_wins",
-        "scenarioPrefix": "Scenario I-B",
         "scenarioName": "The House Always Wins",
         "encounterCodes": [
           "bad_luck",
@@ -114,11 +80,12 @@
           "rats",
           "striking_fear",
           "the_house_always_wins"
-        ]
+        ],
+        "scenarioOrder": 1.2,
+        "scenarioHeader": "Scenario I-B"
       },
       {
         "scenarioCode": "the_miskatonic_museum",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "The Miskatonic Museum",
         "encounterCodes": [
           "bad_luck",
@@ -127,11 +94,39 @@
           "sorcery",
           "the_beyond",
           "the_miskatonic_museum"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
+      },
+      {
+        "scenarioCode": "essex_county_express",
+        "scenarioName": "The Essex County Express",
+        "encounterCodes": [
+          "ancient_evils",
+          "essex_county_express",
+          "pentagram",
+          "striking_fear",
+          "the_beyond"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
+      },
+      {
+        "scenarioCode": "blood_on_the_altar",
+        "scenarioName": "Blood on the Altar",
+        "encounterCodes": [
+          "ancient_evils",
+          "blood_on_the_altar",
+          "dunwich",
+          "naomis_crew",
+          "nightgaunts",
+          "whippoorwills"
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "undimensioned_and_unseen",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "Undimensioned and Unseen",
         "encounterCodes": [
           "beast_thralls",
@@ -139,11 +134,12 @@
           "striking_fear",
           "undimensioned_and_unseen",
           "whippoorwills"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
       },
       {
         "scenarioCode": "where_doom_awaits",
-        "scenarioPrefix": "Scenario VI",
         "scenarioName": "Where Doom Awaits",
         "encounterCodes": [
           "ancient_evils",
@@ -154,7 +150,22 @@
           "sorcery",
           "striking_fear",
           "where_doom_awaits"
-        ]
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
+      },
+      {
+        "scenarioCode": "lost_in_time_and_space",
+        "scenarioName": "Lost in Time and Space",
+        "encounterCodes": [
+          "agents_of_yog",
+          "hideous_abominations",
+          "lost_in_time_and_space",
+          "sorcery",
+          "the_beyond"
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       }
     ]
   },
@@ -163,8 +174,63 @@
     "campaignName": "The Path to Carcosa",
     "scenarios": [
       {
+        "scenarioCode": "curtain_call",
+        "scenarioName": "Curtain Call",
+        "encounterCodes": [
+          "cult_of_the_yellow_sign",
+          "curtain_call",
+          "delusions",
+          "evil_portents",
+          "hauntings",
+          "rats",
+          "striking_fear"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
+        "scenarioCode": "the_last_king",
+        "scenarioName": "The Last King",
+        "encounterCodes": [
+          "ancient_evils",
+          "decay",
+          "hasturs_gift",
+          "stranger",
+          "the_last_king"
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
+      },
+      {
+        "scenarioCode": "echoes_of_the_past",
+        "scenarioName": "Echoes of the Past",
+        "encounterCodes": [
+          "arkham",
+          "cult_of_the_yellow_sign",
+          "delusions",
+          "echoes_of_the_past",
+          "locked_doors",
+          "pentagram"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
+      },
+      {
+        "scenarioCode": "the_unspeakable_oath",
+        "scenarioName": "The Unspeakable Oath",
+        "encounterCodes": [
+          "agents_of_hastur",
+          "decay",
+          "delusions",
+          "hasturs_gift",
+          "inhabitants_of_carcosa",
+          "the_unspeakable_oath"
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
+      },
+      {
         "scenarioCode": "a_phantom_of_truth",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "A Phantom of Truth",
         "encounterCodes": [
           "a_phantom_of_truth",
@@ -173,11 +239,24 @@
           "byakhee",
           "evil_portents",
           "stranger"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
+      },
+      {
+        "scenarioCode": "the_pallid_mask",
+        "scenarioName": "The Pallid Mask",
+        "encounterCodes": [
+          "chilling_cold",
+          "ghouls",
+          "hauntings",
+          "the_pallid_mask"
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       },
       {
         "scenarioCode": "black_stars_rise",
-        "scenarioPrefix": "Scenario VII",
         "scenarioName": "Black Stars Rise",
         "encounterCodes": [
           "ancient_evils",
@@ -189,25 +268,12 @@
           "pentagram",
           "stranger",
           "vortex"
-        ]
-      },
-      {
-        "scenarioCode": "curtain_call",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "Curtain Call",
-        "encounterCodes": [
-          "cult_of_the_yellow_sign",
-          "curtain_call",
-          "delusions",
-          "evil_portents",
-          "hauntings",
-          "rats",
-          "striking_fear"
-        ]
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       },
       {
         "scenarioCode": "dim_carcosa",
-        "scenarioPrefix": "Scenario VIII",
         "scenarioName": "Dim Carcosa",
         "encounterCodes": [
           "agents_of_hastur",
@@ -216,56 +282,9 @@
           "dim_carcosa",
           "inhabitants_of_carcosa",
           "striking_fear"
-        ]
-      },
-      {
-        "scenarioCode": "echoes_of_the_past",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "Echoes of the Past",
-        "encounterCodes": [
-          "arkham",
-          "cult_of_the_yellow_sign",
-          "delusions",
-          "echoes_of_the_past",
-          "locked_doors",
-          "pentagram"
-        ]
-      },
-      {
-        "scenarioCode": "the_last_king",
-        "scenarioPrefix": "Scenario II",
-        "scenarioName": "The Last King",
-        "encounterCodes": [
-          "ancient_evils",
-          "decay",
-          "hasturs_gift",
-          "stranger",
-          "the_last_king"
-        ]
-      },
-      {
-        "scenarioCode": "the_pallid_mask",
-        "scenarioPrefix": "Scenario VI",
-        "scenarioName": "The Pallid Mask",
-        "encounterCodes": [
-          "chilling_cold",
-          "ghouls",
-          "hauntings",
-          "the_pallid_mask"
-        ]
-      },
-      {
-        "scenarioCode": "the_unspeakable_oath",
-        "scenarioPrefix": "Scenario IV",
-        "scenarioName": "The Unspeakable Oath",
-        "encounterCodes": [
-          "agents_of_hastur",
-          "decay",
-          "delusions",
-          "hasturs_gift",
-          "inhabitants_of_carcosa",
-          "the_unspeakable_oath"
-        ]
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       }
     ]
   },
@@ -274,8 +293,23 @@
     "campaignName": "The Forgotten Age",
     "scenarios": [
       {
+        "scenarioCode": "wilds",
+        "scenarioName": "The Untamed Wilds",
+        "encounterCodes": [
+          "agents_of_yig",
+          "ancient_evils",
+          "expedition",
+          "guardians_of_time",
+          "poison",
+          "rainforest",
+          "serpents",
+          "wilds"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
         "scenarioCode": "eztli",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "The Doom of Eztli",
         "encounterCodes": [
           "agents_of_yig",
@@ -286,51 +320,26 @@
           "ruins",
           "traps",
           "venom"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
-        "scenarioCode": "heart_of_the_elders_part_1",
-        "scenarioPrefix": "Scenario V-A",
-        "scenarioName": "Heart of the Elders, Part 1",
+        "scenarioCode": "threads_of_fate",
+        "scenarioName": "Threads of Fate",
         "encounterCodes": [
-          "expedition",
-          "heart_of_the_elders",
-          "pillars_of_judgment",
-          "poison",
-          "rainforest",
-          "serpents"
-        ]
-      },
-      {
-        "scenarioCode": "heart_of_the_elders_part_2",
-        "scenarioPrefix": "Scenario V-B",
-        "scenarioName": "Heart of the Elders, Part 2",
-        "encounterCodes": [
-          "agents_of_yig",
-          "heart_of_the_elders",
-          "knyan",
-          "poison",
-          "ruins",
-          "traps",
-          "venom"
-        ]
-      },
-      {
-        "scenarioCode": "shattered_aeons",
-        "scenarioPrefix": "Scenario VIII",
-        "scenarioName": "Shattered Aeons",
-        "encounterCodes": [
-          "agents_of_yig",
-          "ancient_evils",
-          "flux",
+          "arkham",
+          "locked_doors",
+          "nightgaunts",
           "pentagram",
           "pnakotic_brotherhood",
-          "shattered_aeons"
-        ]
+          "threads_of_fate"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       },
       {
         "scenarioCode": "the_boundary_beyond",
-        "scenarioPrefix": "Scenario IV",
         "scenarioName": "The Boundary Beyond",
         "encounterCodes": [
           "flux",
@@ -340,11 +349,41 @@
           "poison",
           "the_boundary_beyond",
           "venom"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
+      },
+      {
+        "scenarioCode": "heart_of_the_elders_part_1",
+        "scenarioName": "Heart of the Elders, Part 1",
+        "encounterCodes": [
+          "expedition",
+          "heart_of_the_elders",
+          "pillars_of_judgment",
+          "poison",
+          "rainforest",
+          "serpents"
+        ],
+        "scenarioOrder": 5.1,
+        "scenarioHeader": "Scenario V-A"
+      },
+      {
+        "scenarioCode": "heart_of_the_elders_part_2",
+        "scenarioName": "Heart of the Elders, Part 2",
+        "encounterCodes": [
+          "agents_of_yig",
+          "heart_of_the_elders",
+          "knyan",
+          "poison",
+          "ruins",
+          "traps",
+          "venom"
+        ],
+        "scenarioOrder": 5.2,
+        "scenarioHeader": "Scenario V-B"
       },
       {
         "scenarioCode": "the_city_of_archives",
-        "scenarioPrefix": "Scenario VI",
         "scenarioName": "The City of Archives",
         "encounterCodes": [
           "agents_of_yog",
@@ -352,11 +391,12 @@
           "locked_doors",
           "striking_fear",
           "the_city_of_archives"
-        ]
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       },
       {
         "scenarioCode": "the_depths_of_yoth",
-        "scenarioPrefix": "Scenario VII",
         "scenarioName": "The Depths of Yoth",
         "encounterCodes": [
           "agents_of_yig",
@@ -365,24 +405,26 @@
           "ruins",
           "the_depths_of_yoth",
           "venom"
-        ]
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       },
       {
-        "scenarioCode": "threads_of_fate",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "Threads of Fate",
+        "scenarioCode": "shattered_aeons",
+        "scenarioName": "Shattered Aeons",
         "encounterCodes": [
-          "arkham",
-          "locked_doors",
-          "nightgaunts",
+          "agents_of_yig",
+          "ancient_evils",
+          "flux",
           "pentagram",
           "pnakotic_brotherhood",
-          "threads_of_fate"
-        ]
+          "shattered_aeons"
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       },
       {
         "scenarioCode": "turn_back_time",
-        "scenarioPrefix": "Scenario IX",
         "scenarioName": "Turn Back Time",
         "encounterCodes": [
           "agents_of_yig",
@@ -394,22 +436,9 @@
           "traps",
           "turn_back_time",
           "venom"
-        ]
-      },
-      {
-        "scenarioCode": "wilds",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "The Untamed Wilds",
-        "encounterCodes": [
-          "agents_of_yig",
-          "ancient_evils",
-          "expedition",
-          "guardians_of_time",
-          "poison",
-          "rainforest",
-          "serpents",
-          "wilds"
-        ]
+        ],
+        "scenarioOrder": 9,
+        "scenarioHeader": "Scenario IX"
       }
     ]
   },
@@ -418,35 +447,7 @@
     "campaignName": "The Circle Undone",
     "scenarios": [
       {
-        "scenarioCode": "at_deaths_doorstep",
-        "scenarioPrefix": "Scenario II",
-        "scenarioName": "At Death's Doorstep",
-        "encounterCodes": [
-          "at_deaths_doorstep",
-          "chilling_cold",
-          "inexorable_fate",
-          "realm_of_death",
-          "silver_twilight_lodge",
-          "spectral_predators",
-          "the_watcher",
-          "trapped_spirits"
-        ]
-      },
-      {
-        "scenarioCode": "before_the_black_throne",
-        "scenarioPrefix": "Scenario VIII",
-        "scenarioName": "Before the Black Throne",
-        "encounterCodes": [
-          "agents_of_azathoth",
-          "ancient_evils",
-          "before_the_black_throne",
-          "inexorable_fate",
-          "pentagram"
-        ]
-      },
-      {
         "scenarioCode": "disappearance_at_the_twilight_estate",
-        "scenarioPrefix": "Prologue",
         "scenarioName": "Disappearance at the Twilight Estate",
         "encounterCodes": [
           "at_deaths_doorstep",
@@ -457,11 +458,75 @@
           "spectral_predators",
           "the_watcher",
           "trapped_spirits"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prologue"
+      },
+      {
+        "scenarioCode": "the_witching_hour",
+        "scenarioName": "The Witching Hour",
+        "encounterCodes": [
+          "agents_of_azathoth",
+          "agents_of_shub",
+          "ancient_evils",
+          "anettes_coven",
+          "city_of_sins",
+          "striking_fear",
+          "tentacles",
+          "the_witching_hour",
+          "witchcraft"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
+        "scenarioCode": "at_deaths_doorstep",
+        "scenarioName": "At Death's Doorstep",
+        "encounterCodes": [
+          "at_deaths_doorstep",
+          "chilling_cold",
+          "inexorable_fate",
+          "realm_of_death",
+          "silver_twilight_lodge",
+          "spectral_predators",
+          "the_watcher",
+          "trapped_spirits"
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
+      },
+      {
+        "scenarioCode": "the_secret_name",
+        "scenarioName": "The Secret Name",
+        "encounterCodes": [
+          "city_of_sins",
+          "inexorable_fate",
+          "rats",
+          "realm_of_death",
+          "the_secret_name",
+          "witchcraft"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
+      },
+      {
+        "scenarioCode": "the_wages_of_sin",
+        "scenarioName": "The Wages of Sin",
+        "encounterCodes": [
+          "anettes_coven",
+          "city_of_sins",
+          "inexorable_fate",
+          "realm_of_death",
+          "the_wages_of_sin",
+          "the_watcher",
+          "trapped_spirits",
+          "witchcraft"
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "for_the_greater_good",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "For the Greater Good",
         "encounterCodes": [
           "ancient_evils",
@@ -470,11 +535,29 @@
           "locked_doors",
           "pentagram",
           "silver_twilight_lodge"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
+      },
+      {
+        "scenarioCode": "union_and_disillusion",
+        "scenarioName": "Union and Disillusion",
+        "encounterCodes": [
+          "ancient_evils",
+          "anettes_coven",
+          "chilling_cold",
+          "inexorable_fate",
+          "realm_of_death",
+          "silver_twilight_lodge",
+          "spectral_predators",
+          "the_watcher",
+          "union_and_disillusion"
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       },
       {
         "scenarioCode": "in_the_clutches_of_chaos",
-        "scenarioPrefix": "Scenario VII",
         "scenarioName": "In the Clutches of Chaos",
         "encounterCodes": [
           "agents_of_azathoth",
@@ -488,67 +571,22 @@
           "silver_twilight_lodge",
           "striking_fear",
           "witchcraft"
-        ]
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       },
       {
-        "scenarioCode": "the_secret_name",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "The Secret Name",
-        "encounterCodes": [
-          "city_of_sins",
-          "inexorable_fate",
-          "rats",
-          "realm_of_death",
-          "the_secret_name",
-          "witchcraft"
-        ]
-      },
-      {
-        "scenarioCode": "the_wages_of_sin",
-        "scenarioPrefix": "Scenario IV",
-        "scenarioName": "The Wages of Sin",
-        "encounterCodes": [
-          "anettes_coven",
-          "city_of_sins",
-          "inexorable_fate",
-          "realm_of_death",
-          "the_wages_of_sin",
-          "the_watcher",
-          "trapped_spirits",
-          "witchcraft"
-        ]
-      },
-      {
-        "scenarioCode": "the_witching_hour",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "The Witching Hour",
+        "scenarioCode": "before_the_black_throne",
+        "scenarioName": "Before the Black Throne",
         "encounterCodes": [
           "agents_of_azathoth",
-          "agents_of_shub",
           "ancient_evils",
-          "anettes_coven",
-          "city_of_sins",
-          "striking_fear",
-          "tentacles",
-          "the_witching_hour",
-          "witchcraft"
-        ]
-      },
-      {
-        "scenarioCode": "union_and_disillusion",
-        "scenarioPrefix": "Scenario VI",
-        "scenarioName": "Union and Disillusion",
-        "encounterCodes": [
-          "ancient_evils",
-          "anettes_coven",
-          "chilling_cold",
+          "before_the_black_throne",
           "inexorable_fate",
-          "realm_of_death",
-          "silver_twilight_lodge",
-          "spectral_predators",
-          "the_watcher",
-          "union_and_disillusion"
-        ]
+          "pentagram"
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       }
     ]
   },
@@ -558,7 +596,6 @@
     "scenarios": [
       {
         "scenarioCode": "beyond_the_gates_of_sleep",
-        "scenarioPrefix": "Scenario I-A",
         "scenarioName": "Beyond the Gates of Sleep",
         "encounterCodes": [
           "agents_of_nyarlathotep",
@@ -567,22 +604,12 @@
           "dreamers_curse",
           "dreamlands",
           "zoogs"
-        ]
-      },
-      {
-        "scenarioCode": "dark_side_of_the_moon",
-        "scenarioPrefix": "Scenario III-A",
-        "scenarioName": "Dark Side of the Moon",
-        "encounterCodes": [
-          "ancient_evils",
-          "corsairs",
-          "dark_side_of_the_moon",
-          "dreamers_curse"
-        ]
+        ],
+        "scenarioOrder": 1.1,
+        "scenarioHeader": "Scenario I-A"
       },
       {
         "scenarioCode": "the_search_for_kadath",
-        "scenarioPrefix": "Scenario II-A",
         "scenarioName": "The Search for Kadath",
         "encounterCodes": [
           "agents_of_nyarlathotep",
@@ -591,11 +618,24 @@
           "the_search_for_kadath",
           "whispers_of_hypnos",
           "zoogs"
-        ]
+        ],
+        "scenarioOrder": 2.1,
+        "scenarioHeader": "Scenario II-A"
+      },
+      {
+        "scenarioCode": "dark_side_of_the_moon",
+        "scenarioName": "Dark Side of the Moon",
+        "encounterCodes": [
+          "ancient_evils",
+          "corsairs",
+          "dark_side_of_the_moon",
+          "dreamers_curse"
+        ],
+        "scenarioOrder": 3.1,
+        "scenarioHeader": "Scenario III-A"
       },
       {
         "scenarioCode": "where_gods_dwell",
-        "scenarioPrefix": "Scenario IV-A",
         "scenarioName": "Where the Gods Dwell",
         "encounterCodes": [
           "agents_of_nyarlathotep",
@@ -603,7 +643,9 @@
           "pentagram",
           "where_the_gods_dwell",
           "whispers_of_hypnos"
-        ]
+        ],
+        "scenarioOrder": 4.1,
+        "scenarioHeader": "Scenario IV-A"
       }
     ]
   },
@@ -612,8 +654,22 @@
     "campaignName": "The Web of Dreams",
     "scenarios": [
       {
+        "scenarioCode": "waking_nightmare",
+        "scenarioName": "Waking Nightmare",
+        "encounterCodes": [
+          "agents_of_atlach_nacha",
+          "locked_doors",
+          "merging_realities",
+          "spiders",
+          "striking_fear",
+          "waking_nightmare",
+          "whispers_of_hypnos"
+        ],
+        "scenarioOrder": 1.2,
+        "scenarioHeader": "Scenario I-B"
+      },
+      {
         "scenarioCode": "a_thousand_shapes_of_horror",
-        "scenarioPrefix": "Scenario II-B",
         "scenarioName": "A Thousand Shapes of Horror",
         "encounterCodes": [
           "a_thousand_shapes_of_horror",
@@ -623,11 +679,12 @@
           "locked_doors",
           "merging_realities",
           "rats"
-        ]
+        ],
+        "scenarioOrder": 2.2,
+        "scenarioHeader": "Scenario II-B"
       },
       {
         "scenarioCode": "point_of_no_return",
-        "scenarioPrefix": "Scenario III-B",
         "scenarioName": "Point of No Return",
         "encounterCodes": [
           "agents_of_atlach_nacha",
@@ -640,25 +697,12 @@
           "striking_fear",
           "terror_of_the_vale",
           "whispers_of_hypnos"
-        ]
-      },
-      {
-        "scenarioCode": "waking_nightmare",
-        "scenarioPrefix": "Scenario I-B",
-        "scenarioName": "Waking Nightmare",
-        "encounterCodes": [
-          "agents_of_atlach_nacha",
-          "locked_doors",
-          "merging_realities",
-          "spiders",
-          "striking_fear",
-          "waking_nightmare",
-          "whispers_of_hypnos"
-        ]
+        ],
+        "scenarioOrder": 3.2,
+        "scenarioHeader": "Scenario III-B"
       },
       {
         "scenarioCode": "weaver_of_the_cosmos",
-        "scenarioPrefix": "Scenario IV-B",
         "scenarioName": "Weaver of the Cosmos",
         "encounterCodes": [
           "agents_of_atlach_nacha",
@@ -666,7 +710,9 @@
           "chilling_cold",
           "spiders",
           "weaver_of_the_cosmos"
-        ]
+        ],
+        "scenarioOrder": 4.2,
+        "scenarioHeader": "Scenario IV-B"
       }
     ]
   },
@@ -675,86 +721,7 @@
     "campaignName": "The Innsmouth Conspiracy",
     "scenarios": [
       {
-        "scenarioCode": "a_light_in_the_fog",
-        "scenarioPrefix": "Scenario VI",
-        "scenarioName": "A Light in the Fog",
-        "encounterCodes": [
-          "a_light_in_the_fog",
-          "creatures_of_the_deep",
-          "flooded_caverns",
-          "rising_tide",
-          "striking_fear",
-          "syzygy"
-        ]
-      },
-      {
-        "scenarioCode": "devil_reef",
-        "scenarioPrefix": "Scenario IV",
-        "scenarioName": "Devil Reef",
-        "encounterCodes": [
-          "agents_of_hydra",
-          "creatures_of_the_deep",
-          "devil_reef",
-          "flooded_caverns",
-          "malfunction",
-          "rising_tide"
-        ]
-      },
-      {
-        "scenarioCode": "horror_in_high_gear",
-        "scenarioPrefix": "Scenario V",
-        "scenarioName": "Horror in High Gear",
-        "encounterCodes": [
-          "ancient_evils",
-          "fog_over_innsmouth",
-          "horror_in_high_gear",
-          "malfunction",
-          "shattered_memories"
-        ]
-      },
-      {
-        "scenarioCode": "in_too_deep",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "In Too Deep",
-        "encounterCodes": [
-          "agents_of_cthulhu",
-          "creatures_of_the_deep",
-          "in_too_deep",
-          "rising_tide",
-          "syzygy",
-          "the_locals"
-        ]
-      },
-      {
-        "scenarioCode": "into_the_maelstrom",
-        "scenarioPrefix": "Scenario VIII",
-        "scenarioName": "Into the Maelstrom",
-        "encounterCodes": [
-          "agents_of_hydra",
-          "ancient_evils",
-          "creatures_of_the_deep",
-          "flooded_caverns",
-          "into_the_maelstrom",
-          "shattered_memories",
-          "syzygy"
-        ]
-      },
-      {
-        "scenarioCode": "the_lair_of_dagon",
-        "scenarioPrefix": "Scenario VII",
-        "scenarioName": "The Lair of Dagon",
-        "encounterCodes": [
-          "agents_of_dagon",
-          "flooded_caverns",
-          "locked_doors",
-          "pentagram",
-          "syzygy",
-          "the_lair_of_dagon"
-        ]
-      },
-      {
         "scenarioCode": "the_pit_of_despair",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "The Pit of Despair",
         "encounterCodes": [
           "agents_of_cthulhu",
@@ -764,11 +731,12 @@
           "rising_tide",
           "shattered_memories",
           "the_pit_of_despair"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
       },
       {
         "scenarioCode": "the_vanishing_of_elina_harper",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "The Vanishing of Elina Harper",
         "encounterCodes": [
           "agents_of_dagon",
@@ -779,7 +747,93 @@
           "nightgaunts",
           "the_locals",
           "the_vanishing_of_elina_harper"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
+      },
+      {
+        "scenarioCode": "in_too_deep",
+        "scenarioName": "In Too Deep",
+        "encounterCodes": [
+          "agents_of_cthulhu",
+          "creatures_of_the_deep",
+          "in_too_deep",
+          "rising_tide",
+          "syzygy",
+          "the_locals"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
+      },
+      {
+        "scenarioCode": "devil_reef",
+        "scenarioName": "Devil Reef",
+        "encounterCodes": [
+          "agents_of_hydra",
+          "creatures_of_the_deep",
+          "devil_reef",
+          "flooded_caverns",
+          "malfunction",
+          "rising_tide"
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
+      },
+      {
+        "scenarioCode": "horror_in_high_gear",
+        "scenarioName": "Horror in High Gear",
+        "encounterCodes": [
+          "ancient_evils",
+          "fog_over_innsmouth",
+          "horror_in_high_gear",
+          "malfunction",
+          "shattered_memories"
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
+      },
+      {
+        "scenarioCode": "a_light_in_the_fog",
+        "scenarioName": "A Light in the Fog",
+        "encounterCodes": [
+          "a_light_in_the_fog",
+          "creatures_of_the_deep",
+          "flooded_caverns",
+          "rising_tide",
+          "striking_fear",
+          "syzygy"
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
+      },
+      {
+        "scenarioCode": "the_lair_of_dagon",
+        "scenarioName": "The Lair of Dagon",
+        "encounterCodes": [
+          "agents_of_dagon",
+          "flooded_caverns",
+          "locked_doors",
+          "pentagram",
+          "syzygy",
+          "the_lair_of_dagon"
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
+      },
+      {
+        "scenarioCode": "into_the_maelstrom",
+        "scenarioName": "Into the Maelstrom",
+        "encounterCodes": [
+          "agents_of_hydra",
+          "ancient_evils",
+          "creatures_of_the_deep",
+          "flooded_caverns",
+          "into_the_maelstrom",
+          "shattered_memories",
+          "syzygy"
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       }
     ]
   },
@@ -788,34 +842,16 @@
     "campaignName": "Edge of the Earth",
     "scenarios": [
       {
-        "scenarioCode": "city_of_the_elder_things",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "City of the Elder Things",
-        "encounterCodes": [
-          "chilling_cold",
-          "city_of_the_elder_things",
-          "creatures_in_the_ice",
-          "elder_things",
-          "locked_doors",
-          "miasma",
-          "nameless_horrors",
-          "penguins",
-          "shoggoths",
-          "silence_and_mystery",
-          "tekeli_li"
-        ]
-      },
-      {
         "scenarioCode": "eoe_prologue",
-        "scenarioPrefix": "",
         "scenarioName": "Prologue",
         "encounterCodes": [
           "expedition_team"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": ""
       },
       {
         "scenarioCode": "fatal_mirage_2",
-        "scenarioPrefix": "Scenario ???",
         "scenarioName": "Fatal Mirage",
         "encounterCodes": [
           "agents_of_the_unknown",
@@ -826,11 +862,12 @@
           "nameless_horrors",
           "silence_and_mystery",
           "tekeli_li"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario ???"
       },
       {
         "scenarioCode": "fatal_mirage_3",
-        "scenarioPrefix": "Scenario ???",
         "scenarioName": "Fatal Mirage",
         "encounterCodes": [
           "agents_of_the_unknown",
@@ -841,11 +878,12 @@
           "nameless_horrors",
           "silence_and_mystery",
           "tekeli_li"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario ???"
       },
       {
         "scenarioCode": "fatal_mirage",
-        "scenarioPrefix": "Scenario ???",
         "scenarioName": "Fatal Mirage",
         "encounterCodes": [
           "agents_of_the_unknown",
@@ -856,11 +894,12 @@
           "nameless_horrors",
           "silence_and_mystery",
           "tekeli_li"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario ???"
       },
       {
         "scenarioCode": "ice_and_death_part_1",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "Ice and Death, Part I",
         "encounterCodes": [
           "ancient_evils",
@@ -871,11 +910,12 @@
           "silence_and_mystery",
           "tekeli_li",
           "the_crash"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
       },
       {
         "scenarioCode": "ice_and_death_part_2",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "Ice and Death, Part II",
         "encounterCodes": [
           "ancient_evils",
@@ -888,11 +928,12 @@
           "silence_and_mystery",
           "tekeli_li",
           "the_crash"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
       },
       {
         "scenarioCode": "ice_and_death_part_3",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "Ice and Death, Part III",
         "encounterCodes": [
           "ancient_evils",
@@ -906,11 +947,45 @@
           "silence_and_mystery",
           "tekeli_li",
           "the_crash"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
+        "scenarioCode": "to_the_forbidden_peaks",
+        "scenarioName": "To the Forbidden Peaks",
+        "encounterCodes": [
+          "deadly_weather",
+          "elder_things",
+          "hazards_of_antarctica",
+          "nameless_horrors",
+          "tekeli_li",
+          "to_the_forbidden_peaks"
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
+      },
+      {
+        "scenarioCode": "city_of_the_elder_things",
+        "scenarioName": "City of the Elder Things",
+        "encounterCodes": [
+          "chilling_cold",
+          "city_of_the_elder_things",
+          "creatures_in_the_ice",
+          "elder_things",
+          "locked_doors",
+          "miasma",
+          "nameless_horrors",
+          "penguins",
+          "shoggoths",
+          "silence_and_mystery",
+          "tekeli_li"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       },
       {
         "scenarioCode": "the_heart_of_madness_part_1",
-        "scenarioPrefix": "Scenario IV",
         "scenarioName": "The Heart of Madness, Part I",
         "encounterCodes": [
           "ancient_evils",
@@ -922,11 +997,12 @@
           "tekeli_li",
           "the_great_seal",
           "the_heart_of_madness"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "the_heart_of_madness_part_2",
-        "scenarioPrefix": "Scenario IV",
         "scenarioName": "The Heart of Madness, Part II",
         "encounterCodes": [
           "agents_of_the_unknown",
@@ -942,20 +1018,9 @@
           "tekeli_li",
           "the_great_seal",
           "the_heart_of_madness"
-        ]
-      },
-      {
-        "scenarioCode": "to_the_forbidden_peaks",
-        "scenarioPrefix": "Scenario II",
-        "scenarioName": "To the Forbidden Peaks",
-        "encounterCodes": [
-          "deadly_weather",
-          "elder_things",
-          "hazards_of_antarctica",
-          "nameless_horrors",
-          "tekeli_li",
-          "to_the_forbidden_peaks"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       }
     ]
   },
@@ -965,7 +1030,6 @@
     "scenarios": [
       {
         "scenarioCode": "riddles_and_rain",
-        "scenarioPrefix": "Prologue",
         "scenarioName": "Riddles and Rain",
         "encounterCodes": [
           "arkham",
@@ -977,11 +1041,12 @@
           "riddles_and_rain",
           "shadow_of_a_doubt",
           "strange_happenings"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prologue"
       },
       {
         "scenarioCode": "marrakesh",
-        "scenarioPrefix": "Marrakesh",
         "scenarioName": "Dead Heat",
         "encounterCodes": [
           "dead_heat",
@@ -989,11 +1054,12 @@
           "scarlet_sorcery",
           "spreading_corruption",
           "striking_fear"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Marrakesh"
       },
       {
         "scenarioCode": "buenos_aires",
-        "scenarioPrefix": "Buenos Aires",
         "scenarioName": "Sanguine Shadows",
         "encounterCodes": [
           "dark_veiling",
@@ -1003,19 +1069,21 @@
           "sanguine_shadows",
           "shadow_of_a_doubt",
           "strange_happenings"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Buenos Aires"
       },
       {
         "scenarioCode": "bermuda",
-        "scenarioPrefix": "Bermuda",
         "scenarioName": "The Great Work",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Bermuda"
       },
       {
         "scenarioCode": "istanbul",
-        "scenarioPrefix": "Istanbul",
         "scenarioName": "Dealings in the Dark",
         "encounterCodes": [
           "agents_of_yuggoth",
@@ -1025,27 +1093,30 @@
           "dealings_in_the_dark",
           "locked_doors",
           "pentagram"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Istanbul"
       },
       {
         "scenarioCode": "san_francisco",
-        "scenarioPrefix": "San Francisco",
         "scenarioName": "Quid Pro Quo",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "San Francisco"
       },
       {
         "scenarioCode": "moscow",
-        "scenarioPrefix": "Moscow",
         "scenarioName": "Quid Pro Quo",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Moscow"
       },
       {
         "scenarioCode": "havana",
-        "scenarioPrefix": "Havana",
         "scenarioName": "Dancing Mad",
         "encounterCodes": [
           "agents_of_the_outside",
@@ -1054,19 +1125,21 @@
           "dancing_mad",
           "secret_war",
           "shadow_of_a_doubt"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Havana"
       },
       {
         "scenarioCode": "shanghai",
-        "scenarioPrefix": "The Coiled Serpent",
         "scenarioName": "The Coiled Serpent",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "The Coiled Serpent"
       },
       {
         "scenarioCode": "anchorage",
-        "scenarioPrefix": "Anchorage",
         "scenarioName": "On Thin Ice",
         "encounterCodes": [
           "agents_of_the_outside",
@@ -1077,27 +1150,30 @@
           "on_thin_ice",
           "outsiders",
           "spatial_anomaly"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Anchorage"
       },
       {
         "scenarioCode": "tokyo",
-        "scenarioPrefix": "Tokyo",
         "scenarioName": "Special Delivery",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Tokyo"
       },
       {
         "scenarioCode": "lagos",
-        "scenarioPrefix": "Lagos",
         "scenarioName": "Special Delivery",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Lagos"
       },
       {
         "scenarioCode": "alexandria",
-        "scenarioPrefix": "Alexandria",
         "scenarioName": "Dogs of War",
         "encounterCodes": [
           "cleanup_crew",
@@ -1106,19 +1182,21 @@
           "scarlet_sorcery",
           "spatial_anomaly",
           "spreading_corruption"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Alexandria"
       },
       {
         "scenarioCode": "manokwari",
-        "scenarioPrefix": "Manokwari",
         "scenarioName": "Metamorphosis",
         "encounterCodes": [
           "globetrotting"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Manokwari"
       },
       {
         "scenarioCode": "kuala_lampur",
-        "scenarioPrefix": "Kuala Lampur",
         "scenarioName": "Shades of Suffering",
         "encounterCodes": [
           "dark_veiling",
@@ -1128,11 +1206,12 @@
           "shades_of_suffering",
           "spreading_corruption",
           "striking_fear"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Kuala Lampur"
       },
       {
         "scenarioCode": "bermuda_triangle",
-        "scenarioPrefix": "Bermuda Triangle",
         "scenarioName": "Without a Trace",
         "encounterCodes": [
           "agents_of_the_outside",
@@ -1142,11 +1221,12 @@
           "secret_war",
           "spreading_corruption",
           "without_a_trace"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Bermuda Triangle"
       },
       {
         "scenarioCode": "tunguska",
-        "scenarioPrefix": "Tunguska: Finale",
         "scenarioName": "Congress of the Keys",
         "encounterCodes": [
           "agents_of_the_outside",
@@ -1161,7 +1241,9 @@
           "spatial_anomaly",
           "spreading_corruption",
           "striking_fear"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Tunguska: Finale"
       }
     ]
   },
@@ -1171,18 +1253,18 @@
     "scenarios": [
       {
         "scenarioCode": "fhv_prologue",
-        "scenarioPrefix": "Prologue",
         "scenarioName": "Welcome to Hemlock Vale!",
         "encounterCodes": [
           "day_of_rest",
           "residents",
           "the_first_day",
           "the_vale"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prologue"
       },
       {
         "scenarioCode": "written_in_rock",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "Written in Rock",
         "encounterCodes": [
           "chilling_cold",
@@ -1191,11 +1273,12 @@
           "refractions",
           "residents",
           "written_in_rock"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "hemlock_house",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "Hemlock House",
         "encounterCodes": [
           "agents_of_the_colour",
@@ -1206,11 +1289,12 @@
           "rats",
           "residents",
           "transfiguration"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_silent_heath",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Silent Heath",
         "encounterCodes": [
           "agents_of_the_colour",
@@ -1221,11 +1305,12 @@
           "striking_fear",
           "the_silent_heath",
           "transfiguration"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_lost_sister",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Lost Sister",
         "encounterCodes": [
           "blight",
@@ -1234,11 +1319,12 @@
           "myconids",
           "residents",
           "the_lost_sister"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_thing_in_the_depths",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Thing in the Depths",
         "encounterCodes": [
           "blight",
@@ -1246,20 +1332,22 @@
           "residents",
           "the_forest",
           "the_thing_in_the_depths"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_first_evening",
-        "scenarioPrefix": "Prelude",
         "scenarioName": "The First Evening",
         "encounterCodes": [
           "heirlooms",
           "residents"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prelude"
       },
       {
         "scenarioCode": "the_twisted_hollow",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Twisted Hollow",
         "encounterCodes": [
           "myconids",
@@ -1267,11 +1355,12 @@
           "the_first_day",
           "the_forest",
           "the_twisted_hollow"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "dawn_of_the_second_day",
-        "scenarioPrefix": "Prelude",
         "scenarioName": "Dawn of the Second Day",
         "encounterCodes": [
           "day_of_rain",
@@ -1279,20 +1368,22 @@
           "residents",
           "the_second_day",
           "the_vale"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prelude"
       },
       {
         "scenarioCode": "the_second_evening",
-        "scenarioPrefix": "Prelude",
         "scenarioName": "The Second Evening",
         "encounterCodes": [
           "heirlooms",
           "residents"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prelude"
       },
       {
         "scenarioCode": "the_longest_night",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Longest Night",
         "encounterCodes": [
           "arkham",
@@ -1304,11 +1395,12 @@
           "the_longest_night",
           "the_second_day",
           "transfiguration"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "dawn_of_the_final_day",
-        "scenarioPrefix": "Prelude",
         "scenarioName": "Dawn of the Final Day",
         "encounterCodes": [
           "agents_of_the_colour",
@@ -1316,22 +1408,24 @@
           "residents",
           "the_final_day",
           "the_vale"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prelude"
       },
       {
         "scenarioCode": "the_final_evening",
-        "scenarioPrefix": "Prelude",
         "scenarioName": "The Final Evening",
         "encounterCodes": [
           "day_of_the_feast",
           "residents",
           "the_final_day",
           "the_vale"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Prelude"
       },
       {
         "scenarioCode": "fate_of_the_vale",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "Fate of the Vale",
         "encounterCodes": [
           "agents_of_the_colour",
@@ -1344,7 +1438,9 @@
           "the_final_day",
           "the_vale",
           "transfiguration"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       }
     ]
   },
@@ -1354,7 +1450,6 @@
     "scenarios": [
       {
         "scenarioCode": "one_last_job",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "One Last Job",
         "encounterCodes": [
           "arkham",
@@ -1364,19 +1459,12 @@
           "one_last_job",
           "rats",
           "striking_fear"
-        ]
-      },
-      {
-        "scenarioCode": "expedition_to_ryleh",
-        "scenarioPrefix": "Interlude II",
-        "scenarioName": "Expedition to R'lyeh",
-        "encounterCodes": [
-          "tdc_expedition"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_western_wall",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Western Wall",
         "encounterCodes": [
           "agents_of_cthulhu",
@@ -1388,11 +1476,12 @@
           "the_inescapable",
           "the_western_wall",
           "undersea_creatures"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_drowned_quarter",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Drowned Quarter",
         "encounterCodes": [
           "alien_machinery",
@@ -1403,11 +1492,12 @@
           "tdc_flood",
           "the_drowned_quarter",
           "undersea_creatures"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_apiary",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Apiary",
         "encounterCodes": [
           "cosmic_legacy",
@@ -1419,11 +1509,12 @@
           "striking_fear",
           "the_apiary",
           "the_inescapable"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_grand_vault",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "The Grand Vault",
         "encounterCodes": [
           "alien_machinery",
@@ -1432,11 +1523,12 @@
           "tdc_flood",
           "the_grand_vault",
           "the_inescapable"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "court_of_the_ancients",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "Court of the Ancients",
         "encounterCodes": [
           "court_of_the_ancients",
@@ -1448,11 +1540,12 @@
           "star_spawn",
           "stowaways",
           "the_inescapable"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "obsidian_canyons",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "Obsidian Canyons",
         "encounterCodes": [
           "ancient_evils",
@@ -1465,11 +1558,12 @@
           "star_spawn",
           "striking_fear",
           "the_inescapable"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "sepulchre_of_the_sleeper",
-        "scenarioPrefix": "Scenario",
         "scenarioName": "Sepulchre of the Sleeper",
         "encounterCodes": [
           "ancient_evils",
@@ -1480,11 +1574,12 @@
           "star_spawn",
           "striking_fear",
           "tdc_expedition"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario"
       },
       {
         "scenarioCode": "the_doom_of_arkham_part_1",
-        "scenarioPrefix": "Grand Finale",
         "scenarioName": "The Doom of Arkham: Part I",
         "encounterCodes": [
           "agents_of_cthulhu",
@@ -1494,11 +1589,12 @@
           "dreams",
           "star_spawn",
           "the_doom_of_arkham_part_1"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Grand Finale"
       },
       {
         "scenarioCode": "the_doom_of_arkham_part_2",
-        "scenarioPrefix": "Grand Finale",
         "scenarioName": "The Doom of Arkham: Part II",
         "encounterCodes": [
           "agents_of_cthulhu",
@@ -1508,7 +1604,18 @@
           "star_spawn",
           "tdc_flood",
           "the_doom_of_arkham_part_2"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Grand Finale"
+      },
+      {
+        "scenarioCode": "expedition_to_ryleh",
+        "scenarioName": "Expedition to R'lyeh",
+        "encounterCodes": [
+          "tdc_expedition"
+        ],
+        "scenarioOrder": 2.5,
+        "scenarioHeader": "Interlude II"
       }
     ]
   },
@@ -1517,69 +1624,62 @@
     "campaignName": "Dark Matter",
     "scenarios": [
       {
+        "scenarioCode": "in_the_shadow_of_earth",
+        "scenarioName": "In the Shadow of Earth",
+        "encounterCodes": [
+          "deep_space",
+          "in_the_shadow_of_earth"
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario IIIb"
+      },
+      {
+        "scenarioCode": "lost_quantum",
+        "scenarioName": "Lost Quantum",
+        "encounterCodes": [
+          "deep_space",
+          "lost_quantum"
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario IIIa"
+      },
+      {
+        "scenarioCode": "strange_moons",
+        "scenarioName": "Strange Moons",
+        "encounterCodes": [
+          "deep_space",
+          "interstellar_predators",
+          "strange_moons"
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Scenario IIIc"
+      },
+      {
+        "scenarioCode": "the_tatterdemalion",
+        "scenarioName": "The Tatterdemalion",
+        "encounterCodes": [
+          "anachronism",
+          "artificial_intelligence",
+          "dark_past",
+          "the_tatterdemalion"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
         "scenarioCode": "electric_nightmare",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "Electric Nightmare",
         "encounterCodes": [
           "dark_past",
           "electric_nightmare",
           "endtimes",
           "the_boogeyman"
-        ]
-      },
-      {
-        "scenarioCode": "fragment_of_carcosa",
-        "scenarioPrefix": "Scenario V",
-        "scenarioName": "Fragment of Carcosa",
-        "encounterCodes": [
-          "fragment_of_carcosa",
-          "inhabitants_of_carcosa"
-        ]
-      },
-      {
-        "scenarioCode": "in_the_shadow_of_earth",
-        "scenarioPrefix": "Scenario IIIb",
-        "scenarioName": "In the Shadow of Earth",
-        "encounterCodes": [
-          "deep_space",
-          "in_the_shadow_of_earth"
-        ]
-      },
-      {
-        "scenarioCode": "lost_quantum",
-        "scenarioPrefix": "Scenario IIIa",
-        "scenarioName": "Lost Quantum",
-        "encounterCodes": [
-          "deep_space",
-          "lost_quantum"
-        ]
-      },
-      {
-        "scenarioCode": "starfall",
-        "scenarioPrefix": "Scenario VI",
-        "scenarioName": "Starfall",
-        "encounterCodes": [
-          "agents_of_yog",
-          "anachronism",
-          "deep_space",
-          "endtimes",
-          "hasturs_gaze",
-          "starfall"
-        ]
-      },
-      {
-        "scenarioCode": "strange_moons",
-        "scenarioPrefix": "Scenario IIIc",
-        "scenarioName": "Strange Moons",
-        "encounterCodes": [
-          "deep_space",
-          "interstellar_predators",
-          "strange_moons"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
         "scenarioCode": "the_machine_in_yellow",
-        "scenarioPrefix": "Scenario IV",
         "scenarioName": "The Machine in Yellow",
         "encounterCodes": [
           "curtain_call",
@@ -1588,18 +1688,33 @@
           "maddening_delusions",
           "rats",
           "the_machine_in_yellow"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
-        "scenarioCode": "the_tatterdemalion",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "The Tatterdemalion",
+        "scenarioCode": "fragment_of_carcosa",
+        "scenarioName": "Fragment of Carcosa",
         "encounterCodes": [
+          "fragment_of_carcosa",
+          "inhabitants_of_carcosa"
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
+      },
+      {
+        "scenarioCode": "starfall",
+        "scenarioName": "Starfall",
+        "encounterCodes": [
+          "agents_of_yog",
           "anachronism",
-          "artificial_intelligence",
-          "dark_past",
-          "the_tatterdemalion"
-        ]
+          "deep_space",
+          "endtimes",
+          "hasturs_gaze",
+          "starfall"
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       }
     ]
   },
@@ -1608,8 +1723,19 @@
     "campaignName": "Alice in Wonderland",
     "scenarios": [
       {
+        "scenarioCode": "arkham_in_wonderland",
+        "scenarioName": "Arkham in Wonderland",
+        "encounterCodes": [
+          "arkham_in_wonderland",
+          "cheshire_cat",
+          "gurathnakas_shadows",
+          "warped_reality"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
         "scenarioCode": "a_sea_of_troubles",
-        "scenarioPrefix": "Scenario II-A",
         "scenarioName": "A Sea of Troubles",
         "encounterCodes": [
           "a_sea_of_troubles",
@@ -1618,22 +1744,26 @@
           "walrus_and_carpenter",
           "wonderland_banes",
           "wonderland_boons"
-        ]
+        ],
+        "scenarioOrder": 2.1,
+        "scenarioHeader": "Scenario II-A"
       },
       {
-        "scenarioCode": "arkham_in_wonderland",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "Arkham in Wonderland",
+        "scenarioCode": "tempest_in_a_teapot",
+        "scenarioName": "Tempest in a Teapot",
         "encounterCodes": [
-          "arkham_in_wonderland",
           "cheshire_cat",
-          "gurathnakas_shadows",
-          "warped_reality"
-        ]
+          "riddles_and_games",
+          "tempest_in_a_teapot",
+          "warped_reality",
+          "wonderland_banes",
+          "wonderland_boons"
+        ],
+        "scenarioOrder": 2.2,
+        "scenarioHeader": "Scenario II-B"
       },
       {
         "scenarioCode": "bleeding_hearts",
-        "scenarioPrefix": "Scenario II-C",
         "scenarioName": "Bleeding Hearts",
         "encounterCodes": [
           "bleeding_hearts",
@@ -1642,11 +1772,40 @@
           "riddles_and_games",
           "wonderland_banes",
           "wonderland_boons"
-        ]
+        ],
+        "scenarioOrder": 2.3,
+        "scenarioHeader": "Scenario II-C"
+      },
+      {
+        "scenarioCode": "wild_snark_chase",
+        "scenarioName": "Wild Snark Chase",
+        "encounterCodes": [
+          "cheshire_cat",
+          "jabberwocky",
+          "warped_reality",
+          "wild_snark_chase",
+          "wonderland_banes",
+          "wonderland_boons"
+        ],
+        "scenarioOrder": 2.4,
+        "scenarioHeader": "Scenario II-D"
+      },
+      {
+        "scenarioCode": "sibling_rivalry",
+        "scenarioName": "Sibling Rivalry",
+        "encounterCodes": [
+          "card_guards",
+          "cheshire_cat",
+          "chessmen",
+          "sibling_rivalry",
+          "wonderland_banes",
+          "wonderland_boons"
+        ],
+        "scenarioOrder": 2.5,
+        "scenarioHeader": "Scenario II-E"
       },
       {
         "scenarioCode": "fools_mate",
-        "scenarioPrefix": "Scenario II-F",
         "scenarioName": "Fool's Mate",
         "encounterCodes": [
           "cheshire_cat",
@@ -1655,11 +1814,12 @@
           "gurathnakas_shadows",
           "wonderland_banes",
           "wonderland_boons"
-        ]
+        ],
+        "scenarioOrder": 2.6,
+        "scenarioHeader": "Scenario II-F"
       },
       {
         "scenarioCode": "lucid_nightmare",
-        "scenarioPrefix": "Scenario III",
         "scenarioName": "Lucid Nightmare",
         "encounterCodes": [
           "alice_in_arkham",
@@ -1669,46 +1829,9 @@
           "warped_reality",
           "wonderland_banes",
           "wonderland_boons"
-        ]
-      },
-      {
-        "scenarioCode": "sibling_rivalry",
-        "scenarioPrefix": "Scenario II-E",
-        "scenarioName": "Sibling Rivalry",
-        "encounterCodes": [
-          "card_guards",
-          "cheshire_cat",
-          "chessmen",
-          "sibling_rivalry",
-          "wonderland_banes",
-          "wonderland_boons"
-        ]
-      },
-      {
-        "scenarioCode": "tempest_in_a_teapot",
-        "scenarioPrefix": "Scenario II-B",
-        "scenarioName": "Tempest in a Teapot",
-        "encounterCodes": [
-          "cheshire_cat",
-          "riddles_and_games",
-          "tempest_in_a_teapot",
-          "warped_reality",
-          "wonderland_banes",
-          "wonderland_boons"
-        ]
-      },
-      {
-        "scenarioCode": "wild_snark_chase",
-        "scenarioPrefix": "Scenario II-D",
-        "scenarioName": "Wild Snark Chase",
-        "encounterCodes": [
-          "cheshire_cat",
-          "jabberwocky",
-          "warped_reality",
-          "wild_snark_chase",
-          "wonderland_banes",
-          "wonderland_boons"
-        ]
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       }
     ]
   },
@@ -1717,43 +1840,7 @@
     "campaignName": "The Crown of Egil",
     "scenarios": [
       {
-        "scenarioCode": "the_crown",
-        "scenarioPrefix": "Chapter IV",
-        "scenarioName": "The Crown",
-        "encounterCodes": [
-          "berserkers",
-          "glacial_mists",
-          "runic_oaths",
-          "the_crown"
-        ]
-      },
-      {
-        "scenarioCode": "the_fallen",
-        "scenarioPrefix": "Chapter III",
-        "scenarioName": "The Fallen",
-        "encounterCodes": [
-          "chilling_cold",
-          "draugar",
-          "glacial_mists",
-          "hudulfolk",
-          "the_fallen"
-        ]
-      },
-      {
-        "scenarioCode": "the_golden_circle",
-        "scenarioPrefix": "Chapter II",
-        "scenarioName": "The Golden Circle",
-        "encounterCodes": [
-          "ghouls",
-          "hudulfolk",
-          "lacuna",
-          "runic_oaths",
-          "the_golden_circle"
-        ]
-      },
-      {
         "scenarioCode": "the_warning",
-        "scenarioPrefix": "Chapter I",
         "scenarioName": "The Warning",
         "encounterCodes": [
           "berserkers",
@@ -1761,7 +1848,47 @@
           "lacuna",
           "locked_doors",
           "the_warning"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Chapter I"
+      },
+      {
+        "scenarioCode": "the_golden_circle",
+        "scenarioName": "The Golden Circle",
+        "encounterCodes": [
+          "ghouls",
+          "hudulfolk",
+          "lacuna",
+          "runic_oaths",
+          "the_golden_circle"
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Chapter II"
+      },
+      {
+        "scenarioCode": "the_fallen",
+        "scenarioName": "The Fallen",
+        "encounterCodes": [
+          "chilling_cold",
+          "draugar",
+          "glacial_mists",
+          "hudulfolk",
+          "the_fallen"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Chapter III"
+      },
+      {
+        "scenarioCode": "the_crown",
+        "scenarioName": "The Crown",
+        "encounterCodes": [
+          "berserkers",
+          "glacial_mists",
+          "runic_oaths",
+          "the_crown"
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Chapter IV"
       }
     ]
   },
@@ -1770,16 +1897,34 @@
     "campaignName": "Call of the Plaguebearer",
     "scenarios": [
       {
-        "scenarioCode": "arkham_allied",
-        "scenarioPrefix": "Interlude III",
-        "scenarioName": "Arkham Allied",
+        "scenarioCode": "late_risers",
+        "scenarioName": "Late Risers",
         "encounterCodes": [
-          "tenuous_allies"
-        ]
+          "agency_survivors",
+          "gifts_of_the_plaguebearer",
+          "haze_of_miasma",
+          "late_risers",
+          "striking_fear",
+          "the_plaguebearers_commands"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
+        "scenarioCode": "night_on_the_town",
+        "scenarioName": "Night on the Town",
+        "encounterCodes": [
+          "ancient_evils",
+          "arkham",
+          "fallen_arkham",
+          "haze_of_miasma",
+          "night_on_the_town"
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
         "scenarioCode": "dead_by_dawn",
-        "scenarioPrefix": "Scenario III",
         "scenarioName": "Dead by Dawn",
         "encounterCodes": [
           "agency_survivors",
@@ -1787,22 +1932,34 @@
           "dead_by_dawn",
           "gifts_of_the_plaguebearer",
           "tenuous_allies"
-        ]
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       },
       {
-        "scenarioCode": "death_at_sundown",
-        "scenarioPrefix": "Scenario VII",
-        "scenarioName": "Death at Sundown",
+        "scenarioCode": "arkham_allied",
+        "scenarioName": "Arkham Allied",
         "encounterCodes": [
-          "agency_survivors",
-          "death_at_sundown",
-          "life_and_death",
+          "tenuous_allies"
+        ],
+        "scenarioOrder": 3.5,
+        "scenarioHeader": "Interlude III"
+      },
+      {
+        "scenarioCode": "mourning_chorus",
+        "scenarioName": "Mourning Chorus",
+        "encounterCodes": [
+          "fallen_arkham",
+          "haze_of_miasma",
+          "locked_doors",
+          "mourning_chorus",
           "the_plaguebearers_commands"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "high_noon_descent",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "High Noon Descent",
         "encounterCodes": [
           "agency_survivors",
@@ -1813,48 +1970,12 @@
           "high_noon_descent",
           "life_and_death",
           "tenuous_allies"
-        ]
-      },
-      {
-        "scenarioCode": "late_risers",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "Late Risers",
-        "encounterCodes": [
-          "agency_survivors",
-          "gifts_of_the_plaguebearer",
-          "haze_of_miasma",
-          "late_risers",
-          "striking_fear",
-          "the_plaguebearers_commands"
-        ]
-      },
-      {
-        "scenarioCode": "mourning_chorus",
-        "scenarioPrefix": "Scenario IV",
-        "scenarioName": "Mourning Chorus",
-        "encounterCodes": [
-          "fallen_arkham",
-          "haze_of_miasma",
-          "locked_doors",
-          "mourning_chorus",
-          "the_plaguebearers_commands"
-        ]
-      },
-      {
-        "scenarioCode": "night_on_the_town",
-        "scenarioPrefix": "Scenario II",
-        "scenarioName": "Night on the Town",
-        "encounterCodes": [
-          "ancient_evils",
-          "arkham",
-          "fallen_arkham",
-          "haze_of_miasma",
-          "night_on_the_town"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
       },
       {
         "scenarioCode": "the_afternoon_war",
-        "scenarioPrefix": "Scenario VI",
         "scenarioName": "The Afternoon War",
         "encounterCodes": [
           "agents_of_cthugha",
@@ -1863,11 +1984,24 @@
           "mourning_chorus",
           "the_afternoon_war",
           "unbound_power"
-        ]
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
+      },
+      {
+        "scenarioCode": "death_at_sundown",
+        "scenarioName": "Death at Sundown",
+        "encounterCodes": [
+          "agency_survivors",
+          "death_at_sundown",
+          "life_and_death",
+          "the_plaguebearers_commands"
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       },
       {
         "scenarioCode": "the_midnight_hour",
-        "scenarioPrefix": "Scenario VIII",
         "scenarioName": "The Midnight Hour",
         "encounterCodes": [
           "gifts_of_the_plaguebearer",
@@ -1877,7 +2011,9 @@
           "the_midnight_hour",
           "the_plaguebearers_commands",
           "unbound_power"
-        ]
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       }
     ]
   },
@@ -1887,15 +2023,70 @@
     "scenarios": [
       {
         "scenarioCode": "a_house_divided",
-        "scenarioPrefix": "Interlude",
         "scenarioName": "A House Divided",
         "encounterCodes": [
           "grand_compass"
-        ]
+        ],
+        "scenarioOrder": 0,
+        "scenarioHeader": "Interlude"
+      },
+      {
+        "scenarioCode": "lost_moorings",
+        "scenarioName": "Lost Moorings",
+        "encounterCodes": [
+          "awakened_madness",
+          "lost_moorings",
+          "spawn_of_rlyeh",
+          "storm_and_sea",
+          "unfriendly_ports"
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
+      },
+      {
+        "scenarioCode": "going_twice",
+        "scenarioName": "Going Twice",
+        "encounterCodes": [
+          "archaic_evils",
+          "awakened_madness",
+          "countermeasures",
+          "deep_dreams",
+          "going_twice",
+          "shadowy_agents"
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
+      },
+      {
+        "scenarioCode": "private_lives",
+        "scenarioName": "Private Lives",
+        "encounterCodes": [
+          "archaic_evils",
+          "countermeasures",
+          "deep_dreams",
+          "private_lives",
+          "shadowy_agents",
+          "unnatural_stone"
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
+      },
+      {
+        "scenarioCode": "crumbling_masonry",
+        "scenarioName": "Crumbling Masonry",
+        "encounterCodes": [
+          "architects_of_chaos",
+          "awakened_madness",
+          "countermeasures",
+          "crumbling_masonry",
+          "cult_of_cthulhu",
+          "unnatural_stone"
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "across_dreadful_waters",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "Across Dreadful Waters",
         "encounterCodes": [
           "across_dreadful_waters",
@@ -1905,11 +2096,12 @@
           "spawn_of_rlyeh",
           "storm_and_sea",
           "unfriendly_ports"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
       },
       {
         "scenarioCode": "blood_from_stones",
-        "scenarioPrefix": "Scenario VI",
         "scenarioName": "Blood From Stones",
         "encounterCodes": [
           "archaic_evils",
@@ -1919,62 +2111,12 @@
           "deep_dreams",
           "shadowy_agents",
           "unfriendly_ports"
-        ]
-      },
-      {
-        "scenarioCode": "crumbling_masonry",
-        "scenarioPrefix": "Scenario IV",
-        "scenarioName": "Crumbling Masonry",
-        "encounterCodes": [
-          "architects_of_chaos",
-          "awakened_madness",
-          "countermeasures",
-          "crumbling_masonry",
-          "cult_of_cthulhu",
-          "unnatural_stone"
-        ]
-      },
-      {
-        "scenarioCode": "going_twice",
-        "scenarioPrefix": "Scenario II",
-        "scenarioName": "Going Twice",
-        "encounterCodes": [
-          "archaic_evils",
-          "awakened_madness",
-          "countermeasures",
-          "deep_dreams",
-          "going_twice",
-          "shadowy_agents"
-        ]
-      },
-      {
-        "scenarioCode": "lost_moorings",
-        "scenarioPrefix": "Scenario I",
-        "scenarioName": "Lost Moorings",
-        "encounterCodes": [
-          "awakened_madness",
-          "lost_moorings",
-          "spawn_of_rlyeh",
-          "storm_and_sea",
-          "unfriendly_ports"
-        ]
-      },
-      {
-        "scenarioCode": "private_lives",
-        "scenarioPrefix": "Scenario III",
-        "scenarioName": "Private Lives",
-        "encounterCodes": [
-          "archaic_evils",
-          "countermeasures",
-          "deep_dreams",
-          "private_lives",
-          "shadowy_agents",
-          "unnatural_stone"
-        ]
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       },
       {
         "scenarioCode": "pyroclastic_flow",
-        "scenarioPrefix": "Scenario VII",
         "scenarioName": "Pyroclastic Flow",
         "encounterCodes": [
           "architects_of_chaos",
@@ -1984,11 +2126,12 @@
           "spawn_of_rlyeh",
           "storm_and_sea",
           "unnatural_stone"
-        ]
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       },
       {
         "scenarioCode": "tomb_of_dead_dreams",
-        "scenarioPrefix": "Scenario VIII",
         "scenarioName": "Tomb of Dead Dreams",
         "encounterCodes": [
           "archaic_evils",
@@ -1999,7 +2142,9 @@
           "spawn_of_rlyeh",
           "tomb_of_dead_dreams",
           "unnatural_stone"
-        ]
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       }
     ]
   },
@@ -2009,7 +2154,6 @@
     "scenarios": [
       {
         "scenarioCode": "the_road_to_oz",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "The Road to Oz",
         "encounterCodes": [
           "zoz_ferocious_beasts",
@@ -2017,20 +2161,22 @@
           "zoz_terror_out_of_space",
           "zoz_the_road_to_oz",
           "zoz_wicked_witches"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
       },
       {
         "scenarioCode": "royal_audience",
-        "scenarioPrefix": "Interlude I",
         "scenarioName": "Royal Audience",
         "encounterCodes": [
           "zoz_chromatic_infection",
           "zoz_princess_of_oz"
-        ]
+        ],
+        "scenarioOrder": 1.5,
+        "scenarioHeader": "Interlude I"
       },
       {
         "scenarioCode": "deep_impact",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "Deep Impact",
         "encounterCodes": [
           "zoz_alien_vibrance",
@@ -2041,11 +2187,12 @@
           "zoz_horrid_infection",
           "zoz_prismatic_evils",
           "zoz_spiraling_decay"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
         "scenarioCode": "double_whammy",
-        "scenarioPrefix": "Scenario III",
         "scenarioName": "Double Whammy",
         "encounterCodes": [
           "zoz_alien_vibrance",
@@ -2056,11 +2203,12 @@
           "zoz_terror_out_of_space",
           "zoz_violent_invasion",
           "zoz_wicked_witches"
-        ]
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       },
       {
         "scenarioCode": "chasing_rainbows",
-        "scenarioPrefix": "Scenario IV",
         "scenarioName": "Chasing Rainbows",
         "encounterCodes": [
           "zoz_blighted_land",
@@ -2071,11 +2219,12 @@
           "zoz_horrid_infection",
           "zoz_spiraling_decay",
           "zoz_terror_out_of_space"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "misery_loves_company",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "Misery Loves Company",
         "encounterCodes": [
           "zoz_blighted_land",
@@ -2086,11 +2235,12 @@
           "zoz_spiraling_decay",
           "zoz_violent_invasion",
           "zoz_wicked_witches"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
       },
       {
         "scenarioCode": "hall_of_the_mountain_king",
-        "scenarioPrefix": "Scenario VI",
         "scenarioName": "Hall of the Mountain King",
         "encounterCodes": [
           "zoz_alien_vibrance",
@@ -2099,11 +2249,12 @@
           "zoz_nomes",
           "zoz_prismatic_evils",
           "zoz_spiraling_decay"
-        ]
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       },
       {
         "scenarioCode": "defense_of_the_realm",
-        "scenarioPrefix": "Scenario VII",
         "scenarioName": "Defense of the Realm",
         "encounterCodes": [
           "zoz_companions_of_oz",
@@ -2113,11 +2264,12 @@
           "zoz_terror_out_of_space",
           "zoz_the_colour_itself",
           "zoz_violent_invasion"
-        ]
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       },
       {
         "scenarioCode": "true_colours",
-        "scenarioPrefix": "Scenario VIII",
         "scenarioName": "True Colours",
         "encounterCodes": [
           "zoz_blighted_land",
@@ -2129,7 +2281,9 @@
           "zoz_the_colour_itself",
           "zoz_true_colours",
           "zoz_violent_invasion"
-        ]
+        ],
+        "scenarioOrder": 8,
+        "scenarioHeader": "Scenario VIII"
       }
     ]
   },
@@ -2139,7 +2293,6 @@
     "scenarios": [
       {
         "scenarioCode": "night_of_fire",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "Night of Fire",
         "encounterCodes": [
           "zau_agents_of_aforgomon",
@@ -2147,11 +2300,12 @@
           "zau_nyctophobia",
           "zau_thugs",
           "zau_unravelling_years"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
       },
       {
         "scenarioCode": "the_myriad_gentleman",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "The Myriad Gentleman",
         "encounterCodes": [
           "agents_of_yog",
@@ -2159,11 +2313,12 @@
           "zau_myriad_gentleman",
           "zau_shifting_reality",
           "zau_unravelling_years"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
         "scenarioCode": "a_world_torn_down",
-        "scenarioPrefix": "Scenario III",
         "scenarioName": "A World Torn Down",
         "encounterCodes": [
           "zau_agents_of_aforgomon",
@@ -2173,20 +2328,22 @@
           "zau_thugs",
           "zau_unleashed_chaos",
           "zau_world_torn_down"
-        ]
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       },
       {
         "scenarioCode": "unstuck",
-        "scenarioPrefix": "Scenario IV",
         "scenarioName": "Unstuck",
         "encounterCodes": [
           "zau_paradox",
           "zau_unstuck"
-        ]
+        ],
+        "scenarioOrder": 4,
+        "scenarioHeader": "Scenario IV"
       },
       {
         "scenarioCode": "a_year_to_plan",
-        "scenarioPrefix": "Scenario V",
         "scenarioName": "A Year to Plan",
         "encounterCodes": [
           "arkham",
@@ -2196,11 +2353,12 @@
           "zau_shifting_reality",
           "zau_unravelling_years",
           "zau_year_to_plan"
-        ]
+        ],
+        "scenarioOrder": 5,
+        "scenarioHeader": "Scenario V"
       },
       {
         "scenarioCode": "a_world_torn_down_again",
-        "scenarioPrefix": "Scenario VI",
         "scenarioName": "A World Torn Down, Again",
         "encounterCodes": [
           "zau_agents_of_aforgomon",
@@ -2211,11 +2369,12 @@
           "zau_thugs",
           "zau_unleashed_chaos",
           "zau_world_torn_down_again"
-        ]
+        ],
+        "scenarioOrder": 6,
+        "scenarioHeader": "Scenario VI"
       },
       {
         "scenarioCode": "time_runs_out",
-        "scenarioPrefix": "Scenario VII",
         "scenarioName": "Time Runs Out",
         "encounterCodes": [
           "zau_agents_of_aforgomon",
@@ -2223,7 +2382,9 @@
           "zau_time_runs_out",
           "zau_unleashed_chaos",
           "zau_unravelling_years"
-        ]
+        ],
+        "scenarioOrder": 7,
+        "scenarioHeader": "Scenario VII"
       }
     ]
   },
@@ -2233,18 +2394,18 @@
     "scenarios": [
       {
         "scenarioCode": "africa_is_watching",
-        "scenarioPrefix": "Scenario I",
         "scenarioName": "Africa is Watching",
         "encounterCodes": [
           "zhod_africa_is_watching",
           "zhod_african_wildlife",
           "zhod_lands_of_the_congo",
           "zhod_the_darkness"
-        ]
+        ],
+        "scenarioOrder": 1,
+        "scenarioHeader": "Scenario I"
       },
       {
         "scenarioCode": "to_the_heart_of_the_congo",
-        "scenarioPrefix": "Scenario II",
         "scenarioName": "To the Heart of the Congo",
         "encounterCodes": [
           "zhod_african_wildlife",
@@ -2252,18 +2413,21 @@
           "zhod_lands_of_the_congo",
           "zhod_the_darkness",
           "zhod_to_the_heart_of_the_congo"
-        ]
+        ],
+        "scenarioOrder": 2,
+        "scenarioHeader": "Scenario II"
       },
       {
         "scenarioCode": "the_avatar_of_darkness",
-        "scenarioPrefix": "Scenario III",
         "scenarioName": "The Avatar of Darkness",
         "encounterCodes": [
           "zhod_cult_of_darkness",
           "zhod_lands_of_the_congo",
           "zhod_the_avatar_of_darkness",
           "zhod_the_darkness"
-        ]
+        ],
+        "scenarioOrder": 3,
+        "scenarioHeader": "Scenario III"
       }
     ]
   }
