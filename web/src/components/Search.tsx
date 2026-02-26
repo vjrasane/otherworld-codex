@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import MiniSearch from "minisearch";
 import type { SearchEntry } from "../data";
 import { Search as SearchIcon, X } from "lucide-react";
+import { routes } from "../routes";
 
 const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
 
@@ -80,13 +81,13 @@ export default function Search() {
   function href(result: Record<string, string>) {
     switch (result.type) {
       case "campaign":
-        return `/campaigns/${result.code}`;
+        return routes.campaign(result.code);
       case "scenario":
-        return `/scenarios/${result.code}`;
+        return routes.scenario(result.code);
       case "encounter":
-        return `/encounters/${result.code}`;
+        return routes.encounter(result.code);
       default:
-        return `/cards/${result.code}`;
+        return routes.card(result.code);
     }
   }
 

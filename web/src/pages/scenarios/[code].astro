@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CardImage from "../../components/CardImage.astro";
 import { getAllCampaigns, getEncounterSet, getEncounterCards } from "../../data";
 import type { Scenario } from "../../data";
+import { routes } from "../../routes";
 
 export function getStaticPaths() {
   const campaigns = getAllCampaigns();
@@ -24,7 +25,7 @@ const { scenario } = Astro.props;
 
 <Base title={scenario.name}>
   <nav class="breadcrumb">
-    <a href={`/campaigns/${scenario.campaignCode}`}>{scenario.campaignName}</a>
+    <a href={routes.campaign(scenario.campaignCode)}>{scenario.campaignName}</a>
     <span>›</span>
   </nav>
   {scenario.prefix && <div class="prefix">{scenario.prefix}</div>}
@@ -39,11 +40,11 @@ const { scenario } = Astro.props;
         return (
           <section class="encounter-section">
             <h2>
-              <a href={`/encounters/${es.code}`}>{es.name}</a>
+              <a href={routes.encounter(es.code)}>{es.name}</a>
             </h2>
             <div class="card-grid">
               {cards.map((card) => (
-                <a href={`/cards/${card.code}`} class="card-link">
+                <a href={routes.card(card.code)} class="card-link">
                   <CardImage
                     imageUrl={card.imageUrl}
                     name={card.name}

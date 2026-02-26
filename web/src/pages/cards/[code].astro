@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CardImage from "../../components/CardImage.astro";
 import { getAllCards } from "../../data";
 import type { Card } from "../../data";
+import { routes } from "../../routes";
 
 export function getStaticPaths() {
   return getAllCards().map((c) => ({
@@ -71,7 +72,7 @@ function formatText(text: string): string {
       <div class="meta">
         {card.slot && <div>Slot: {card.slot}</div>}
         <div>Pack: {card.packName}</div>
-        {card.encounterName && <div>Encounter: <a href={`/encounters/${card.encounterCode}`}>{card.encounterName}</a></div>}
+        {card.encounterName && <div>Encounter: <a href={routes.encounter(card.encounterCode!)}>{card.encounterName}</a></div>}
         {card.isUnique && <div>Unique</div>}
         {card.quantity > 1 && <div>Quantity: {card.quantity}</div>}
       </div>

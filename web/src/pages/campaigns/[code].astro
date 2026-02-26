@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import { getAllCampaigns, getEncounterSet } from "../../data";
 import type { Campaign } from "../../data";
+import { routes } from "../../routes";
 
 export function getStaticPaths() {
   return getAllCampaigns().map((c) => ({
@@ -23,7 +24,7 @@ const { campaign } = Astro.props;
     {
       campaign.scenarios.map((s) => (
         <div class="scenario">
-          <a href={`/scenarios/${s.code}`} class="scenario-header">
+          <a href={routes.scenario(s.code)} class="scenario-header">
             {s.imageUrl ? (
               <img src={s.imageUrl} alt="" class="scenario-image" />
             ) : (
@@ -43,7 +44,7 @@ const { campaign } = Astro.props;
               const es = getEncounterSet(ec);
               if (!es) return null;
               return (
-                <a href={`/encounters/${es.code}`} class="encounter-tag">
+                <a href={routes.encounter(es.code)} class="encounter-tag">
                   {es.name}
                 </a>
               );

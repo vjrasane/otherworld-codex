@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { getAllCampaigns } from "../data";
+import { routes } from "../routes";
 
 const campaigns = getAllCampaigns();
 ---
@@ -10,7 +11,7 @@ const campaigns = getAllCampaigns();
   <div class="campaigns">
     {
       campaigns.map((c) => (
-        <a href={`/campaigns/${c.code}`} class="campaign-card">
+        <a href={routes.campaign(c.code)} class="campaign-card">
           {c.imageUrl ? (
             <img src={c.imageUrl} alt="" class="campaign-image" />
           ) : (

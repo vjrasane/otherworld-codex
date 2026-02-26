@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import CardImage from "../../components/CardImage.astro";
 import { getAllEncounterSets, getAllCampaigns } from "../../data";
 import type { EncounterSet, Scenario } from "../../data";
+import { routes } from "../../routes";
 
 interface EncounterPageProps {
   encounterSet: EncounterSet;
@@ -41,7 +42,7 @@ const { encounterSet, scenarios } = Astro.props as EncounterPageProps;
         <h2>Appears in</h2>
         <div class="scenario-list">
           {scenarios.map((s) => (
-            <a href={`/scenarios/${s.code}`} class="scenario-link">
+            <a href={routes.scenario(s.code)} class="scenario-link">
               <span class="scenario-campaign">{s.campaignName}</span>
               <span>›</span>
               <span>{s.name}</span>
@@ -55,7 +56,7 @@ const { encounterSet, scenarios } = Astro.props as EncounterPageProps;
   <div class="card-grid">
     {
       encounterSet.cards.map((card) => (
-        <a href={`/cards/${card.code}`} class="card-link">
+        <a href={routes.card(card.code)} class="card-link">
           <CardImage
             imageUrl={card.imageUrl}
             name={card.name}
