@@ -63,6 +63,8 @@ for (const s of campaign.scenarios) {
 <Base title={campaign.name}>
   <h1>{campaign.name}</h1>
 
+  <section class="scenario-list">
+    <h2>Scenarios</h2>
   <div class="scenario-grid">
     {campaign.scenarios.map((s) => (
       <a href={routes.scenario(s.code)} class="scenario-card">
@@ -76,6 +78,7 @@ for (const s of campaign.scenarios) {
       </a>
     ))}
   </div>
+</section>
 
   <div class="stats-grid">
     <section class="encounter-list">
@@ -100,6 +103,11 @@ for (const s of campaign.scenarios) {
 <style>
   h1 {
     margin-bottom: 1.5rem;
+  }
+
+  h2 {  
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem;
   }
 
   .scenario-grid {
@@ -163,10 +171,6 @@ for (const s of campaign.scenarios) {
     }
   }
 
-  .encounter-list h2 {
-    font-size: 1.1rem;
-    margin: 0 0 0.75rem;
-  }
 
   .encounter-tags {
     display: flex;

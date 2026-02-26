@@ -29,7 +29,9 @@ export default function Search() {
     if (entries.length === 0) return null;
     const ms = new MiniSearch<SearchEntry>({
       fields: ["name"],
-      storeFields: ["type", "code", "name", "subname", "imageUrl", "typeCode", "packName"],
+      storeFields: [
+        "type", "code", "name", "subname", "xp", "imageUrl", "typeCode", "packName"
+      ],
       searchOptions: {
         prefix: true,
         fuzzy: 0.2,
@@ -109,7 +111,7 @@ export default function Search() {
   }
 
   return (
-    <div ref={ref} style={{ position: "relative", flex: 1, maxWidth: 400 }}>
+    <div ref={ref} style={{ position: "relative", width: "100%", maxWidth: 600 }}>
       <label
         style={{
           display: "flex",
@@ -251,6 +253,7 @@ export default function Search() {
                   }}
                 >
                   {r.name}
+                  {r.xp ? ` (${r.xp})` : ""}
                   {r.subname ? ` · ${r.subname}` : ""}
                 </div>
                 <div

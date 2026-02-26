@@ -25,7 +25,8 @@ const traits = card.traits
 
 function formatText(text: string): string {
   return text
-    .replace(/\[(\w+)\]/g, '<span class="icon">[$1]</span>')
+    .replace(/\[\[(.*?)\]\]/g, "<b><em>$1</em></b>")
+    .replace(/\[([\w_]+)\]/g, '<i class="icon-$1"></i>')
     .replace(/\n/g, "<br>");
 }
 ---

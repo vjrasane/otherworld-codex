@@ -20,6 +20,7 @@ export interface Card {
   text?: string;
   flavor?: string;
   subname?: string;
+  xp?: number;
   cost?: number;
   health?: number;
   sanity?: number;
@@ -71,6 +72,7 @@ export interface SearchEntry {
   type: "card" | "encounter" | "scenario" | "campaign";
   code: string;
   name: string;
+  xp?: number;
   subname?: string;
   imageUrl?: string;
   typeCode?: string;
@@ -106,6 +108,7 @@ function parseCard(raw: (typeof cardsJson)[number]): Card {
     cost: (raw as Record<string, unknown>).cost as number | undefined,
     health: raw.health ?? undefined,
     sanity: raw.sanity ?? undefined,
+    xp: raw.xp ?? undefined,
     skillWillpower: raw.skill_willpower ?? undefined,
     skillIntellect: raw.skill_intellect ?? undefined,
     skillCombat: raw.skill_combat ?? undefined,
@@ -219,6 +222,7 @@ function buildSearchIndex(): SearchEntry[] {
       type: "card",
       code: card.code,
       name: card.name,
+      xp: card.xp,
       subname: card.subname,
       imageUrl: card.imageUrl,
       typeCode: card.typeCode,
