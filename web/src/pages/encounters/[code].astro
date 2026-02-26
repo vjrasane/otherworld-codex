@@ -35,7 +35,7 @@ const { encounterSet, scenarios } = Astro.props as EncounterPageProps;
 
 <Base title={encounterSet.name}>
   <div class="heading">
-    <img src={`/icons/${encounterSet.code}.svg`} alt="" class="heading-icon" />
+    <img src={routes.icon(encounterSet.code)} alt="" class="heading-icon" />
     <h1>{encounterSet.name}</h1>
   </div>
 
