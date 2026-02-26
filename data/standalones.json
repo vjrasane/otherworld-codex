@@ -1,0 +1,269 @@
+[
+  {
+    "scenarioCode": "curse_of_the_rougarou",
+    "scenarioName": "Curse of the Rougarou",
+    "scenarioOrder": 1,
+    "encounterCodes": [
+      "rougarou",
+      "bayou"
+    ]
+  },
+  {
+    "scenarioCode": "carnevale_of_horrors",
+    "scenarioName": "Carnevale of Horrors",
+    "scenarioOrder": 2,
+    "encounterCodes": [
+      "venice"
+    ]
+  },
+  {
+    "scenarioCode": "in_the_labyrinths_of_lunacy",
+    "scenarioName": "The Labyrinths of Lunacy",
+    "scenarioOrder": 3,
+    "encounterCodes": [
+      "in_the_labyrinths_of_lunacy",
+      "epic_multiplayer",
+      "single_group"
+    ]
+  },
+  {
+    "scenarioCode": "the_eternal_slumber",
+    "scenarioName": "The Eternal Slumber",
+    "scenarioOrder": 4,
+    "encounterCodes": [
+      "the_eternal_slumber",
+      "sands_of_egypt",
+      "brotherhood_of_the_beast",
+      "abyssal_tribute"
+    ]
+  },
+  {
+    "scenarioCode": "the_nights_usurper",
+    "scenarioName": "The Night's Usurper",
+    "scenarioOrder": 5,
+    "encounterCodes": [
+      "the_nights_usurper",
+      "sands_of_egypt",
+      "brotherhood_of_the_beast",
+      "abyssal_gifts"
+    ]
+  },
+  {
+    "scenarioCode": "murder_at_the_excelsior_hotel",
+    "scenarioName": "Murder at the Excelsior Hotel",
+    "scenarioOrder": 6,
+    "encounterCodes": [
+      "murder_at_the_excelsior_hotel",
+      "alien_interference",
+      "dark_rituals",
+      "excelsior_management",
+      "sins_of_the_past",
+      "vile_experiments"
+    ]
+  },
+  {
+    "scenarioCode": "blob_that_ate_everything",
+    "scenarioName": "The Blob That Ate Everything",
+    "scenarioOrder": 7,
+    "encounterCodes": [
+      "blob",
+      "blob_single_group",
+      "migo_incursion"
+    ]
+  },
+  {
+    "scenarioCode": "blob_that_ate_everything_else",
+    "scenarioName": "The Blob That Ate Everything Else",
+    "scenarioOrder": 8,
+    "encounterCodes": [
+      "blob",
+      "blob_single_group",
+      "blob_that_ate_everything_else",
+      "migo_incursion",
+      "migo_incursion_2"
+    ]
+  },
+  {
+    "scenarioCode": "war_of_the_outer_gods",
+    "scenarioName": "War of the Outer Gods",
+    "scenarioOrder": 9,
+    "encounterCodes": [
+      "war_of_the_outer_gods",
+      "children_of_paradise",
+      "swarm_of_assimilation",
+      "death_of_stars"
+    ]
+  },
+  {
+    "scenarioCode": "machinations_through_time",
+    "scenarioName": "Machinations Through Time",
+    "scenarioOrder": 10,
+    "encounterCodes": [
+      "machinations_through_time",
+      "machinations_through_time_epic_multiplayer",
+      "machinations_through_time_single_group"
+    ]
+  },
+  {
+    "scenarioCode": "read_or_die",
+    "scenarioName": "Read or Die",
+    "scenarioOrder": 11,
+    "encounterCodes": [
+      "read_or_die",
+      "extracurricular_activity",
+      "sorcery",
+      "the_beyond",
+      "bishops_thralls",
+      "whippoorwills",
+      "ancient_evils",
+      "locked_doors",
+      "agents_of_yog",
+      "armitages_fate"
+    ]
+  },
+  {
+    "scenarioCode": "all_or_nothing",
+    "scenarioName": "All or Nothing",
+    "scenarioOrder": 12,
+    "encounterCodes": [
+      "all_or_nothing",
+      "the_house_always_wins",
+      "bad_luck",
+      "naomis_crew",
+      "arkham",
+      "rats"
+    ]
+  },
+  {
+    "scenarioCode": "by_the_book",
+    "scenarioName": "By the Book",
+    "scenarioOrder": 13,
+    "encounterCodes": [
+      "by_the_book",
+      "arkham",
+      "agents_of_shub",
+      "cultists",
+      "chilling_cold",
+      "pentagram",
+      "nightgaunts",
+      "striking_fear"
+    ]
+  },
+  {
+    "scenarioCode": "bad_blood",
+    "scenarioName": "Bad Blood",
+    "scenarioOrder": 14,
+    "encounterCodes": [
+      "bad_blood",
+      "threads_of_fate",
+      "pnakotic_brotherhood",
+      "arkham",
+      "locked_doors",
+      "nightgaunts",
+      "pentagram"
+    ]
+  },
+  {
+    "scenarioCode": "enthralling_encore",
+    "scenarioName": "Enthralling Encore",
+    "scenarioOrder": 15,
+    "encounterCodes": [
+      "enthralling_encore",
+      "curtain_call",
+      "decay",
+      "delusions",
+      "hauntings",
+      "ghouls",
+      "striking_fear",
+      "rats"
+    ]
+  },
+  {
+    "scenarioCode": "laid_to_rest",
+    "scenarioName": "Laid to Rest",
+    "scenarioOrder": 16,
+    "encounterCodes": [
+      "laid_to_rest",
+      "the_wages_of_sin",
+      "anettes_coven",
+      "city_of_sins",
+      "inexorable_fate",
+      "realm_of_death",
+      "trapped_spirits",
+      "witchcraft"
+    ]
+  },
+  {
+    "scenarioCode": "relics_of_the_past",
+    "scenarioName": "Relics of the Past",
+    "scenarioOrder": 17,
+    "encounterCodes": [
+      "relics_of_the_past",
+      "eztli",
+      "agents_of_yig",
+      "traps",
+      "ruins",
+      "poison",
+      "serpents",
+      "venom",
+      "chilling_cold",
+      "locked_doors",
+      "arkham"
+    ]
+  },
+  {
+    "scenarioCode": "red_tide_rising",
+    "scenarioName": "Red Tide Rising",
+    "scenarioOrder": 18,
+    "encounterCodes": [
+      "red_tide_rising",
+      "the_vanishing_of_elina_harper",
+      "agents_of_dagon",
+      "fog_over_innsmouth",
+      "the_locals",
+      "chilling_cold",
+      "locked_doors",
+      "nightgaunts",
+      "arkham"
+    ]
+  },
+  {
+    "scenarioCode": "fortune_and_folly_part_1",
+    "scenarioName": "Fortune and Folly, Part I: The Stakeout",
+    "scenarioOrder": 19,
+    "encounterCodes": [
+      "fortune_and_folly",
+      "fortunes_chosen",
+      "plan_in_shambles"
+    ]
+  },
+  {
+    "scenarioCode": "fortune_and_folly_part_2",
+    "scenarioName": "Fortune and Folly, Part II: The Heist",
+    "scenarioOrder": 20,
+    "encounterCodes": [
+      "fortune_and_folly",
+      "fortunes_chosen",
+      "plan_in_shambles"
+    ]
+  },
+  {
+    "scenarioCode": "the_midwinter_gala",
+    "scenarioName": "The Midwinter Gala",
+    "scenarioOrder": 21,
+    "encounterCodes": [
+      "the_midwinter_gala"
+    ]
+  },
+  {
+    "scenarioCode": "film_fatale",
+    "scenarioName": "Film Fatale",
+    "scenarioOrder": 22,
+    "encounterCodes": [
+      "film_fatale",
+      "cosmic_journey",
+      "forgotten_island",
+      "abominable_contessa"
+    ]
+  }
+]

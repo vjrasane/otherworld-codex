@@ -1,5 +1,6 @@
 import cardsJson from "../../../data/cards.json";
 import campaignsJson from "../../../data/campaigns.json";
+import standalonesJson from "../../../data/standalones.json";
 
 export interface Card {
   code: string;
@@ -54,6 +55,14 @@ export interface Campaign {
   name: string;
   order: number;
   scenarios: Scenario[];
+  imageUrl?: string;
+}
+
+export interface Standalone {
+  code: string;
+  name: string;
+  order: number;
+  encounterCodes: string[];
   imageUrl?: string;
 }
 

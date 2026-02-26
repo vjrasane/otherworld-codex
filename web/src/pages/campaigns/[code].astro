@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import CampaignCharts from "../../components/CampaignCharts";
+import { TypePieChart, TraitBarChart } from "../../components/CampaignCharts";
 import { getAllCampaigns, getEncounterSet, getCampaignCards } from "../../data";
 import type { Campaign } from "../../data";
 import { routes } from "../../routes";
@@ -19,64 +19,79 @@ interface Props {
 const { campaign } = Astro.props;
 const cards = getCampaignCards(campaign);
 
-const typeMap = new Map<string, number>();
-for (const card of cards) {
-  typeMap.set(card.typeName, (typeMap.get(card.typeName) ?? 0) + 1);
+function aggregate(countBy: "unique" | "total") {
+  const typeMap = new Map<string, number>();
+  const traitMap = new Map<string, number>();
+  for (const card of cards) {
+    const n = countBy === "total" ? card.quantity : 1;
+    typeMap.set(card.typeName, (typeMap.get(card.typeName) ?? 0) + n);
+    if (card.traits) {
+      for (const t of card.traits.split(". ").map((s) => s.replace(/\.$/, "").trim()).filter(Boolean)) {
+        traitMap.set(t, (traitMap.get(t) ?? 0) + n);
+      }
+    }
+  }
+  const sort = (m: Map<string, number>) =>
+    [...m.entries()].map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
+  return { typeCounts: sort(typeMap), traitCounts: sort(traitMap) };
 }
-const typeCounts = [...typeMap.entries()]
-  .map(([name, value]) => ({ name, value }))
-  .sort((a, b) => b.value - a.value);
 
-const traitMap = new Map<string, number>();
-for (const card of cards) {
-  if (!card.traits) continue;
-  for (const t of card.traits.split(". ").map((s) => s.replace(/\.$/, "").trim()).filter(Boolean)) {
-    traitMap.set(t, (traitMap.get(t) ?? 0) + 1);
+const unique = aggregate("unique");
+const total = aggregate("total");
+
+const seen = new Set<string>();
+const encounterCodes: string[] = [];
+for (const s of campaign.scenarios) {
+  for (const ec of s.encounterCodes) {
+    if (!seen.has(ec)) {
+      seen.add(ec);
+      encounterCodes.push(ec);
+    }
   }
 }
-const traitCounts = [...traitMap.entries()]
-  .map(([name, value]) => ({ name, value }))
-  .sort((a, b) => b.value - a.value)
-;
 ---
 
 <Base title={campaign.name}>
   <h1>{campaign.name}</h1>
-  <div class="scenarios">
-    {
-      campaign.scenarios.map((s) => (
-        <div class="scenario">
-          <a href={routes.scenario(s.code)} class="scenario-header">
-            <img src={routes.icon(s.code)} alt="" class="scenario-icon" />
-            <div class="scenario-info">
-              {s.header && <div class="scenario-header-label">{s.header}</div>}
-              <div class="scenario-name">{s.name}</div>
-              <div class="encounter-count">
-                {s.encounterCodes.length} encounter set
-                {s.encounterCodes.length !== 1 && "s"}
-              </div>
-            </div>
-          </a>
-          <div class="encounter-sets">
-            {s.encounterCodes.map((ec) => {
-              const es = getEncounterSet(ec);
-              if (!es) return null;
-              return (
-                <a href={routes.encounter(es.code)} class="encounter-tag">
-                  <img src={routes.icon(es.code)} alt="" class="encounter-icon" />
-                  {es.name}
-                </a>
-              );
-            })}
+
+  <div class="scenario-grid">
+    {campaign.scenarios.map((s) => (
+      <a href={routes.scenario(s.code)} class="scenario-card">
+        <div class="scenario-card-header">
+          <img src={routes.icon(s.code)} alt="" class="scenario-icon" />
+          <div class="scenario-card-info">
+            {s.header && <div class="scenario-header-label">{s.header}</div>}
+            <div class="scenario-name">{s.name}</div>
           </div>
         </div>
-      ))
-    }
+      </a>
+    ))}
   </div>
 
-  <div class="charts">
-    <CampaignCharts typeCounts={typeCounts} traitCounts={traitCounts} client:visible />
+  <div class="middle-row">
+    <section class="encounter-list">
+      <h2>Encounter Sets</h2>
+      <div class="encounter-tags">
+        {encounterCodes.map((ec) => {
+          const es = getEncounterSet(ec);
+          if (!es) return null;
+          return (
+            <a href={routes.encounter(es.code)} class="encounter-tag">
+              <img src={routes.icon(es.code)} alt="" class="encounter-icon" />
+              {es.name}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+    <section class="type-chart">
+      <TypePieChart unique={unique.typeCounts} total={total.typeCounts} client:visible />
+    </section>
   </div>
+
+  <section class="traits">
+    <TraitBarChart unique={unique.traitCounts} total={total.traitCounts} client:visible />
+  </section>
 </Base>
 
 <style>
@@ -84,61 +99,73 @@ const traitCounts = [...traitMap.entries()]
     margin-bottom: 1.5rem;
   }
 
-  .scenarios {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
   }
 
-  .scenario {
+  .scenario-card {
+    display: flex;
+    padding: 0.5rem 0.75rem;
     background: var(--bg-1);
     border: 1px solid var(--border);
     border-radius: 8px;
-    overflow: hidden;
+    color: var(--text-primary);
+    transition: border-color 0.15s;
   }
 
-  .scenario-header {
+  .scenario-card:hover {
+    border-color: var(--accent);
+  }
+
+  .scenario-card-header {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.75rem;
-    margin: 0.5rem;
-    border-radius: 6px;
-    color: var(--text-primary);
-    transition: background 0.15s;
-  }
-
-  .scenario-header:hover {
-    background: var(--bg-2);
+    gap: 0.6rem;
   }
 
   .scenario-icon {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
     filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
   }
 
   .scenario-header-label {
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 
   .scenario-name {
     font-weight: 600;
-    font-size: 1.05rem;
-  }
-
-  .encounter-count {
-    color: var(--text-muted);
     font-size: 0.85rem;
   }
 
-  .encounter-sets {
+  .middle-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 700px) {
+    .middle-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .encounter-list h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .encounter-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    padding: 0 0.75rem 0.75rem;
   }
 
   .encounter-tag {
@@ -160,9 +187,5 @@ const traitCounts = [...traitMap.entries()]
 
   .encounter-tag:hover {
     color: var(--accent);
-  }
-
-  .charts {
-    margin-top: 2rem;
   }
 </style>
