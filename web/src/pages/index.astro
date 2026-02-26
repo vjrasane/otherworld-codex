@@ -1,9 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
-import { getAllCampaigns } from "../data";
+import { getAllCampaigns, getAllStandalones } from "../data";
 import { routes } from "../routes";
 
 const campaigns = getAllCampaigns();
+const standalones = getAllStandalones();
 ---
 
 <Base title="Campaigns">
@@ -23,6 +24,24 @@ const campaigns = getAllCampaigns();
       ))
     }
   </div>
+
+  <h1>Standalone Scenarios</h1>
+  <div class="standalones">
+    {
+      standalones.map((s) => (
+        <a href={routes.scenario(s.code)} class="campaign-card">
+          <img
+            src={routes.icon(s.encounterCodes[0])}
+            alt=""
+            class="campaign-icon"
+          />
+          <div class="campaign-info">
+            <div class="campaign-name">{s.name}</div>
+          </div>
+        </a>
+      ))
+    }
+  </div>
 </Base>
 
 <style>
@@ -30,10 +49,17 @@ const campaigns = getAllCampaigns();
     margin-bottom: 1rem;
   }
 
-  .campaigns {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  h1 + h1,
+  .campaigns + h1,
+  .standalones + h1 {
+    margin-top: 2rem;
+  }
+
+  .campaigns,
+  .standalones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
   }
 
   .campaign-card {

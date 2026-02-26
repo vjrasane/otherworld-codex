@@ -39,6 +39,15 @@ function aggregate(countBy: "unique" | "total") {
 const unique = aggregate("unique");
 const total = aggregate("total");
 
+const chartCards = cards.map((c) => ({
+  code: c.code,
+  name: c.name,
+  typeName: c.typeName,
+  typeCode: c.typeCode,
+  imageUrl: c.imageUrl,
+  traits: c.traits,
+}));
+
 const seen = new Set<string>();
 const encounterCodes: string[] = [];
 for (const s of campaign.scenarios) {
@@ -84,7 +93,7 @@ for (const s of campaign.scenarios) {
         })}
       </div>
     </section>
-    <CampaignCharts unique={unique} total={total} client:visible />
+    <CampaignCharts unique={unique} total={total} cards={chartCards} client:visible />
   </div>
 </Base>
 
