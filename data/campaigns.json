@@ -1,6 +1,7 @@
 [
   {
     "campaignCode": "core",
+    "campaignOrder": 1,
     "campaignName": "The Night of the Zealot",
     "scenarios": [
       {
@@ -52,6 +53,7 @@
   },
   {
     "campaignCode": "dwl",
+    "campaignOrder": 2,
     "campaignName": "The Dunwich Legacy",
     "scenarios": [
       {
@@ -171,6 +173,7 @@
   },
   {
     "campaignCode": "ptc",
+    "campaignOrder": 3,
     "campaignName": "The Path to Carcosa",
     "scenarios": [
       {
@@ -290,6 +293,7 @@
   },
   {
     "campaignCode": "tfa",
+    "campaignOrder": 4,
     "campaignName": "The Forgotten Age",
     "scenarios": [
       {
@@ -444,6 +448,7 @@
   },
   {
     "campaignCode": "tcu",
+    "campaignOrder": 5,
     "campaignName": "The Circle Undone",
     "scenarios": [
       {
@@ -592,6 +597,7 @@
   },
   {
     "campaignCode": "tdea",
+    "campaignOrder": 6,
     "campaignName": "The Dream-Quest",
     "scenarios": [
       {
@@ -651,6 +657,7 @@
   },
   {
     "campaignCode": "tdeb",
+    "campaignOrder": 7,
     "campaignName": "The Web of Dreams",
     "scenarios": [
       {
@@ -718,6 +725,7 @@
   },
   {
     "campaignCode": "tic",
+    "campaignOrder": 8,
     "campaignName": "The Innsmouth Conspiracy",
     "scenarios": [
       {
@@ -839,6 +847,7 @@
   },
   {
     "campaignCode": "eoe",
+    "campaignOrder": 9,
     "campaignName": "Edge of the Earth",
     "scenarios": [
       {
@@ -1026,6 +1035,7 @@
   },
   {
     "campaignCode": "tskc",
+    "campaignOrder": 10,
     "campaignName": "The Scarlet Keys",
     "scenarios": [
       {
@@ -1249,6 +1259,7 @@
   },
   {
     "campaignCode": "fhv",
+    "campaignOrder": 11,
     "campaignName": "The Feast of Hemlock Vale",
     "scenarios": [
       {
@@ -1446,6 +1457,7 @@
   },
   {
     "campaignCode": "tdc",
+    "campaignOrder": 12,
     "campaignName": "The Drowned City",
     "scenarios": [
       {
@@ -1621,6 +1633,7 @@
   },
   {
     "campaignCode": "zdm",
+    "campaignOrder": 101,
     "campaignName": "Dark Matter",
     "scenarios": [
       {
@@ -1720,6 +1733,7 @@
   },
   {
     "campaignCode": "zaw",
+    "campaignOrder": 102,
     "campaignName": "Alice in Wonderland",
     "scenarios": [
       {
@@ -1837,6 +1851,7 @@
   },
   {
     "campaignCode": "zce",
+    "campaignOrder": 103,
     "campaignName": "The Crown of Egil",
     "scenarios": [
       {
@@ -1894,6 +1909,7 @@
   },
   {
     "campaignCode": "zcp",
+    "campaignOrder": 104,
     "campaignName": "Call of the Plaguebearer",
     "scenarios": [
       {
@@ -2019,6 +2035,7 @@
   },
   {
     "campaignCode": "zcf",
+    "campaignOrder": 105,
     "campaignName": "Cyclopean Foundations",
     "scenarios": [
       {
@@ -2150,6 +2167,7 @@
   },
   {
     "campaignCode": "zoz",
+    "campaignOrder": 106,
     "campaignName": "The Colour Out of Oz",
     "scenarios": [
       {
@@ -2289,6 +2307,7 @@
   },
   {
     "campaignCode": "zau",
+    "campaignOrder": 107,
     "campaignName": "Ages Unwound",
     "scenarios": [
       {
@@ -2390,6 +2409,7 @@
   },
   {
     "campaignCode": "zhod",
+    "campaignOrder": 108,
     "campaignName": "Heart of Darkness",
     "scenarios": [
       {

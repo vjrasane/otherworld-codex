@@ -52,6 +52,7 @@ export interface Scenario {
 export interface Campaign {
   code: string;
   name: string;
+  order: number;
   scenarios: Scenario[];
   imageUrl?: string;
 }
@@ -160,10 +161,12 @@ const campaigns: Campaign[] = campaignsJson.map((raw: RawCampaign) => {
   return {
     code: raw.campaignCode,
     name: raw.campaignName,
+    order: raw.campaignOrder,
     scenarios,
     imageUrl,
   };
 });
+campaigns.sort((a, b) => a.order - b.order);
 
 const campaignsByCode = new Map<string, Campaign>();
 for (const c of campaigns) {
