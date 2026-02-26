@@ -5,6 +5,8 @@ import { Search as SearchIcon, X } from "lucide-react";
 import { routes } from "../routes";
 
 const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
+const ICON_FILTER =
+  "invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%)";
 
 function useDebouncedValue<T>(value: T, ms: number): T {
   const [debounced, setDebounced] = useState(value);
@@ -195,34 +197,47 @@ export default function Search() {
                 background: i === active ? "var(--bg-2)" : undefined,
               }}
             >
-              {r.imageUrl ? (
-                <div
-                  style={{
-                    width: 40,
-                    height: HORIZONTAL_TYPES.has(r.typeCode ?? "") ? 28 : 56,
-                    flexShrink: 0,
-                    userSelect: "none",
-                  }}
-                >
-                  <img
-                    src={r.imageUrl}
-                    alt=""
+              {r.type === "card" ? (
+                r.imageUrl ? (
+                  <div
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                      width: 40,
+                      height: HORIZONTAL_TYPES.has(r.typeCode ?? "") ? 28 : 56,
+                      flexShrink: 0,
+                      userSelect: "none",
+                    }}
+                  >
+                    <img
+                      src={r.imageUrl}
+                      alt=""
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: 3,
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width: 40,
+                      height: 56,
+                      flexShrink: 0,
+                      background: "var(--bg-3)",
                       borderRadius: 3,
                     }}
                   />
-                </div>
+                )
               ) : (
-                <div
+                <img
+                  src={routes.icon(r.code)}
+                  alt=""
                   style={{
-                    width: 40,
-                    height: 56,
+                    width: 28,
+                    height: 28,
                     flexShrink: 0,
-                    background: "var(--bg-3)",
-                    borderRadius: 3,
+                    filter: ICON_FILTER,
                   }}
                 />
               )}

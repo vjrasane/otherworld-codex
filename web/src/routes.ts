@@ -3,4 +3,5 @@ export const routes = {
   scenario: (code: string) => `/scenarios/${code}`,
   encounter: (code: string) => `/encounters/${code}`,
   card: (code: string) => `/cards/${code}`,
+  icon: (code: string) => `/icons/${code}.svg`,
 } as const;

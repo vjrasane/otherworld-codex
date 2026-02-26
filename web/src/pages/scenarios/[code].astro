@@ -40,7 +40,10 @@ const { scenario } = Astro.props;
         return (
           <section class="encounter-section">
             <h2>
-              <a href={routes.encounter(es.code)}>{es.name}</a>
+              <a href={routes.encounter(es.code)} class="encounter-heading">
+                <img src={routes.icon(es.code)} alt="" class="encounter-icon" />
+                {es.name}
+              </a>
             </h2>
             <div class="card-grid">
               {cards.map((card) => (
@@ -91,12 +94,21 @@ const { scenario } = Astro.props;
     margin-bottom: 0.75rem;
   }
 
-  .encounter-section h2 a {
+  .encounter-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--text-primary);
   }
 
-  .encounter-section h2 a:hover {
+  .encounter-heading:hover {
     color: var(--accent);
+  }
+
+  .encounter-icon {
+    width: 22px;
+    height: 22px;
+    filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
   }
 
   .card-grid {

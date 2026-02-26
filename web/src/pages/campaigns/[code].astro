@@ -25,11 +25,7 @@ const { campaign } = Astro.props;
       campaign.scenarios.map((s) => (
         <div class="scenario">
           <a href={routes.scenario(s.code)} class="scenario-header">
-            {s.imageUrl ? (
-              <img src={s.imageUrl} alt="" class="scenario-image" />
-            ) : (
-              <div class="scenario-placeholder" />
-            )}
+            <img src={routes.icon(s.code)} alt="" class="scenario-icon" />
             <div class="scenario-info">
               {s.prefix && <div class="scenario-prefix">{s.prefix}</div>}
               <div class="scenario-name">{s.name}</div>
@@ -45,6 +41,7 @@ const { campaign } = Astro.props;
               if (!es) return null;
               return (
                 <a href={routes.encounter(es.code)} class="encounter-tag">
+                  <img src={routes.icon(es.code)} alt="" class="encounter-icon" />
                   {es.name}
                 </a>
               );
@@ -87,20 +84,11 @@ const { campaign } = Astro.props;
     background: var(--bg-2);
   }
 
-  .scenario-image {
-    width: 60px;
-    height: 84px;
-    object-fit: cover;
-    border-radius: 4px;
+  .scenario-icon {
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
-  }
-
-  .scenario-placeholder {
-    width: 60px;
-    height: 84px;
-    background: var(--bg-3);
-    border-radius: 4px;
-    flex-shrink: 0;
+    filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
   }
 
   .scenario-prefix {
@@ -126,11 +114,20 @@ const { campaign } = Astro.props;
   }
 
   .encounter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 0.8rem;
     padding: 0.2rem 0.5rem;
     background: var(--bg-2);
     border-radius: 4px;
     color: var(--text-secondary);
+  }
+
+  .encounter-icon {
+    width: 14px;
+    height: 14px;
+    filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
   }
 
   .encounter-tag:hover {
