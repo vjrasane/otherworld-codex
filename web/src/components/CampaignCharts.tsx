@@ -12,6 +12,7 @@ import {
 } from "recharts";
 
 type Entry = { name: string; value: number };
+export type CountMode = "unique" | "total";
 
 const COLORS = [
   "#88c0d0",
@@ -55,19 +56,20 @@ const toggleButtonStyle = (active: boolean): React.CSSProperties => ({
 interface TypePieChartProps {
   unique: Entry[];
   total: Entry[];
+  mode: CountMode;
+  onModeChange: (mode: CountMode) => void;
 }
 
-export function TypePieChart({ unique, total }: TypePieChartProps) {
-  const [mode, setMode] = useState<"unique" | "total">("total");
+export function TypePieChart({ unique, total, mode, onModeChange }: TypePieChartProps) {
   const data = mode === "total" ? total : unique;
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.75rem" }}>
         <h2 style={{ fontSize: "1.1rem", margin: 0 }}>Card Types</h2>
         <div style={toggleStyle}>
-          <button style={toggleButtonStyle(mode === "unique")} onClick={() => setMode("unique")}>Unique</button>
-          <button style={toggleButtonStyle(mode === "total")} onClick={() => setMode("total")}>Total</button>
+          <button style={toggleButtonStyle(mode === "unique")} onClick={() => onModeChange("unique")}>Unique</button>
+          <button style={toggleButtonStyle(mode === "total")} onClick={() => onModeChange("total")}>Total</button>
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
@@ -98,21 +100,15 @@ export function TypePieChart({ unique, total }: TypePieChartProps) {
 interface TraitBarChartProps {
   unique: Entry[];
   total: Entry[];
+  mode: CountMode;
 }
 
-export function TraitBarChart({ unique, total }: TraitBarChartProps) {
-  const [mode, setMode] = useState<"unique" | "total">("total");
+export function TraitBarChart({ unique, total, mode }: TraitBarChartProps) {
   const data = mode === "total" ? total : unique;
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-        <h2 style={{ fontSize: "1.1rem", margin: 0 }}>Traits</h2>
-        <div style={toggleStyle}>
-          <button style={toggleButtonStyle(mode === "unique")} onClick={() => setMode("unique")}>Unique</button>
-          <button style={toggleButtonStyle(mode === "total")} onClick={() => setMode("total")}>Total</button>
-        </div>
-      </div>
+      <h2 style={{ fontSize: "1.1rem", marginBottom: "0.75rem" }}>Traits</h2>
       <ResponsiveContainer width="100%" height={data.length * 28 + 16}>
         <BarChart data={data} layout="vertical" margin={{ left: 0, right: 16, top: 0, bottom: 0 }}>
           <XAxis type="number" hide />
@@ -129,5 +125,23 @@ export function TraitBarChart({ unique, total }: TraitBarChartProps) {
         </BarChart>
       </ResponsiveContainer>
     </div>
+  );
+}
+
+interface CampaignChartsProps {
+  unique: { typeCounts: Entry[]; traitCounts: Entry[] };
+  total: { typeCounts: Entry[]; traitCounts: Entry[] };
+}
+
+export default function CampaignCharts({ unique, total }: CampaignChartsProps) {
+  const [mode, setMode] = useState<CountMode>("total");
+
+  return (
+    <>
+      <TypePieChart unique={unique.typeCounts} total={total.typeCounts} mode={mode} onModeChange={setMode} />
+      <div style={{ gridColumn: "1 / -1", marginTop: "1rem" }}>
+        <TraitBarChart unique={unique.traitCounts} total={total.traitCounts} mode={mode} />
+      </div>
+    </>
   );
 }

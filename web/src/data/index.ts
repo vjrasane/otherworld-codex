@@ -183,6 +183,26 @@ for (const c of campaigns) {
   campaignsByCode.set(c.code, c);
 }
 
+const standalones: Standalone[] = standalonesJson.map((raw) => {
+  const encounterCards = raw.encounterCodes.flatMap(
+    (ec: string) => cardsByEncounter.get(ec) ?? [],
+  );
+  const imageCard = encounterCards.find((c) => c.imageUrl);
+  return {
+    code: raw.scenarioCode,
+    name: raw.scenarioName,
+    order: raw.scenarioOrder,
+    encounterCodes: raw.encounterCodes,
+    imageUrl: imageCard?.imageUrl,
+  };
+});
+standalones.sort((a, b) => a.order - b.order);
+
+const standalonesByCode = new Map<string, Standalone>();
+for (const s of standalones) {
+  standalonesByCode.set(s.code, s);
+}
+
 const scenariosByCode = new Map<string, Scenario>();
 for (const c of campaigns) {
   for (const s of c.scenarios) {
@@ -217,6 +237,16 @@ function buildSearchIndex(): SearchEntry[] {
   }
 
   for (const s of scenariosByCode.values()) {
+    entries.push({
+      id: `scenario:${s.code}`,
+      type: "scenario",
+      code: s.code,
+      name: s.name,
+      imageUrl: s.imageUrl,
+    });
+  }
+
+  for (const s of standalones) {
     entries.push({
       id: `scenario:${s.code}`,
       type: "scenario",
@@ -265,6 +295,14 @@ export function getAllCampaigns(): Campaign[] {
 
 export function getScenario(code: string): Scenario | undefined {
   return scenariosByCode.get(code);
+}
+
+export function getStandalone(code: string): Standalone | undefined {
+  return standalonesByCode.get(code);
+}
+
+export function getAllStandalones(): Standalone[] {
+  return standalones;
 }
 
 export function getEncounterCards(code: string): Card[] {

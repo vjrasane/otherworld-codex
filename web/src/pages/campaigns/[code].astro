@@ -1,6 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { TypePieChart, TraitBarChart } from "../../components/CampaignCharts";
+import CampaignCharts from "../../components/CampaignCharts";
 import { getAllCampaigns, getEncounterSet, getCampaignCards } from "../../data";
 import type { Campaign } from "../../data";
 import { routes } from "../../routes";
@@ -68,7 +68,7 @@ for (const s of campaign.scenarios) {
     ))}
   </div>
 
-  <div class="middle-row">
+  <div class="stats-grid">
     <section class="encounter-list">
       <h2>Encounter Sets</h2>
       <div class="encounter-tags">
@@ -84,14 +84,8 @@ for (const s of campaign.scenarios) {
         })}
       </div>
     </section>
-    <section class="type-chart">
-      <TypePieChart unique={unique.typeCounts} total={total.typeCounts} client:visible />
-    </section>
+    <CampaignCharts unique={unique} total={total} client:visible />
   </div>
-
-  <section class="traits">
-    <TraitBarChart unique={unique.traitCounts} total={total.traitCounts} client:visible />
-  </section>
 </Base>
 
 <style>
@@ -143,23 +137,26 @@ for (const s of campaign.scenarios) {
     font-size: 0.85rem;
   }
 
-  .middle-row {
+  .stats-grid {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 2rem;
+    gap: 0.2rem;
     align-items: start;
-    margin-bottom: 2rem;
+  }
+
+  .stats-grid > :global(astro-island) {
+    display: contents;
   }
 
   @media (max-width: 700px) {
-    .middle-row {
+    .stats-grid {
       grid-template-columns: 1fr;
     }
   }
 
   .encounter-list h2 {
     font-size: 1.1rem;
-    margin-bottom: 0.75rem;
+    margin: 0 0 0.75rem;
   }
 
   .encounter-tags {

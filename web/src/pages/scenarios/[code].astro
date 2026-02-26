@@ -1,39 +1,71 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CardImage from "../../components/CardImage.astro";
-import { getAllCampaigns, getEncounterSet, getEncounterCards } from "../../data";
-import type { Scenario } from "../../data";
+import {
+  getAllCampaigns,
+  getAllStandalones,
+  getEncounterSet,
+  getEncounterCards,
+} from "../../data";
+import type { Scenario, Standalone } from "../../data";
 import { routes } from "../../routes";
+
+interface Props {
+  scenario: Scenario | null;
+  standalone: Standalone | null;
+}
 
 export function getStaticPaths() {
   const campaigns = getAllCampaigns();
-  const paths: { params: { code: string }; props: { scenario: Scenario } }[] = [];
+  const standalones = getAllStandalones();
+  const paths: { params: { code: string }; props: Props }[] = [];
   for (const c of campaigns) {
     for (const s of c.scenarios) {
-      paths.push({ params: { code: s.code }, props: { scenario: s } });
+      paths.push({
+        params: { code: s.code },
+        props: { scenario: s, standalone: null },
+      });
     }
+  }
+  for (const s of standalones) {
+    paths.push({
+      params: { code: s.code },
+      props: { scenario: null, standalone: s },
+    });
   }
   return paths;
 }
 
-interface Props {
-  scenario: Scenario;
-}
-
-const { scenario } = Astro.props;
+const { scenario, standalone } = Astro.props;
+const name = scenario?.name ?? standalone!.name;
+const encounterCodes = scenario?.encounterCodes ?? standalone!.encounterCodes;
 ---
 
-<Base title={scenario.name}>
-  <nav class="breadcrumb">
-    <a href={routes.campaign(scenario.campaignCode)}>{scenario.campaignName}</a>
-    <span>›</span>
-  </nav>
-  {scenario.header && <div class="header-label">{scenario.header}</div>}
-  <h1>{scenario.name}</h1>
+<Base title={name}>
+  {
+    scenario && (
+      <nav class="breadcrumb">
+        <a href={routes.campaign(scenario.campaignCode)}>
+          {scenario.campaignName}
+        </a>
+        <span>›</span>
+      </nav>
+    )
+  }
+  {
+    standalone && (
+      <nav class="breadcrumb">
+        <a href={routes.index}>Standalone Scenarios</a>
+        <span>›</span>
+      </nav>
+    )
+  }
+  {scenario?.header && <div class="header-label">{scenario.header}</div>}
+  <h1>{name}</h1>
 
   <div class="encounter-sections">
     {
-      scenario.encounterCodes.map((ec) => {
+      encounterCodes.map((ec) => {
         const es = getEncounterSet(ec);
         if (!es) return null;
         const cards = getEncounterCards(ec);
@@ -41,7 +73,11 @@ const { scenario } = Astro.props;
           <section class="encounter-section">
             <h2>
               <a href={routes.encounter(es.code)} class="encounter-heading">
-                <img src={routes.icon(es.code)} alt="" class="encounter-icon" />
+                <img
+                  src={routes.icon(es.code)}
+                  alt=""
+                  class="encounter-icon"
+                />
                 {es.name}
               </a>
             </h2>
@@ -108,7 +144,8 @@ const { scenario } = Astro.props;
   .encounter-icon {
     width: 22px;
     height: 22px;
-    filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
+    filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg)
+      brightness(95%) contrast(88%);
   }
 
   .card-grid {
