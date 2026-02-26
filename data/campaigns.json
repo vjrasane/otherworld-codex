@@ -1162,15 +1162,6 @@
           "spreading_corruption",
           "striking_fear"
         ]
-      },
-      {
-        "scenarioCode": "core",
-        "scenarioPrefix": "",
-        "scenarioName": "The Scarlet Keys",
-        "encounterCodes": [
-          "globetrotting",
-          "red_coterie"
-        ]
       }
     ]
   },
@@ -1354,16 +1345,6 @@
           "the_vale",
           "transfiguration"
         ]
-      },
-      {
-        "scenarioCode": "core",
-        "scenarioPrefix": "",
-        "scenarioName": "The Feast of Hemlock Vale",
-        "encounterCodes": [
-          "the_final_day",
-          "the_first_day",
-          "the_second_day"
-        ]
       }
     ]
   },
@@ -1527,16 +1508,6 @@
           "star_spawn",
           "tdc_flood",
           "the_doom_of_arkham_part_2"
-        ]
-      },
-      {
-        "scenarioCode": "core",
-        "scenarioPrefix": "",
-        "scenarioName": "The Dream-Quest",
-        "encounterCodes": [
-          "tasks",
-          "tdc_expedition",
-          "the_inescapable"
         ]
       }
     ]
@@ -2158,17 +2129,6 @@
           "zoz_the_colour_itself",
           "zoz_true_colours",
           "zoz_violent_invasion"
-        ]
-      },
-      {
-        "scenarioCode": "core",
-        "scenarioPrefix": "",
-        "scenarioName": "The Colour Out of Oz",
-        "encounterCodes": [
-          "zoz_gillikin",
-          "zoz_munchkin",
-          "zoz_quadling",
-          "zoz_winkie"
         ]
       }
     ]
