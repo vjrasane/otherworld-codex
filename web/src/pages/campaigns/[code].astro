@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { getAllCampaigns, getEncounterSet } from "../../data";
+import CampaignCharts from "../../components/CampaignCharts";
+import { getAllCampaigns, getEncounterSet, getCampaignCards } from "../../data";
 import type { Campaign } from "../../data";
 import { routes } from "../../routes";
 
@@ -16,6 +17,27 @@ interface Props {
 }
 
 const { campaign } = Astro.props;
+const cards = getCampaignCards(campaign);
+
+const typeMap = new Map<string, number>();
+for (const card of cards) {
+  typeMap.set(card.typeName, (typeMap.get(card.typeName) ?? 0) + 1);
+}
+const typeCounts = [...typeMap.entries()]
+  .map(([name, value]) => ({ name, value }))
+  .sort((a, b) => b.value - a.value);
+
+const traitMap = new Map<string, number>();
+for (const card of cards) {
+  if (!card.traits) continue;
+  for (const t of card.traits.split(". ").map((s) => s.replace(/\.$/, "").trim()).filter(Boolean)) {
+    traitMap.set(t, (traitMap.get(t) ?? 0) + 1);
+  }
+}
+const traitCounts = [...traitMap.entries()]
+  .map(([name, value]) => ({ name, value }))
+  .sort((a, b) => b.value - a.value)
+;
 ---
 
 <Base title={campaign.name}>
@@ -50,6 +72,10 @@ const { campaign } = Astro.props;
         </div>
       ))
     }
+  </div>
+
+  <div class="charts">
+    <CampaignCharts typeCounts={typeCounts} traitCounts={traitCounts} client:visible />
   </div>
 </Base>
 
@@ -134,5 +160,9 @@ const { campaign } = Astro.props;
 
   .encounter-tag:hover {
     color: var(--accent);
+  }
+
+  .charts {
+    margin-top: 2rem;
   }
 </style>

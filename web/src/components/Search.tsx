@@ -29,7 +29,7 @@ export default function Search() {
     if (entries.length === 0) return null;
     const ms = new MiniSearch<SearchEntry>({
       fields: ["name"],
-      storeFields: ["type", "code", "name", "imageUrl", "typeCode", "packName"],
+      storeFields: ["type", "code", "name", "subname", "imageUrl", "typeCode", "packName"],
       searchOptions: {
         prefix: true,
         fuzzy: 0.2,
@@ -251,6 +251,7 @@ export default function Search() {
                   }}
                 >
                   {r.name}
+                  {r.subname ? ` · ${r.subname}` : ""}
                 </div>
                 <div
                   style={{

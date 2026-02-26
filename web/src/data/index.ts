@@ -62,6 +62,7 @@ export interface SearchEntry {
   type: "card" | "encounter" | "scenario" | "campaign";
   code: string;
   name: string;
+  subname?: string;
   imageUrl?: string;
   typeCode?: string;
   packName?: string;
@@ -189,6 +190,7 @@ function buildSearchIndex(): SearchEntry[] {
       type: "card",
       code: card.code,
       name: card.name,
+      subname: card.subname,
       imageUrl: card.imageUrl,
       typeCode: card.typeCode,
       packName: card.packName,
@@ -258,6 +260,22 @@ export function getScenario(code: string): Scenario | undefined {
 
 export function getEncounterCards(code: string): Card[] {
   return cardsByEncounter.get(code) ?? [];
+}
+
+export function getCampaignCards(campaign: Campaign): Card[] {
+  const seen = new Set<string>();
+  const cards: Card[] = [];
+  for (const s of campaign.scenarios) {
+    for (const ec of s.encounterCodes) {
+      for (const card of cardsByEncounter.get(ec) ?? []) {
+        if (!seen.has(card.code)) {
+          seen.add(card.code);
+          cards.push(card);
+        }
+      }
+    }
+  }
+  return cards;
 }
 
 export function getSearchIndex(): SearchEntry[] {

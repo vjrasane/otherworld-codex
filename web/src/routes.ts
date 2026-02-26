@@ -6,6 +6,6 @@ export const routes = {
   encounter: (code: string) => `${base}/encounters/${code}`,
   card: (code: string) => `${base}/cards/${code}`,
   icon: (code: string) => `${base}/icons/${code}.svg`,
-  index: base,
+  index: `${base}/`,
   searchIndex: `${base}/search-index.json`,
 } as const;
