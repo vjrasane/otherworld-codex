@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/lib/pq"
 	db "github.com/ville/otherworld-codex/internal/db"
 )
 
@@ -84,6 +86,16 @@ func main() {
 	if databaseURL == "" {
 		log.Fatal("DATABASE_URL is required")
 	}
+
+	conn, err := sql.Open("postgres", databaseURL)
+	if err != nil {
+		log.Fatal("failed to connect for migrations:", err)
+	}
+	log.Println("running migrations")
+	if _, _, err := db.RunMigrations(conn); err != nil {
+		log.Fatal("failed to run migrations:", err)
+	}
+	conn.Close()
 
 	ctx := context.Background()
 	pool, err := pgxpool.New(ctx, databaseURL)

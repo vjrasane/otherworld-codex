@@ -1,0 +1,11 @@
+DROP VIEW IF EXISTS search_view;
+DROP VIEW IF EXISTS campaign_view;
+DROP VIEW IF EXISTS scenario_view;
+DROP VIEW IF EXISTS trait;
+DROP VIEW IF EXISTS encounter_set;
+DROP VIEW IF EXISTS pack;
+DROP TABLE IF EXISTS encounter_set_scenario;
+DROP TABLE IF EXISTS card;
+DROP TABLE IF EXISTS scenario;
+DROP TABLE IF EXISTS campaign;
+DROP EXTENSION IF EXISTS pg_trgm;

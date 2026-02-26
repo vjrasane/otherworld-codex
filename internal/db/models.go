@@ -9,18 +9,18 @@ import (
 )
 
 type Campaign struct {
-	CampaignCode   string
-	CampaignName   string
-	UpdatedAt      pgtype.Timestamp
-	FullTextSearch interface{}
+	CampaignCode string
+	CampaignName string
+	UpdatedAt    pgtype.Timestamp
 }
 
 type CampaignView struct {
-	CampaignCode   string
-	CampaignName   string
-	UpdatedAt      pgtype.Timestamp
-	FullTextSearch interface{}
-	ImageUrl       pgtype.Text
+	CampaignCode string
+	CampaignName string
+	UpdatedAt    pgtype.Timestamp
+	ImageUrl     pgtype.Text
+	TypeCode     pgtype.Text
+	PackName     pgtype.Text
 }
 
 type Card struct {
@@ -49,13 +49,14 @@ type Card struct {
 	UpdatedAt         pgtype.Timestamp
 	Quantity          pgtype.Int4
 	ImageUrl          pgtype.Text
-	FullTextSearch    interface{}
 }
 
 type EncounterSet struct {
 	EncounterCode pgtype.Text
 	EncounterName pgtype.Text
 	ImageUrl      pgtype.Text
+	TypeCode      string
+	PackName      string
 }
 
 type EncounterSetScenario struct {
@@ -68,6 +69,7 @@ type Pack struct {
 	PackCode string
 	PackName string
 	ImageUrl pgtype.Text
+	TypeCode string
 }
 
 type Scenario struct {
@@ -77,7 +79,6 @@ type Scenario struct {
 	CampaignCode   pgtype.Text
 	UpdatedAt      pgtype.Timestamp
 	Position       int32
-	FullTextSearch interface{}
 }
 
 type ScenarioView struct {
@@ -87,19 +88,23 @@ type ScenarioView struct {
 	CampaignCode   pgtype.Text
 	UpdatedAt      pgtype.Timestamp
 	Position       int32
-	FullTextSearch interface{}
 	ImageUrl       pgtype.Text
+	TypeCode       pgtype.Text
+	PackName       pgtype.Text
 }
 
 type SearchView struct {
-	Type           string
-	Code           string
-	Name           string
-	ImageUrl       pgtype.Text
-	FullTextSearch interface{}
+	Type     string
+	Code     string
+	Name     string
+	ImageUrl pgtype.Text
+	TypeCode string
+	PackName string
 }
 
 type Trait struct {
 	TraitName interface{}
 	ImageUrl  pgtype.Text
+	TypeCode  string
+	PackName  string
 }

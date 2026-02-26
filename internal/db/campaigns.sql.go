@@ -80,6 +80,41 @@ func (q *Queries) GetCampaignScenarios(ctx context.Context, campaignCode pgtype.
 	return items, nil
 }
 
+const listCampaigns = `-- name: ListCampaigns :many
+SELECT
+    cv.campaign_code,
+    cv.campaign_name,
+    cv.image_url
+FROM campaign_view cv
+ORDER BY cv.campaign_name
+`
+
+type ListCampaignsRow struct {
+	CampaignCode string
+	CampaignName string
+	ImageUrl     pgtype.Text
+}
+
+func (q *Queries) ListCampaigns(ctx context.Context) ([]ListCampaignsRow, error) {
+	rows, err := q.db.Query(ctx, listCampaigns)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListCampaignsRow
+	for rows.Next() {
+		var i ListCampaignsRow
+		if err := rows.Scan(&i.CampaignCode, &i.CampaignName, &i.ImageUrl); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const upsertCampaign = `-- name: UpsertCampaign :exec
 INSERT INTO campaign (campaign_code, campaign_name)
 VALUES ($1, $2)

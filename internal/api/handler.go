@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -9,16 +10,22 @@ import (
 )
 
 type Handler struct {
-	q *db.Queries
+	q     *db.Queries
+	cache string
 }
 
-func NewHandler(q *db.Queries) http.Handler {
-	h := &Handler{q: q}
+func NewHandler(q *db.Queries, cacheMaxAge int) http.Handler {
+	h := &Handler{
+		q:     q,
+		cache: fmt.Sprintf("public, max-age=%d", cacheMaxAge),
+	}
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/search", h.search)
+	mux.HandleFunc("GET /api/campaigns", h.listCampaigns)
 	mux.HandleFunc("GET /api/campaigns/{code}", h.getCampaign)
 	mux.HandleFunc("GET /api/scenarios/{code}", h.getScenario)
+	mux.HandleFunc("GET /api/encounters/{code}", h.getEncounterSet)
 	mux.HandleFunc("GET /api/cards/{code}", h.getCard)
 
 	return cors(mux)

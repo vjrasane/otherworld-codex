@@ -98,6 +98,6 @@ func (h *Handler) getCard(w http.ResponseWriter, r *http.Request) {
 		Scenarios:         scenarios,
 	}
 
-	w.Header().Set("Cache-Control", "public, max-age=3600")
+	w.Header().Set("Cache-Control", h.cache)
 	writeJSON(w, http.StatusOK, resp)
 }

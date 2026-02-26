@@ -21,6 +21,32 @@ type campaignScenario struct {
 	ImageURL       *string `json:"imageUrl"`
 }
 
+type campaignListItem struct {
+	CampaignCode string  `json:"campaignCode"`
+	CampaignName string  `json:"campaignName"`
+	ImageURL     *string `json:"imageUrl"`
+}
+
+func (h *Handler) listCampaigns(w http.ResponseWriter, r *http.Request) {
+	rows, err := h.q.ListCampaigns(r.Context())
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to list campaigns"})
+		return
+	}
+
+	items := make([]campaignListItem, len(rows))
+	for i, row := range rows {
+		items[i] = campaignListItem{
+			CampaignCode: row.CampaignCode,
+			CampaignName: row.CampaignName,
+			ImageURL:     textPtr(row.ImageUrl),
+		}
+	}
+
+	w.Header().Set("Cache-Control", h.cache)
+	writeJSON(w, http.StatusOK, items)
+}
+
 func (h *Handler) getCampaign(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
 
@@ -52,6 +78,6 @@ func (h *Handler) getCampaign(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("Cache-Control", "public, max-age=3600")
+	w.Header().Set("Cache-Control", h.cache)
 	writeJSON(w, http.StatusOK, resp)
 }

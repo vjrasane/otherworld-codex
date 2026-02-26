@@ -1,3 +1,11 @@
+-- name: ListCampaigns :many
+SELECT
+    cv.campaign_code,
+    cv.campaign_name,
+    cv.image_url
+FROM campaign_view cv
+ORDER BY cv.campaign_name;
+
 -- name: GetCampaignByCode :one
 SELECT
     ca.campaign_code,

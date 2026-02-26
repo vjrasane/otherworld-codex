@@ -30,6 +30,7 @@ type scenarioCard struct {
 	Traits        []string `json:"traits"`
 	Quantity      *int32   `json:"quantity"`
 	ImageURL      *string  `json:"imageUrl"`
+	IsHorizontal  bool     `json:"isHorizontal"`
 }
 
 func (h *Handler) getScenario(w http.ResponseWriter, r *http.Request) {
@@ -89,6 +90,6 @@ func (h *Handler) getScenario(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("Cache-Control", "public, max-age=3600")
+	w.Header().Set("Cache-Control", h.cache)
 	writeJSON(w, http.StatusOK, resp)
 }

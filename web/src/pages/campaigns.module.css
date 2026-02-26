@@ -1,0 +1,45 @@
+.page {
+  max-width: 48rem;
+  margin: 2rem auto;
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.campaign {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: var(--rounded);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.campaign:hover {
+  background: var(--bg-1);
+  text-decoration: none;
+}
+
+.thumb {
+  width: 4rem;
+  height: 5.5rem;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.name {
+  font-weight: 500;
+  font-size: var(--text-lg);
+}

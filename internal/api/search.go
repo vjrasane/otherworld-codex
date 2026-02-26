@@ -3,16 +3,17 @@ package api
 import (
 	"net/http"
 	"strconv"
-	"strings"
 
 	db "github.com/ville/otherworld-codex/internal/db"
 )
 
 type searchResult struct {
-	Type     string  `json:"type"`
-	Code     string  `json:"code"`
-	Name     string  `json:"name"`
-	ImageURL *string `json:"imageUrl"`
+	Type         string  `json:"type"`
+	Code         string  `json:"code"`
+	Name         string  `json:"name"`
+	ImageURL     *string `json:"imageUrl"`
+	CardTypeCode *string `json:"cardTypeCode,omitempty"`
+	PackName     *string `json:"packName,omitempty"`
 }
 
 func (h *Handler) search(w http.ResponseWriter, r *http.Request) {
@@ -29,11 +30,9 @@ func (h *Handler) search(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tsquery := strings.Join(strings.Fields(q), " & ")
-
 	rows, err := h.q.Search(r.Context(), db.SearchParams{
-		ToTsquery: tsquery,
-		Limit:     limit,
+		WordSimilarity: q,
+		Limit:          limit,
 	})
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "search failed"})
@@ -43,13 +42,15 @@ func (h *Handler) search(w http.ResponseWriter, r *http.Request) {
 	results := make([]searchResult, len(rows))
 	for i, row := range rows {
 		results[i] = searchResult{
-			Type:     row.Type,
-			Code:     row.Code,
-			Name:     row.Name,
-			ImageURL: textPtr(row.ImageUrl),
+			Type:         row.Type,
+			Code:         row.Code,
+			Name:         row.Name,
+			ImageURL:     textPtr(row.ImageUrl),
+			CardTypeCode: &row.TypeCode,
+			PackName:     &row.PackName,
 		}
 	}
 
-	w.Header().Set("Cache-Control", "public, max-age=60")
+	w.Header().Set("Cache-Control", h.cache)
 	writeJSON(w, http.StatusOK, results)
 }

@@ -7,8 +7,6 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const search = `-- name: Search :many
@@ -16,39 +14,36 @@ SELECT
     type,
     code,
     name,
-    image_url
+    image_url,
+    type_code,
+    pack_name
 FROM search_view
-WHERE full_text_search @@ to_tsquery('english', $1)
-ORDER BY ts_rank(full_text_search, to_tsquery('english', $1)) DESC
+WHERE word_similarity($1, name) > 0.3
+ORDER BY word_similarity($1, name) DESC, name ASC
 LIMIT $2
 `
 
 type SearchParams struct {
-	ToTsquery string
-	Limit     int32
+	WordSimilarity string
+	Limit          int32
 }
 
-type SearchRow struct {
-	Type     string
-	Code     string
-	Name     string
-	ImageUrl pgtype.Text
-}
-
-func (q *Queries) Search(ctx context.Context, arg SearchParams) ([]SearchRow, error) {
-	rows, err := q.db.Query(ctx, search, arg.ToTsquery, arg.Limit)
+func (q *Queries) Search(ctx context.Context, arg SearchParams) ([]SearchView, error) {
+	rows, err := q.db.Query(ctx, search, arg.WordSimilarity, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []SearchRow
+	var items []SearchView
 	for rows.Next() {
-		var i SearchRow
+		var i SearchView
 		if err := rows.Scan(
 			&i.Type,
 			&i.Code,
 			&i.Name,
 			&i.ImageUrl,
+			&i.TypeCode,
+			&i.PackName,
 		); err != nil {
 			return nil, err
 		}

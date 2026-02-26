@@ -16,7 +16,6 @@ in
 
   packages = with pkgs; [
     sqlc
-    dbmate
     just
     postgresql
     watchexec
@@ -37,6 +36,8 @@ in
     POSTGRES_PORT = PGPORT;
 
     DATABASE_URL = "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}?sslmode=disable";
+
+    ENV = "development";
   };
 
   processes.postgres = {
@@ -48,14 +49,8 @@ in
     };
   };
 
-  tasks."db:migrate" = {
-    exec = "just db-migrate";
-    before = [ "devenv:processes:server" ];
-  };
-
   tasks."fetch:cards" = {
     exec = "test -f data/cards.json || just fetch-cards";
-    after = [ "db:migrate" ];
     before = [ "devenv:processes:server" ];
   };
 
@@ -68,5 +63,10 @@ in
   processes.server = {
     exec = "watchexec -r -e go -d 500 --stop-signal SIGINT -- go run ./cmd/server";
     process-compose.depends_on.postgres.condition = "process_healthy";
+  };
+
+  processes.web = {
+    exec = "npm --prefix web run dev";
+    process-compose.depends_on.server.condition = "process_started";
   };
 }
