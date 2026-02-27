@@ -1,2 +1,2 @@
 export const SITE_TITLE = "Arkham Study";
-export const SITE = "arkham.study";
+export const SITE = "https://arkham.study";
