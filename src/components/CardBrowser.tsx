@@ -12,6 +12,7 @@ type Option = { label: string; value: string };
 
 interface ScenarioOption extends Option {
   campaignCode: string;
+  encounterCodes: string[];
 }
 
 interface FilterOptions {
@@ -204,6 +205,79 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     return filterOptions.scenarios.filter((s) => codes.has(s.campaignCode));
   }, [filterOptions.scenarios, selectedCampaigns]);
 
+  const validEncounterCodes = useMemo(() => {
+    const active =
+      selectedScenarios.length > 0
+        ? filterOptions.scenarios.filter((s) =>
+            selectedScenarios.some((sel) => sel.value === s.value),
+          )
+        : selectedCampaigns.length > 0
+          ? scenarioOptions
+          : null;
+    if (!active) return null;
+    const codes = new Set<string>();
+    for (const s of active) s.encounterCodes.forEach((ec) => codes.add(ec));
+    return codes;
+  }, [filterOptions.scenarios, scenarioOptions, selectedCampaigns, selectedScenarios]);
+
+  const encounterOptions = useMemo(() => {
+    if (!validEncounterCodes) return filterOptions.encounters;
+    return filterOptions.encounters.filter((e) =>
+      validEncounterCodes.has(e.value),
+    );
+  }, [filterOptions.encounters, validEncounterCodes]);
+
+  const validTraits = useMemo(() => {
+    const cVals = new Set(selectedCampaigns.map((c) => c.value));
+    const sVals = new Set(selectedScenarios.map((s) => s.value));
+    const eVals = new Set(selectedEncounters.map((e) => e.value));
+    const noFilter = cVals.size === 0 && sVals.size === 0 && eVals.size === 0;
+    if (noFilter) return null;
+    const traits = new Set<string>();
+    for (const card of cards) {
+      const meta = cardMeta[card.code];
+      if (!meta) continue;
+      if (cVals.size > 0 && !meta.campaignCodes.some((c) => cVals.has(c)))
+        continue;
+      if (sVals.size > 0 && !meta.scenarioCodes.some((s) => sVals.has(s)))
+        continue;
+      if (eVals.size > 0 && !eVals.has(meta.encounterCode)) continue;
+      for (const t of meta.traits) traits.add(t);
+    }
+    return traits;
+  }, [cards, cardMeta, selectedCampaigns, selectedScenarios, selectedEncounters]);
+
+  const traitOptions = useMemo(() => {
+    if (!validTraits) return filterOptions.traits;
+    return filterOptions.traits.filter((t) => validTraits.has(t.value));
+  }, [filterOptions.traits, validTraits]);
+
+  function pruneTraits(
+    traits: Option[],
+    campaignVals: Set<string>,
+    scenarioVals: Set<string>,
+    encounterVals: Set<string>,
+  ): Option[] {
+    const noFilter =
+      campaignVals.size === 0 &&
+      scenarioVals.size === 0 &&
+      encounterVals.size === 0;
+    if (noFilter) return traits;
+    const available = new Set<string>();
+    for (const card of cards) {
+      const meta = cardMeta[card.code];
+      if (!meta) continue;
+      if (campaignVals.size > 0 && !meta.campaignCodes.some((c) => campaignVals.has(c)))
+        continue;
+      if (scenarioVals.size > 0 && !meta.scenarioCodes.some((s) => scenarioVals.has(s)))
+        continue;
+      if (encounterVals.size > 0 && !encounterVals.has(meta.encounterCode))
+        continue;
+      for (const t of meta.traits) available.add(t);
+    }
+    return traits.filter((t) => available.has(t.value));
+  }
+
   const handleCampaignChange = (v: MultiValue<Option>) => {
     const next = toOptions(v);
     let scenarios = filters.scenarios;
@@ -214,7 +288,61 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
         return opt && codes.has(opt.campaignCode);
       });
     }
-    setFilters({ ...filters, campaigns: next, scenarios });
+    const activeScenarios =
+      scenarios.length > 0
+        ? filterOptions.scenarios.filter((s) =>
+            scenarios.some((sel) => sel.value === s.value),
+          )
+        : next.length > 0
+          ? filterOptions.scenarios.filter((s) => {
+              const codes = new Set(next.map((c) => c.value));
+              return codes.has(s.campaignCode);
+            })
+          : null;
+    let encounters = filters.encounters;
+    if (activeScenarios) {
+      const ecCodes = new Set<string>();
+      for (const s of activeScenarios)
+        s.encounterCodes.forEach((ec) => ecCodes.add(ec));
+      encounters = encounters.filter((e) => ecCodes.has(e.value));
+    }
+    const cVals = new Set(next.map((c) => c.value));
+    const sVals = new Set(scenarios.map((s) => s.value));
+    const eVals = new Set(encounters.map((e) => e.value));
+    const traits = pruneTraits(filters.traits, cVals, sVals, eVals);
+    setFilters({ ...filters, campaigns: next, scenarios, encounters, traits });
+  };
+
+  const handleScenarioChange = (v: MultiValue<Option>) => {
+    const next = toOptions(v);
+    const active =
+      next.length > 0
+        ? filterOptions.scenarios.filter((s) =>
+            next.some((sel) => sel.value === s.value),
+          )
+        : selectedCampaigns.length > 0
+          ? scenarioOptions
+          : null;
+    let encounters = filters.encounters;
+    if (active) {
+      const ecCodes = new Set<string>();
+      for (const s of active) s.encounterCodes.forEach((ec) => ecCodes.add(ec));
+      encounters = encounters.filter((e) => ecCodes.has(e.value));
+    }
+    const cVals = new Set(selectedCampaigns.map((c) => c.value));
+    const sVals = new Set(next.map((s) => s.value));
+    const eVals = new Set(encounters.map((e) => e.value));
+    const traits = pruneTraits(filters.traits, cVals, sVals, eVals);
+    setFilters({ ...filters, scenarios: next, encounters, traits });
+  };
+
+  const handleEncounterChange = (v: MultiValue<Option>) => {
+    const next = toOptions(v);
+    const cVals = new Set(selectedCampaigns.map((c) => c.value));
+    const sVals = new Set(selectedScenarios.map((s) => s.value));
+    const eVals = new Set(next.map((e) => e.value));
+    const traits = pruneTraits(filters.traits, cVals, sVals, eVals);
+    setFilters({ ...filters, encounters: next, traits });
   };
 
   const filteredCards = useMemo(() => {
@@ -274,7 +402,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
             isMulti
             options={scenarioOptions}
             value={selectedScenarios}
-            onChange={(v) => setFilters({ ...filters, scenarios: toOptions(v) })}
+            onChange={handleScenarioChange}
             placeholder="All scenarios"
             styles={selectStyles}
             components={selectComponents}
@@ -286,11 +414,9 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
           <label style={s.label}>Encounter Set</label>
           <Select<Option, true>
             isMulti
-            options={filterOptions.encounters}
+            options={encounterOptions}
             value={selectedEncounters}
-            onChange={(v) =>
-              setFilters({ ...filters, encounters: toOptions(v) })
-            }
+            onChange={handleEncounterChange}
             placeholder="All encounter sets"
             styles={selectStyles}
             components={selectComponents}
@@ -302,7 +428,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
           <label style={s.label}>Trait</label>
           <Select<Option, true>
             isMulti
-            options={filterOptions.traits}
+            options={traitOptions}
             value={selectedTraits}
             onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
             placeholder="All traits"

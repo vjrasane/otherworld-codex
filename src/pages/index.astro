@@ -75,12 +75,14 @@ const scenarioOptions = [
       label: s.name,
       value: s.code,
       campaignCode: c.code,
+      encounterCodes: s.encounterCodes,
     })),
   ),
   ...standalones.map((s) => ({
     label: s.name,
     value: s.code,
     campaignCode: "",
+    encounterCodes: s.encounterCodes,
   })),
 ];
 
