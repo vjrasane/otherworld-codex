@@ -28,6 +28,14 @@ export interface Card {
   skillIntellect?: number;
   skillCombat?: number;
   skillAgility?: number;
+  enemyFight?: number;
+  enemyEvade?: number;
+  enemyDamage?: number;
+  enemyHorror?: number;
+  shroud?: number;
+  clues?: number;
+  cluesFixed?: boolean;
+  healthPerInvestigator?: boolean;
   isUnique: boolean;
   position: number;
   slot?: string;
@@ -72,6 +80,14 @@ function parseBaseCard(raw: any): Card {
     skillIntellect: raw.skill_intellect ?? undefined,
     skillCombat: raw.skill_combat ?? undefined,
     skillAgility: raw.skill_agility ?? undefined,
+    enemyFight: raw.enemy_fight ?? undefined,
+    enemyEvade: raw.enemy_evade ?? undefined,
+    enemyDamage: raw.enemy_damage ?? undefined,
+    enemyHorror: raw.enemy_horror ?? undefined,
+    shroud: raw.shroud ?? undefined,
+    clues: raw.clues ?? undefined,
+    cluesFixed: raw.clues_fixed ?? undefined,
+    healthPerInvestigator: raw.health_per_investigator ?? undefined,
     isUnique: raw.is_unique,
     position: raw.position,
     slot: raw.real_slot || undefined,

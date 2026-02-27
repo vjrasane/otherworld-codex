@@ -24,6 +24,7 @@ interface FilterOptions {
   scenarios: ScenarioOption[];
   encounters: Option[];
   traits: Option[];
+  types: Option[];
 }
 
 interface CardMeta {
@@ -38,6 +39,7 @@ interface Filters {
   scenarios: Option[];
   encounters: Option[];
   traits: Option[];
+  types: Option[];
 }
 
 interface Props {
@@ -51,6 +53,7 @@ const PARAM_KEYS = {
   scenarios: "scenario",
   encounters: "encounter",
   traits: "trait",
+  types: "type",
 } as const;
 
 function parseURL(filterOptions: FilterOptions): Filters {
@@ -66,6 +69,7 @@ function parseURL(filterOptions: FilterOptions): Filters {
     scenarios: resolve(PARAM_KEYS.scenarios, filterOptions.scenarios),
     encounters: resolve(PARAM_KEYS.encounters, filterOptions.encounters),
     traits: resolve(PARAM_KEYS.traits, filterOptions.traits),
+    types: resolve(PARAM_KEYS.types, filterOptions.types),
   };
 }
 
@@ -204,6 +208,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     scenarios: selectedScenarios,
     encounters: selectedEncounters,
     traits: selectedTraits,
+    types: selectedTypes,
   } = filters;
 
   const scenarioOptions = useMemo(() => {
@@ -258,6 +263,24 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     if (!validTraits) return filterOptions.traits;
     return filterOptions.traits.filter((t) => validTraits.has(t.value));
   }, [filterOptions.traits, validTraits]);
+
+  const typeOptions = useMemo(() => {
+    const cVals = new Set(selectedCampaigns.map((c) => c.value));
+    const sVals = new Set(selectedScenarios.map((s) => s.value));
+    const eVals = new Set(selectedEncounters.map((e) => e.value));
+    const noFilter = cVals.size === 0 && sVals.size === 0 && eVals.size === 0;
+    if (noFilter) return filterOptions.types;
+    const available = new Set<string>();
+    for (const card of cards) {
+      const meta = cardMeta[card.code];
+      if (!meta) continue;
+      if (cVals.size > 0 && !meta.campaignCodes.some((c) => cVals.has(c))) continue;
+      if (sVals.size > 0 && !meta.scenarioCodes.some((s) => sVals.has(s))) continue;
+      if (eVals.size > 0 && !eVals.has(meta.encounterCode)) continue;
+      available.add(card.typeCode);
+    }
+    return filterOptions.types.filter((t) => available.has(t.value));
+  }, [cards, cardMeta, filterOptions.types, selectedCampaigns, selectedScenarios, selectedEncounters]);
 
   function pruneTraits(
     traits: Option[],
@@ -357,8 +380,10 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     const sVals = new Set(selectedScenarios.map((s) => s.value));
     const eVals = new Set(selectedEncounters.map((e) => e.value));
     const tVals = new Set(selectedTraits.map((t) => t.value));
+    const tyVals = new Set(selectedTypes.map((t) => t.value));
 
     return cards.filter((card) => {
+      if (!card.encounterCode) return false;
       const meta = cardMeta[card.code];
       if (!meta) return false;
       if (cVals.size > 0 && !meta.campaignCodes.some((c) => cVals.has(c)))
@@ -368,6 +393,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
       if (eVals.size > 0 && !eVals.has(meta.encounterCode)) return false;
       if (tVals.size > 0 && !meta.traits.some((t) => tVals.has(t)))
         return false;
+      if (tyVals.size > 0 && !tyVals.has(card.typeCode)) return false;
       return true;
     });
   }, [
@@ -377,6 +403,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     selectedScenarios,
     selectedEncounters,
     selectedTraits,
+    selectedTypes,
   ]);
 
   const filterKey = [
@@ -384,6 +411,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     selectedScenarios.map((s) => s.value).join(","),
     selectedEncounters.map((e) => e.value).join(","),
     selectedTraits.map((t) => t.value).join(","),
+    selectedTypes.map((t) => t.value).join(","),
   ].join("|");
 
   return (
@@ -440,6 +468,20 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
               value={selectedTraits}
               onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
               placeholder="All traits"
+              styles={selectStyles}
+              components={selectComponents}
+              closeMenuOnSelect={false}
+              hideSelectedOptions={false}
+            />
+          </div>
+          <div>
+            <label style={s.label}>Type</label>
+            <Select<Option, true>
+              isMulti
+              options={typeOptions}
+              value={selectedTypes}
+              onChange={(v) => setFilters({ ...filters, types: toOptions(v) })}
+              placeholder="All types"
               styles={selectStyles}
               components={selectComponents}
               closeMenuOnSelect={false}

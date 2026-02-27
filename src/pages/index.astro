@@ -114,11 +114,22 @@ const traitOptions = [...traitSet]
   .sort()
   .map((t) => ({ label: t, value: t }));
 
+const typeMap = new Map<string, string>();
+for (const card of encounterCards) {
+  if (!typeMap.has(card.typeCode)) {
+    typeMap.set(card.typeCode, card.typeName);
+  }
+}
+const typeOptions = [...typeMap.entries()]
+  .map(([code, name]) => ({ label: name, value: code }))
+  .sort((a, b) => a.label.localeCompare(b.label));
+
 const filterOptions = {
   campaigns: campaignOptions,
   scenarios: scenarioOptions,
   encounters: encounterOptions,
   traits: traitOptions,
+  types: typeOptions,
 };
 ---
 
