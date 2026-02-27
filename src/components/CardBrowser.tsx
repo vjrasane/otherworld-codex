@@ -6,11 +6,51 @@ import Select, {
 } from "react-select";
 import { CardGrid } from "./CardGrid";
 import CardStats from "./CardStats";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Card } from "@/src/data/card";
 import { css } from "../styles";
 
 type ViewMode = "cards" | "stats";
+type StatFilter = { stat: string; value: string };
+
+function parseStatParam(param: string | null): StatFilter | null {
+  if (!param) return null;
+  const dot = param.indexOf(".");
+  if (dot < 1) return null;
+  return { stat: param.slice(0, dot), value: param.slice(dot + 1) };
+}
+
+function isVariable(val: number | undefined): boolean {
+  return val == null || val < 0;
+}
+
+const STAT_GETTERS: Record<string, (c: Card) => number | undefined> = {
+  Health: (c) => c.health,
+  Fight: (c) => c.enemyFight,
+  Evade: (c) => c.enemyEvade,
+  Damage: (c) => c.enemyDamage,
+  Horror: (c) => c.enemyHorror,
+  Shroud: (c) => c.shroud,
+  Clues: (c) => c.clues,
+  Clues_pp: (c) => c.clues,
+};
+
+const STAT_TYPE_CODE: Record<string, string> = {
+  Health: "enemy",
+  Fight: "enemy",
+  Evade: "enemy",
+  Damage: "enemy",
+  Horror: "enemy",
+  Shroud: "location",
+  Clues: "location",
+  Clues_pp: "location",
+};
+
+function statFilterLabel(sf: StatFilter): string {
+  const stat = sf.stat === "Clues_pp" ? "Clues/inv" : sf.stat;
+  const value = sf.value === "?" ? "variable" : sf.value;
+  return `${stat} = ${value}`;
+}
 
 type Option = { label: string; value: string };
 
@@ -73,7 +113,7 @@ function parseURL(filterOptions: FilterOptions): Filters {
   };
 }
 
-function toURL(filters: Filters): string {
+function toURL(filters: Filters, viewMode: ViewMode, statFilter: StatFilter | null): string {
   const params = new URLSearchParams();
   for (const [field, key] of Object.entries(PARAM_KEYS)) {
     const selected = filters[field as keyof Filters];
@@ -81,6 +121,8 @@ function toURL(filters: Filters): string {
       params.set(key, selected.map((o) => o.value).join(","));
     }
   }
+  if (viewMode === "stats") params.set("view", "stats");
+  if (statFilter) params.set("stat", `${statFilter.stat}.${statFilter.value}`);
   const str = params.toString();
   return str ? `?${str}` : window.location.pathname;
 }
@@ -190,15 +232,59 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
   const [filters, setFiltersState] = useState<Filters>(() =>
     parseURL(filterOptions),
   );
-  const [viewMode, setViewMode] = useState<ViewMode>("cards");
+  const [viewMode, setViewModeState] = useState<ViewMode>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("view") === "stats" ? "stats" : "cards";
+  });
+  const [statFilter, setStatFilterState] = useState<StatFilter | null>(() =>
+    parseStatParam(new URLSearchParams(window.location.search).get("stat")),
+  );
+
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
+  const viewModeRef = useRef(viewMode);
+  viewModeRef.current = viewMode;
+  const statFilterRef = useRef(statFilter);
+  statFilterRef.current = statFilter;
+
+  const pushURL = useCallback(() => {
+    history.pushState(null, "", toURL(filtersRef.current, viewModeRef.current, statFilterRef.current));
+  }, []);
 
   const setFilters = useCallback((next: Filters) => {
     setFiltersState(next);
-    history.pushState(null, "", toURL(next));
-  }, []);
+    filtersRef.current = next;
+    pushURL();
+  }, [pushURL]);
+
+  const setViewMode = useCallback((next: ViewMode) => {
+    setViewModeState(next);
+    viewModeRef.current = next;
+    pushURL();
+  }, [pushURL]);
+
+  const handleStatClick = useCallback((_category: string, stat: string, value: string) => {
+    const sf: StatFilter = { stat, value };
+    setStatFilterState(sf);
+    statFilterRef.current = sf;
+    setViewModeState("cards");
+    viewModeRef.current = "cards";
+    pushURL();
+  }, [pushURL]);
+
+  const clearStatFilter = useCallback(() => {
+    setStatFilterState(null);
+    statFilterRef.current = null;
+    pushURL();
+  }, [pushURL]);
 
   useEffect(() => {
-    const onPopState = () => setFiltersState(parseURL(filterOptions));
+    const onPopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setFiltersState(parseURL(filterOptions));
+      setViewModeState(params.get("view") === "stats" ? "stats" : "cards");
+      setStatFilterState(parseStatParam(params.get("stat")));
+    };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, [filterOptions]);
@@ -382,7 +468,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     const tVals = new Set(selectedTraits.map((t) => t.value));
     const tyVals = new Set(selectedTypes.map((t) => t.value));
 
-    return cards.filter((card) => {
+    let result = cards.filter((card) => {
       if (!card.encounterCode) return false;
       const meta = cardMeta[card.code];
       if (!meta) return false;
@@ -396,6 +482,23 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
       if (tyVals.size > 0 && !tyVals.has(card.typeCode)) return false;
       return true;
     });
+
+    if (statFilter) {
+      const typeCode = STAT_TYPE_CODE[statFilter.stat];
+      const getter = STAT_GETTERS[statFilter.stat];
+      if (typeCode && getter) {
+        result = result.filter((card) => {
+          if (card.typeCode !== typeCode) return false;
+          if (statFilter.value === "?") return isVariable(getter(card));
+          const numVal = parseInt(statFilter.value);
+          if (statFilter.stat === "Clues_pp") return !card.cluesFixed && getter(card) === numVal;
+          if (statFilter.stat === "Clues") return card.cluesFixed === true && getter(card) === numVal;
+          return !isVariable(getter(card)) && getter(card) === numVal;
+        });
+      }
+    }
+
+    return result;
   }, [
     cards,
     cardMeta,
@@ -404,6 +507,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     selectedEncounters,
     selectedTraits,
     selectedTypes,
+    statFilter,
   ]);
 
   const filterKey = [
@@ -412,6 +516,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     selectedEncounters.map((e) => e.value).join(","),
     selectedTraits.map((t) => t.value).join(","),
     selectedTypes.map((t) => t.value).join(","),
+    statFilter ? `${statFilter.stat}.${statFilter.value}` : "",
   ].join("|");
 
   return (
@@ -494,9 +599,16 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
           <button style={css(s.viewButtonStyle, viewMode === "stats" && s.viewButtonActive)} onClick={() => setViewMode("stats")}>Stats</button>
         </div>
       </div>
-      <div style={s.count}>{filteredCards.length} cards</div>
+      <div style={s.countRow}>
+        {statFilter && (
+          <button onClick={clearStatFilter} style={s.statChip}>
+            {statFilterLabel(statFilter)} ×
+          </button>
+        )}
+        <div style={s.count}>{filteredCards.length} cards</div>
+      </div>
       {viewMode === "stats" ? (
-        <CardStats cards={filteredCards} />
+        <CardStats cards={filteredCards} onCellClick={handleStatClick} />
       ) : (
         <CardGrid key={filterKey} cards={filteredCards} />
       )}
@@ -523,10 +635,28 @@ const s: Record<string, React.CSSProperties> = {
     color: "var(--text-muted)",
     marginBottom: "0.25rem",
   },
+  countRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    marginBottom: "0.75rem",
+  },
   count: {
     fontSize: "0.85rem",
     color: "var(--text-muted)",
-    marginBottom: "0.75rem",
+  },
+  statChip: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.35rem",
+    padding: "0.2rem 0.5rem",
+    background: "var(--bg-3)",
+    border: "1px solid var(--border)",
+    borderRadius: 4,
+    fontSize: "0.8rem",
+    color: "var(--text-secondary)",
+    cursor: "pointer",
+    font: "inherit",
   },
 
   viewToggleStyle: {

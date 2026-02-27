@@ -254,7 +254,7 @@ function textColorForCell(rgb: string, opacity: number): string {
   return lum > 0.18 ? "var(--bg-0)" : "var(--text-primary)";
 }
 
-function HeatmapChart({ title, rows, keys }: { title: string; rows: StatRow[]; keys: string[] }) {
+function HeatmapChart({ title, rows, keys, category, onCellClick }: { title: string; rows: StatRow[]; keys: string[]; category?: string; onCellClick?: (category: string, stat: string, value: string) => void }) {
   if (rows.length === 0) return null;
   return (
     <div>
@@ -276,6 +276,9 @@ function HeatmapChart({ title, rows, keys }: { title: string; rows: StatRow[]; k
               return (
                 <div
                   key={k}
+                  onClick={val > 0 && onCellClick && category ? () => onCellClick(category, row.name, k) : undefined}
+                  onMouseEnter={val > 0 && onCellClick && category ? (e) => { e.currentTarget.style.outline = "2px solid var(--accent)"; } : undefined}
+                  onMouseLeave={val > 0 && onCellClick && category ? (e) => { e.currentTarget.style.outline = ""; } : undefined}
                   style={{
                     background: `rgba(${row.color}, ${opacity})`,
                     borderRadius: 3,
@@ -284,6 +287,7 @@ function HeatmapChart({ title, rows, keys }: { title: string; rows: StatRow[]; k
                     padding: "0.3rem 0.15rem",
                     color: val > 0 ? textColorForCell(row.color as string, opacity) : "transparent",
                     minWidth: 28,
+                    cursor: val > 0 && onCellClick ? "pointer" : undefined,
                   }}
                 >
                   {val}
@@ -297,21 +301,21 @@ function HeatmapChart({ title, rows, keys }: { title: string; rows: StatRow[]; k
   );
 }
 
-function EnemyStatsChart({ cards, mode }: { cards: Card[]; mode: CountMode }) {
+function EnemyStatsChart({ cards, mode, onCellClick }: { cards: Card[]; mode: CountMode; onCellClick?: (category: string, stat: string, value: string) => void }) {
   const hasEnemies = useMemo(() => cards.some((c) => c.typeCode === "enemy"), [cards]);
   const { rows, keys } = useMemo(() => buildEnemyData(cards, mode), [cards, mode]);
   if (!hasEnemies) return null;
-  return <HeatmapChart title="Enemy Stats" rows={rows} keys={keys} />;
+  return <HeatmapChart title="Enemy Stats" rows={rows} keys={keys} category="enemy" onCellClick={onCellClick} />;
 }
 
-function LocationStatsChart({ cards, mode }: { cards: Card[]; mode: CountMode }) {
+function LocationStatsChart({ cards, mode, onCellClick }: { cards: Card[]; mode: CountMode; onCellClick?: (category: string, stat: string, value: string) => void }) {
   const hasLocations = useMemo(() => cards.some((c) => c.typeCode === "location"), [cards]);
   const { rows, keys } = useMemo(() => buildLocationData(cards, mode), [cards, mode]);
   if (!hasLocations) return null;
-  return <HeatmapChart title="Location Stats" rows={rows} keys={keys} />;
+  return <HeatmapChart title="Location Stats" rows={rows} keys={keys} category="location" onCellClick={onCellClick} />;
 }
 
-export default function CardStats({ cards }: { cards: Card[] }) {
+export default function CardStats({ cards, onCellClick }: { cards: Card[]; onCellClick?: (category: string, stat: string, value: string) => void }) {
   const [mode, setMode] = useState<CountMode>("total");
 
   const typeCounts = useMemo(() => countBy(cards, (c) => c.typeName, mode), [cards, mode]);
@@ -327,8 +331,8 @@ export default function CardStats({ cards }: { cards: Card[] }) {
         </div>
       </div>
       <PieSection title="Card Types" data={typeCounts} />
-      <EnemyStatsChart cards={cards} mode={mode} />
-      <LocationStatsChart cards={cards} mode={mode} />
+      <EnemyStatsChart cards={cards} mode={mode} onCellClick={onCellClick} />
+      <LocationStatsChart cards={cards} mode={mode} onCellClick={onCellClick} />
       <BarSection title="Traits" data={traitCounts} />
       <BarSection title="Encounter Sets" data={encounterCounts} />
     </div>
