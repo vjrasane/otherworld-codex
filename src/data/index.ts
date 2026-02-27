@@ -1,41 +1,11 @@
-import cardsJson from "../../data/cards.json";
 import campaignsJson from "../../data/campaigns.json";
 import standalonesJson from "../../data/standalones.json";
-
-export interface Card {
-  code: string;
-  name: string;
-  typeCode: string;
-  typeName: string;
-  factionCode: string;
-  factionName: string;
-  packCode: string;
-  packName: string;
-  encounterCode?: string;
-  encounterName?: string;
-  traits?: string;
-  quantity: number;
-  imageUrl?: string;
-  backImageUrl?: string;
-  text?: string;
-  flavor?: string;
-  subname?: string;
-  xp?: number;
-  cost?: number;
-  health?: number;
-  sanity?: number;
-  skillWillpower?: number;
-  skillIntellect?: number;
-  skillCombat?: number;
-  skillAgility?: number;
-  isUnique: boolean;
-  position: number;
-  slot?: string;
-}
+import { allCards, cardsByCode, cardsByEncounter, type Card } from "./card";
 
 export interface EncounterSet {
   code: string;
   name: string;
+  packName: string;
   imageUrl?: string;
   cards: Card[];
 }
@@ -77,63 +47,11 @@ export interface SearchEntry {
   imageUrl?: string;
   typeCode?: string;
   packName?: string;
+  campaignName?: string;
 }
 
-const IMAGE_BASE = "https://arkhamdb.com";
-
-function cardImageUrl(imagesrc?: string): string | undefined {
-  if (!imagesrc) return undefined;
-  return IMAGE_BASE + imagesrc;
-}
-
-function parseCard(raw: any): Card {
-  return {
-    code: raw.code,
-    name: raw.name,
-    typeCode: raw.type_code,
-    typeName: raw.type_name,
-    factionCode: raw.faction_code,
-    factionName: raw.faction_name,
-    packCode: raw.pack_code,
-    packName: raw.pack_name,
-    encounterCode: raw.encounter_code ?? undefined,
-    encounterName: raw.encounter_name ?? undefined,
-    traits: raw.traits ?? undefined,
-    quantity: raw.quantity,
-    imageUrl: cardImageUrl(raw.imagesrc),
-    backImageUrl: cardImageUrl(raw.backimagesrc ?? undefined),
-    text: raw.text ?? undefined,
-    flavor: raw.flavor ?? undefined,
-    subname: raw.subname ?? undefined,
-    cost: (raw as Record<string, unknown>).cost as number | undefined,
-    health: raw.health ?? undefined,
-    sanity: raw.sanity ?? undefined,
-    xp: raw.xp ?? undefined,
-    skillWillpower: raw.skill_willpower ?? undefined,
-    skillIntellect: raw.skill_intellect ?? undefined,
-    skillCombat: raw.skill_combat ?? undefined,
-    skillAgility: raw.skill_agility ?? undefined,
-    isUnique: raw.is_unique,
-    position: raw.position,
-    slot: raw.real_slot || undefined,
-  };
-}
-
-const allCards: Card[] = (cardsJson as any[]).map(parseCard);
-
-const cardsByCode = new Map<string, Card>();
-for (const card of allCards) {
-  cardsByCode.set(card.code, card);
-}
-
-const cardsByEncounter = new Map<string, Card[]>();
-for (const card of allCards) {
-  if (card.encounterCode) {
-    const list = cardsByEncounter.get(card.encounterCode) ?? [];
-    list.push(card);
-    cardsByEncounter.set(card.encounterCode, list);
-  }
-}
+type RawCampaign = (typeof campaignsJson)[number];
+type RawScenario = RawCampaign["scenarios"][number];
 
 const encounterSets = new Map<string, EncounterSet>();
 for (const card of allCards) {
@@ -144,14 +62,11 @@ for (const card of allCards) {
       code: card.encounterCode,
       name: card.encounterName!,
       imageUrl: imageCard?.imageUrl,
+      packName: card.packName,
       cards,
     });
   }
 }
-
-type RawCampaign = (typeof campaignsJson)[number];
-type RawScenario = RawCampaign["scenarios"][number];
-
 const campaigns: Campaign[] = campaignsJson.map((raw: RawCampaign) => {
   const scenarios: Scenario[] = raw.scenarios.map((s: RawScenario) => {
     const encounterCards = s.encounterCodes.flatMap(
@@ -237,6 +152,7 @@ function buildSearchIndex(): SearchEntry[] {
       code: es.code,
       name: es.name,
       imageUrl: es.imageUrl,
+      packName: es.packName,
     });
   }
 
@@ -247,6 +163,7 @@ function buildSearchIndex(): SearchEntry[] {
       code: s.code,
       name: s.name,
       imageUrl: s.imageUrl,
+      campaignName: s.campaignName,
     });
   }
 

@@ -1,17 +1,36 @@
-import { type Card } from "@/src/data";
-import { routes } from "@/src/routes";
+import { type Card } from "@/src/data/card";
+import { getCardRoute, routes } from "@/src/routes";
 import { CardImage } from "./CardImage";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export const CardGrid = ({ cards }: { cards: Card[] }) => {
+  const [count, setCount] = useState(50);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setCount((c) => c + 50);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const renderedCards = useMemo(() => cards.slice(0, count), [cards, count])
+
   return (
-    <div style={s.grid}>
-      {cards.map((card) => (
-        <a key={card.code} href={routes.card(card.code)} style={s.cardLink}>
-          <CardImage card={card} />
-          <div style={s.cardName}>{card.name}</div>
-        </a>
-      ))}
-    </div>
+    <>
+      <div style={s.grid}>
+        {renderedCards.map((card) => (
+          <a key={card.code} href={getCardRoute(card)} style={s.cardLink}>
+            <CardImage card={card} />
+            <div style={s.cardName}>{card.name}</div>
+          </a>
+        ))}
+      </div>
+      <div ref={sentinelRef} />
+    </>
   );
 };
 

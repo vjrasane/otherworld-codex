@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef, useMemo } from "react";
-import MiniSearch from "minisearch";
-import type { SearchEntry } from "@/src/data";
+import React, { useState, useEffect, useRef, useMemo, type PropsWithChildren } from "react";
+import MiniSearch, { type SearchResult } from "minisearch";
+import { getCard, type SearchEntry } from "@/src/data";
 import { Search as SearchIcon, X } from "lucide-react";
 import { routes } from "@/src/routes";
+import type { Card } from "../data/card";
+import { capitalize, compact } from "lodash-es";
 
 const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
 const ICON_FILTER =
@@ -30,7 +32,11 @@ export default function Search() {
     const ms = new MiniSearch<SearchEntry>({
       fields: ["name"],
       storeFields: [
-        "type", "code", "name", "subname", "xp", "imageUrl", "typeCode", "packName"
+        "type",
+        "code",
+        "name",
+        "packName",
+        "campaignName"
       ],
       searchOptions: {
         prefix: true,
@@ -92,21 +98,6 @@ export default function Search() {
         return routes.encounter(result.code);
       default:
         return routes.card(result.code);
-    }
-  }
-
-  function typeLabel(type: string) {
-    switch (type) {
-      case "card":
-        return "Card";
-      case "encounter":
-        return "Encounter";
-      case "scenario":
-        return "Scenario";
-      case "campaign":
-        return "Campaign";
-      default:
-        return type;
     }
   }
 
@@ -179,100 +170,149 @@ export default function Search() {
             zIndex: 200,
           }}
         >
-          {results.map((r, i) => (
-            <a
-              key={r.id}
-              href={href(r)}
-              onClick={() => {
-                setOpen(false);
-                setQuery("");
-              }}
-              onMouseEnter={() => setActive(i)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-                padding: "0.5rem 0.75rem",
-                color: "var(--text-primary)",
-                textDecoration: "none",
-                borderBottom: "1px solid var(--border)",
-                background: i === active ? "var(--bg-2)" : undefined,
-              }}
-            >
-              {r.type === "card" ? (
-                r.imageUrl ? (
-                  <div
-                    style={{
-                      width: 40,
-                      height: HORIZONTAL_TYPES.has(r.typeCode ?? "") ? 28 : 56,
-                      flexShrink: 0,
-                      userSelect: "none",
-                    }}
-                  >
-                    <img
-                      src={r.imageUrl}
-                      alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        borderRadius: 3,
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      width: 40,
-                      height: 56,
-                      flexShrink: 0,
-                      background: "var(--bg-3)",
-                      borderRadius: 3,
-                    }}
-                  />
-                )
-              ) : (
-                <img
-                  src={routes.icon(r.code)}
-                  alt=""
-                  style={{
-                    width: 28,
-                    height: 28,
-                    flexShrink: 0,
-                    filter: ICON_FILTER,
-                  }}
-                />
-              )}
-              <div style={{ minWidth: 0 }}>
-                <div
-                  style={{
-                    fontWeight: 500,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {r.name}
-                  {r.xp ? ` (${r.xp})` : ""}
-                  {r.subname ? ` · ${r.subname}` : ""}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--text-muted)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {typeLabel(r.type)}
-                  {r.packName && ` · ${r.packName}`}
-                </div>
-              </div>
-            </a>
-          ))}
+          {results.map((res, i) => {
+            return (
+              <a
+                key={res.id}
+                href={href(res)}
+                onClick={() => {
+                  setOpen(false);
+                  setQuery("");
+                }}
+                onMouseEnter={() => setActive(i)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.75rem",
+                  padding: "0.5rem 0.75rem",
+                  color: "var(--text-primary)",
+                  textDecoration: "none",
+                  borderBottom: "1px solid var(--border)",
+                  background: i === active ? "var(--bg-2)" : undefined,
+                }}
+              >
+                <SearchResultItem result={res} />
+              </a>
+            )
+          })}
         </div>
       )}
     </div>
   );
+}
+
+const SearchResultText: React.FC<{ title: string, subtitle: string }> = ({ title, subtitle }) => {
+  return <div style={{ minWidth: 0 }}>
+    <div
+      style={{
+        fontWeight: 500,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {title}
+
+    </div>
+    <div
+      style={{
+        fontSize: "0.8rem",
+        color: "var(--text-muted)",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {subtitle}
+    </div>
+  </div>
+
+}
+
+const SearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) => {
+  const { type, code } = result
+  switch (type) {
+    case "card": {
+      const card = getCard(code)
+      if (!card) return null
+      return <CardSearchResultItem card={card} />
+    }
+
+    default: {
+      return <IconSearchResultItem result={result} />
+    }
+  }
+}
+
+const IconSearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) => {
+  const { type, code, name, packName, campaignName } = result
+  const subtitle = compact([capitalize(type), packName && `· ${packName}`, campaignName && `· ${campaignName}`]).join(" ")
+  return <>
+    <img
+      src={routes.icon(code)}
+      alt=""
+      style={{
+        width: 28,
+        height: 28,
+        flexShrink: 0,
+        filter: ICON_FILTER,
+      }}
+    />
+    <SearchResultText title={name} subtitle={subtitle} />
+  </>
+}
+
+
+const CardSearchResultItem: React.FC<{ card: Card }> = ({
+  card
+}) => {
+  const { name, xp, subname, packName } = card
+  const title = compact([name, xp && `(${xp})`, subname && `· ${subname}`]).join(" ")
+  const subtitle = compact(["Card", packName && `· ${packName}`]).join(" ")
+  return <>
+    <CardSearchResultImage card={card} />
+    <SearchResultText title={title} subtitle={subtitle} />
+  </>
+}
+
+
+const CardSearchResultImage: React.FC<{ card: Card }> = ({
+  card
+}) => {
+  if (card.imageUrl) {
+    return (
+      <div
+        style={{
+          width: 40,
+          height: HORIZONTAL_TYPES.has(card.typeCode ?? "") ? 28 : 56,
+          flexShrink: 0,
+          userSelect: "none",
+        }}
+      >
+        <img
+          src={card.imageUrl}
+          alt=""
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            borderRadius: 3,
+          }}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        width: 40,
+        height: 56,
+        flexShrink: 0,
+        background: "var(--bg-3)",
+        borderRadius: 3,
+      }}
+    />
+  )
+
 }

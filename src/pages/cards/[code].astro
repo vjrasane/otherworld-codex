@@ -1,8 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
-import CardImage from "../../components/CardImage.astro";
+import { CardImage } from "../../components/CardImage.tsx";
 import { getAllCards } from "../../data";
-import type { Card } from "../../data";
+import type { Card } from "../../data/card";
 import { routes } from "../../routes";
 
 export function getStaticPaths() {
@@ -34,7 +34,9 @@ function formatText(text: string): string {
 <Base title={card.name}>
   <div class="card-detail">
     <div class="image-column">
-      <CardImage imageUrl={card.imageUrl} name={card.name} typeCode={card.typeCode} />
+      <CardImage card={card} />
+      {card.doubleSided && <CardImage card={card} back />}
+      {card.linkedCard && <CardImage card={card.linkedCard} />}
     </div>
     <div class="info-column">
       <div class="type-line">

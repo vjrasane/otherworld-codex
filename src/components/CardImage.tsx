@@ -1,22 +1,25 @@
 import type React from "react";
-import type { Card } from "../data";
+import type { Card } from "../data/card";
 import { css } from "../styles";
 
 
 const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
 
-export const CardImage: React.FC<{ card: Card }> = ({ card }) => {
+export const CardImage: React.FC<{ card: Card, back?: boolean }> = ({ card, back }) => {
   const horizontal = HORIZONTAL_TYPES.has(card.typeCode);
-  if (card.imageUrl) {
+  const imageUrl = !back ? card.imageUrl : card.backImageUrl;
+  const name = !back ? card.name : card.backName
+
+  if (imageUrl) {
     return (
       <div style={css(s.cardImage, horizontal && s.horizontal)}>
-        <img src={card.imageUrl} alt={card.name} style={s.img} />
+        <img src={imageUrl} alt={name} style={s.img} />
       </div>
     );
   }
   return (
     <div style={css(s.placeholder, horizontal && s.horizontal)}>
-      <span>{card.name}</span>
+      <span>{name}</span>
     </div>
   );
 }
