@@ -15,8 +15,8 @@ type StatFilters = Record<string, string>;
 
 const STAT_PARAM_KEYS: Record<string, string> = {
   Health: "health", Fight: "fight", Evade: "evade",
-  Damage: "damage", Horror: "horror", Shroud: "shroud",
-  Clues: "clues", Clues_pp: "clues_pp",
+  Damage: "damage", Horror: "horror", EnemyVictory: "victory",
+  Shroud: "shroud", Clues: "clues", Clues_pp: "clues_pp", LocationVictory: "loc_victory",
 };
 
 const PARAM_TO_STAT = Object.fromEntries(
@@ -43,9 +43,11 @@ const STAT_GETTERS: Record<string, (c: Card) => number | undefined> = {
   Evade: (c) => c.enemyEvade,
   Damage: (c) => c.enemyDamage,
   Horror: (c) => c.enemyHorror,
+  EnemyVictory: (c) => c.victory,
   Shroud: (c) => c.shroud,
   Clues: (c) => c.clues,
   Clues_pp: (c) => c.clues,
+  LocationVictory: (c) => c.victory,
 };
 
 const STAT_TYPE_CODE: Record<string, string> = {
@@ -54,14 +56,18 @@ const STAT_TYPE_CODE: Record<string, string> = {
   Evade: "enemy",
   Damage: "enemy",
   Horror: "enemy",
+  EnemyVictory: "enemy",
   Shroud: "location",
   Clues: "location",
   Clues_pp: "location",
+  LocationVictory: "location",
 };
 
 function statChipLabel(stat: string, value: string): string {
-  const label = stat === "Clues_pp" ? "clues/inv" : stat.toLowerCase();
-  return `${label} = ${value}`;
+  if (stat === "Clues_pp") return `clues/inv = ${value}`;
+  if (stat === "EnemyVictory") return `enemy victory = ${value}`;
+  if (stat === "LocationVictory") return `location victory = ${value}`;
+  return `${stat.toLowerCase()} = ${value}`;
 }
 
 type Option = { label: string; value: string };
@@ -276,9 +282,10 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     pushURL();
   }, [pushURL]);
 
-  const handleStatClick = useCallback((_category: string, stat: string, value: string) => {
-    if (statFiltersRef.current[stat] === value) return;
-    const next = { ...statFiltersRef.current, [stat]: value };
+  const handleStatClick = useCallback((category: string, stat: string, value: string) => {
+    const key = stat === "Victory" ? (category === "enemy" ? "EnemyVictory" : "LocationVictory") : stat;
+    if (statFiltersRef.current[key] === value) return;
+    const next = { ...statFiltersRef.current, [key]: value };
     setStatFiltersState(next);
     statFiltersRef.current = next;
     setViewModeState("cards");
@@ -517,6 +524,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
         if (stat === "Health") return !(isVariable(card.health) || card.healthPerInvestigator === true) && getter(card) === numVal;
         if (stat === "Damage") return (card.enemyDamage ?? 0) === numVal && !(card.enemyDamage != null && card.enemyDamage < 0);
         if (stat === "Horror") return (card.enemyHorror ?? 0) === numVal && !(card.enemyHorror != null && card.enemyHorror < 0);
+        if (stat === "EnemyVictory" || stat === "LocationVictory") return (card.victory ?? 0) === numVal;
         return !isVariable(getter(card)) && getter(card) === numVal;
       });
     }

@@ -36,6 +36,17 @@ const toggleStyle: React.CSSProperties = {
   fontSize: "0.8rem",
 };
 
+const selectStyle: React.CSSProperties = {
+  background: "var(--bg-2)",
+  border: "1px solid var(--border)",
+  borderRadius: 6,
+  color: "var(--text-secondary)",
+  fontSize: "0.8rem",
+  padding: "0.2rem 0.4rem",
+  cursor: "pointer",
+  font: "inherit",
+};
+
 const toggleButtonStyle = (active: boolean): React.CSSProperties => ({
   padding: "0.3rem 0.6rem",
   background: active ? "var(--accent)" : "transparent",
@@ -120,14 +131,31 @@ function PieSection({ title, data }: { title: string; data: Entry[] }) {
   );
 }
 
+const LIMIT_OPTIONS = [20, 50, 0] as const;
+
 function BarSection({ title, data }: { title: string; data: Entry[] }) {
+  const [limit, setLimit] = useState(20);
   if (data.length === 0) return null;
+  const visible = limit > 0 ? data.slice(0, limit) : data;
   return (
     <div>
-      <h3 style={{ fontSize: "1.1rem", margin: "0 0 0.75rem" }}>{title}</h3>
-      <ResponsiveContainer width="100%" height={data.length * 28 + 16}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "0 0 0.75rem" }}>
+        <h3 style={{ fontSize: "1.1rem", margin: 0 }}>{title}</h3>
+        {data.length > 20 && (
+          <select
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            style={selectStyle}
+          >
+            {LIMIT_OPTIONS.map((n) => (
+              <option key={n} value={n}>{n === 0 ? "All" : `Top ${n}`}</option>
+            ))}
+          </select>
+        )}
+      </div>
+      <ResponsiveContainer width="100%" height={visible.length * 28 + 16}>
         <BarChart
-          data={data}
+          data={visible}
           layout="vertical"
           margin={{ left: 0, right: 16, top: 0, bottom: 0 }}
         >
@@ -185,6 +213,7 @@ function buildEnemyData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys
     { name: "Evade", color: "163, 190, 140", dist: statDistribution(enemies, (c) => isVariable(c.enemyEvade) ? undefined : c.enemyEvade, mode), varCount: 0 },
     { name: "Damage", color: "191, 97, 106", dist: statDistribution(enemies, (c) => isNegative(c.enemyDamage) ? undefined : (c.enemyDamage ?? 0), mode), varCount: 0 },
     { name: "Horror", color: "94, 129, 172", dist: statDistribution(enemies, (c) => isNegative(c.enemyHorror) ? undefined : (c.enemyHorror ?? 0), mode), varCount: 0 },
+    { name: "Victory", color: "235, 203, 139", dist: statDistribution(enemies, (c) => c.victory ?? 0, mode), varCount: 0 },
   ];
   for (const c of enemies) {
     const w = mode === "total" ? c.quantity : 1;
@@ -217,6 +246,7 @@ function buildLocationData(cards: Card[], mode: CountMode): { rows: StatRow[]; k
   const shroudDist = statDistribution(locations, (c) => isVariable(c.shroud) ? undefined : c.shroud, mode);
   const fixedClueDist = statDistribution(fixedClues, (c) => c.clues, mode);
   const perPlayerClueDist = statDistribution(perPlayerClues, (c) => c.clues, mode);
+  const victoryDist = statDistribution(locations, (c) => c.victory ?? 0, mode);
 
   let shroudVarCount = 0;
   for (const c of locations) {
@@ -224,7 +254,7 @@ function buildLocationData(cards: Card[], mode: CountMode): { rows: StatRow[]; k
   }
 
   const allVals = new Set<number>();
-  for (const m of [shroudDist, fixedClueDist, perPlayerClueDist]) for (const k of m.keys()) allVals.add(k);
+  for (const m of [shroudDist, fixedClueDist, perPlayerClueDist, victoryDist]) for (const k of m.keys()) allVals.add(k);
   const sortedVals = [...allVals].sort((a, b) => a - b);
   const hasVar = shroudVarCount > 0;
   const keys = sortedVals.map(String);
@@ -232,8 +262,9 @@ function buildLocationData(cards: Card[], mode: CountMode): { rows: StatRow[]; k
 
   const dists: { name: string; label?: React.ReactNode; color: string; dist: Map<number, number>; varCount: number }[] = [
     { name: "Shroud", color: "76, 86, 106", dist: shroudDist, varCount: shroudVarCount },
-    { name: "Clues", color: "235, 203, 139", dist: fixedClueDist, varCount: 0 },
+    { name: "Clues", color: "163, 190, 140", dist: fixedClueDist, varCount: 0 },
     { name: "Clues_pp", label: <><i className="icon-per_investigator" />{" "}Clues</>, color: "208, 135, 112", dist: perPlayerClueDist, varCount: 0 },
+    { name: "Victory", color: "235, 203, 139", dist: victoryDist, varCount: 0 },
   ];
 
   const rows: StatRow[] = dists.map((d) => {
@@ -325,6 +356,12 @@ function LocationStatsChart({ cards, mode, onCellClick, activeFilters }: { cards
   return <HeatmapChart title="Location Stats" rows={rows} keys={keys} category="location" onCellClick={onCellClick} activeFilters={activeFilters} />;
 }
 
+function remapVictory(filters: Record<string, string> | undefined, key: string): Record<string, string> | undefined {
+  if (!filters || !(key in filters)) return filters;
+  const { [key]: val, ...rest } = filters;
+  return { ...rest, Victory: val };
+}
+
 export default function CardStats({ cards, onCellClick, activeFilters }: { cards: Card[]; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string> }) {
   const [mode, setMode] = useState<CountMode>("total");
 
@@ -341,8 +378,8 @@ export default function CardStats({ cards, onCellClick, activeFilters }: { cards
         </div>
       </div>
       <PieSection title="Card Types" data={typeCounts} />
-      <EnemyStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={activeFilters} />
-      <LocationStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={activeFilters} />
+      <EnemyStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={remapVictory(activeFilters, "EnemyVictory")} />
+      <LocationStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={remapVictory(activeFilters, "LocationVictory")} />
       <BarSection title="Traits" data={traitCounts} />
       <BarSection title="Encounter Sets" data={encounterCounts} />
     </div>

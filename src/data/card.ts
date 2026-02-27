@@ -35,6 +35,7 @@ export interface Card {
   shroud?: number;
   clues?: number;
   cluesFixed?: boolean;
+  victory?: number;
   healthPerInvestigator?: boolean;
   isUnique: boolean;
   position: number;
@@ -87,6 +88,7 @@ function parseBaseCard(raw: any): Card {
     shroud: raw.shroud ?? undefined,
     clues: raw.clues ?? undefined,
     cluesFixed: raw.clues_fixed ?? undefined,
+    victory: raw.victory ?? undefined,
     healthPerInvestigator: raw.health_per_investigator ?? undefined,
     isUnique: raw.is_unique,
     position: raw.position,
