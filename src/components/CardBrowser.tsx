@@ -170,82 +170,7 @@ function CustomMultiValue(props: MultiValueProps<Option, true>) {
 
 const selectComponents = { MultiValue: CustomMultiValue };
 
-const selectStyles: StylesConfig<Option, true> = {
-  control: (base, { isFocused }) => ({
-    ...base,
-    background: "var(--bg-2)",
-    borderColor: isFocused ? "var(--accent)" : "var(--border)",
-    boxShadow: isFocused ? "0 0 0 1px var(--accent)" : "none",
-    "&:hover": { borderColor: "var(--accent)" },
-    minHeight: 38,
-    flexWrap: "nowrap",
-  }),
-  valueContainer: (base) => ({
-    ...base,
-    flexWrap: "nowrap",
-    overflow: "hidden",
-  }),
-  menu: (base) => ({
-    ...base,
-    background: "var(--bg-1)",
-    border: "1px solid var(--border)",
-    zIndex: 10,
-  }),
-  option: (base, { isFocused, isSelected }) => ({
-    ...base,
-    background: isSelected
-      ? "var(--bg-3)"
-      : isFocused
-        ? "var(--bg-2)"
-        : undefined,
-    color: "var(--text-primary)",
-    ":active": { background: "var(--bg-3)" },
-  }),
-  multiValue: (base) => ({
-    ...base,
-    background: "var(--bg-3)",
-    minWidth: 0,
-    flexShrink: 1,
-  }),
-  multiValueLabel: (base) => ({
-    ...base,
-    color: "var(--text-primary)",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  }),
-  multiValueRemove: (base) => ({
-    ...base,
-    color: "var(--text-muted)",
-    ":hover": { background: "var(--danger)", color: "var(--text-primary)" },
-  }),
-  input: (base) => ({
-    ...base,
-    color: "var(--text-primary)",
-  }),
-  placeholder: (base) => ({
-    ...base,
-    color: "var(--text-muted)",
-  }),
-  indicatorSeparator: (base) => ({
-    ...base,
-    background: "var(--border)",
-  }),
-  dropdownIndicator: (base) => ({
-    ...base,
-    color: "var(--text-muted)",
-    ":hover": { color: "var(--text-primary)" },
-  }),
-  clearIndicator: (base) => ({
-    ...base,
-    color: "var(--text-muted)",
-    ":hover": { color: "var(--danger)" },
-  }),
-  noOptionsMessage: (base) => ({
-    ...base,
-    color: "var(--text-muted)",
-  }),
-};
+
 
 
 
@@ -574,101 +499,101 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
   return (
     <div style={{ marginTop: "-1.5rem" }}>
       <div style={css(s.stickyHeader, { top: headerHeight })}>
-      <div style={s.filtersRow}>
-        <div style={s.filters}>
-          <div>
-            <label style={s.label}>Campaign</label>
-            <Select<Option, true>
-              isMulti
-              options={filterOptions.campaigns}
-              value={selectedCampaigns}
-              onChange={handleCampaignChange}
-              placeholder="All campaigns"
-              styles={selectStyles}
-              components={selectComponents}
-              closeMenuOnSelect={false}
-              hideSelectedOptions={false}
-            />
+        <div style={s.filtersRow}>
+          <div style={s.filters}>
+            <div>
+              <label style={s.label}>Campaign</label>
+              <Select<Option, true>
+                isMulti
+                options={filterOptions.campaigns}
+                value={selectedCampaigns}
+                onChange={handleCampaignChange}
+                placeholder="All campaigns"
+                styles={selectStyles}
+                components={selectComponents}
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+              />
+            </div>
+            <div>
+              <label style={s.label}>Scenario</label>
+              <Select<Option, true>
+                isMulti
+                options={scenarioOptions}
+                value={selectedScenarios}
+                onChange={handleScenarioChange}
+                placeholder="All scenarios"
+                styles={selectStyles}
+                components={selectComponents}
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+              />
+            </div>
+            <div>
+              <label style={s.label}>Encounter Set</label>
+              <Select<Option, true>
+                isMulti
+                options={encounterOptions}
+                value={selectedEncounters}
+                onChange={handleEncounterChange}
+                placeholder="All encounter sets"
+                styles={selectStyles}
+                components={selectComponents}
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+              />
+            </div>
+            <div>
+              <label style={s.label}>Trait</label>
+              <Select<Option, true>
+                isMulti
+                options={traitOptions}
+                value={selectedTraits}
+                onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
+                placeholder="All traits"
+                styles={selectStyles}
+                components={selectComponents}
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+              />
+            </div>
+            <div>
+              <label style={s.label}>Type</label>
+              <Select<Option, true>
+                isMulti
+                options={typeOptions}
+                value={selectedTypes}
+                onChange={(v) => setFilters({ ...filters, types: toOptions(v) })}
+                placeholder="All types"
+                styles={selectStyles}
+                components={selectComponents}
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+              />
+            </div>
           </div>
-          <div>
-            <label style={s.label}>Scenario</label>
-            <Select<Option, true>
-              isMulti
-              options={scenarioOptions}
-              value={selectedScenarios}
-              onChange={handleScenarioChange}
-              placeholder="All scenarios"
-              styles={selectStyles}
-              components={selectComponents}
-              closeMenuOnSelect={false}
-              hideSelectedOptions={false}
-            />
-          </div>
-          <div>
-            <label style={s.label}>Encounter Set</label>
-            <Select<Option, true>
-              isMulti
-              options={encounterOptions}
-              value={selectedEncounters}
-              onChange={handleEncounterChange}
-              placeholder="All encounter sets"
-              styles={selectStyles}
-              components={selectComponents}
-              closeMenuOnSelect={false}
-              hideSelectedOptions={false}
-            />
-          </div>
-          <div>
-            <label style={s.label}>Trait</label>
-            <Select<Option, true>
-              isMulti
-              options={traitOptions}
-              value={selectedTraits}
-              onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
-              placeholder="All traits"
-              styles={selectStyles}
-              components={selectComponents}
-              closeMenuOnSelect={false}
-              hideSelectedOptions={false}
-            />
-          </div>
-          <div>
-            <label style={s.label}>Type</label>
-            <Select<Option, true>
-              isMulti
-              options={typeOptions}
-              value={selectedTypes}
-              onChange={(v) => setFilters({ ...filters, types: toOptions(v) })}
-              placeholder="All types"
-              styles={selectStyles}
-              components={selectComponents}
-              closeMenuOnSelect={false}
-              hideSelectedOptions={false}
-            />
+          <div style={s.viewToggleStyle}>
+            <button style={css(s.viewButtonStyle, viewMode === "cards" && s.viewButtonActive)} onClick={() => setViewMode("cards")}>Cards</button>
+            <button style={css(s.viewButtonStyle, viewMode === "stats" && s.viewButtonActive)} onClick={() => setViewMode("stats")}>Stats</button>
           </div>
         </div>
-        <div style={s.viewToggleStyle}>
-          <button style={css(s.viewButtonStyle, viewMode === "cards" && s.viewButtonActive)} onClick={() => setViewMode("cards")}>Cards</button>
-          <button style={css(s.viewButtonStyle, viewMode === "stats" && s.viewButtonActive)} onClick={() => setViewMode("stats")}>Stats</button>
+        <div style={s.countRow}>
+          <div style={s.count}>{filteredCards.length} cards</div>
+          <div style={s.statChips}>
+            {Object.entries(statFilters).map(([stat, value]) => (
+              <button key={stat} onClick={() => clearStatFilter(stat)} style={s.statChip}>
+                {statChipLabel(stat, value)} ×
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-      <div style={s.countRow}>
-        <div style={s.count}>{filteredCards.length} cards</div>
-        <div style={s.statChips}>
-          {Object.entries(statFilters).map(([stat, value]) => (
-            <button key={stat} onClick={() => clearStatFilter(stat)} style={s.statChip}>
-              {statChipLabel(stat, value)} ×
-            </button>
-          ))}
-        </div>
-      </div>
       </div>
       <div style={{ paddingTop: "0.75rem" }}>
-      {viewMode === "stats" ? (
-        <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} onChartClick={handleChartClick} />
-      ) : (
-        <CardGrid key={filterKey} cards={filteredCards} />
-      )}
+        {viewMode === "stats" ? (
+          <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} onChartClick={handleChartClick} />
+        ) : (
+          <CardGrid key={filterKey} cards={filteredCards} />
+        )}
       </div>
     </div>
   );
@@ -755,4 +680,81 @@ const s: Record<string, React.CSSProperties> = {
     color: "var(--bg-0)",
     fontWeight: 600,
   }
+};
+
+const selectStyles: StylesConfig<Option, true> = {
+  control: (base, { isFocused }) => ({
+    ...base,
+    background: "var(--bg-2)",
+    borderColor: isFocused ? "var(--accent)" : "var(--border)",
+    boxShadow: isFocused ? "0 0 0 1px var(--accent)" : "none",
+    "&:hover": { borderColor: "var(--accent)" },
+    minHeight: 38,
+    flexWrap: "nowrap",
+  }),
+  valueContainer: (base) => ({
+    ...base,
+    flexWrap: "nowrap",
+    overflow: "hidden",
+  }),
+  menu: (base) => ({
+    ...base,
+    background: "var(--bg-1)",
+    border: "1px solid var(--border)",
+    zIndex: 10,
+  }),
+  option: (base, { isFocused, isSelected }) => ({
+    ...base,
+    background: isSelected
+      ? "var(--bg-3)"
+      : isFocused
+        ? "var(--bg-2)"
+        : undefined,
+    color: "var(--text-primary)",
+    ":active": { background: "var(--bg-3)" },
+  }),
+  multiValue: (base) => ({
+    ...base,
+    background: "var(--bg-3)",
+    minWidth: 0,
+    flexShrink: 1,
+  }),
+  multiValueLabel: (base) => ({
+    ...base,
+    color: "var(--text-primary)",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  }),
+  multiValueRemove: (base) => ({
+    ...base,
+    color: "var(--text-muted)",
+    ":hover": { background: "var(--danger)", color: "var(--text-primary)" },
+  }),
+  input: (base) => ({
+    ...base,
+    color: "var(--text-primary)",
+  }),
+  placeholder: (base) => ({
+    ...base,
+    color: "var(--text-muted)",
+  }),
+  indicatorSeparator: (base) => ({
+    ...base,
+    background: "var(--border)",
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "var(--text-muted)",
+    ":hover": { color: "var(--text-primary)" },
+  }),
+  clearIndicator: (base) => ({
+    ...base,
+    color: "var(--text-muted)",
+    ":hover": { color: "var(--danger)" },
+  }),
+  noOptionsMessage: (base) => ({
+    ...base,
+    color: "var(--text-muted)",
+  }),
 };
