@@ -1,22 +1,130 @@
 ---
 import Base from "../layouts/Base.astro";
-import { CardGrid } from "../components/CardGrid.tsx";
+import CardBrowser from "../components/CardBrowser.tsx";
 import { getAllCampaigns, getAllCards, getAllStandalones } from "../data";
-import { routes } from "../routes";
-import { sortBy } from "lodash-es"
+import { sortBy } from "lodash-es";
 
 const cards = getAllCards();
+const campaigns = getAllCampaigns();
+const standalones = getAllStandalones();
 
-let encounterCards = cards.filter(c => !!c.encounterCode)
-encounterCards = sortBy(encounterCards, "code") 
+let encounterCards = cards.filter((c) => !!c.encounterCode);
+encounterCards = sortBy(encounterCards, "code");
+
+// Reverse maps: encounterCode → campaign/scenario codes
+const encounterToCampaigns = new Map<string, Set<string>>();
+const encounterToScenarios = new Map<string, Set<string>>();
+
+for (const campaign of campaigns) {
+  for (const scenario of campaign.scenarios) {
+    for (const ec of scenario.encounterCodes) {
+      if (!encounterToCampaigns.has(ec))
+        encounterToCampaigns.set(ec, new Set());
+      encounterToCampaigns.get(ec)!.add(campaign.code);
+
+      if (!encounterToScenarios.has(ec))
+        encounterToScenarios.set(ec, new Set());
+      encounterToScenarios.get(ec)!.add(scenario.code);
+    }
+  }
+}
+
+for (const standalone of standalones) {
+  for (const ec of standalone.encounterCodes) {
+    if (!encounterToScenarios.has(ec))
+      encounterToScenarios.set(ec, new Set());
+    encounterToScenarios.get(ec)!.add(standalone.code);
+  }
+}
+
+// Per-card metadata for filter matching
+const cardMeta: Record<
+  string,
+  {
+    campaignCodes: string[];
+    scenarioCodes: string[];
+    encounterCode: string;
+    traits: string[];
+  }
+> = {};
+for (const card of encounterCards) {
+  const ec = card.encounterCode!;
+  const traits = card.traits
+    ? card.traits
+        .split(".")
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : [];
+  cardMeta[card.code] = {
+    campaignCodes: [...(encounterToCampaigns.get(ec) ?? [])],
+    scenarioCodes: [...(encounterToScenarios.get(ec) ?? [])],
+    encounterCode: ec,
+    traits,
+  };
+}
+
+// Filter option lists
+const campaignOptions = campaigns.map((c) => ({
+  label: c.name,
+  value: c.code,
+}));
+
+const scenarioOptions = [
+  ...campaigns.flatMap((c) =>
+    c.scenarios.map((s) => ({
+      label: s.name,
+      value: s.code,
+      campaignCode: c.code,
+    })),
+  ),
+  ...standalones.map((s) => ({
+    label: s.name,
+    value: s.code,
+    campaignCode: "",
+  })),
+];
+
+const encounterMap = new Map<string, string>();
+for (const card of encounterCards) {
+  if (
+    card.encounterCode &&
+    card.encounterName &&
+    !encounterMap.has(card.encounterCode)
+  ) {
+    encounterMap.set(card.encounterCode, card.encounterName);
+  }
+}
+const encounterOptions = [...encounterMap.entries()]
+  .map(([code, name]) => ({ label: name, value: code }))
+  .sort((a, b) => a.label.localeCompare(b.label));
+
+const traitSet = new Set<string>();
+for (const card of encounterCards) {
+  if (card.traits) {
+    card.traits
+      .split(".")
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .forEach((t) => traitSet.add(t));
+  }
+}
+const traitOptions = [...traitSet]
+  .sort()
+  .map((t) => ({ label: t, value: t }));
+
+const filterOptions = {
+  campaigns: campaignOptions,
+  scenarios: scenarioOptions,
+  encounters: encounterOptions,
+  traits: traitOptions,
+};
 ---
 
 <Base>
-  <CardGrid cards={encounterCards} client:only="react" />
+  <CardBrowser
+    cards={encounterCards}
+    filterOptions={filterOptions}
+    cardMeta={cardMeta}
+    client:only="react"
+  />
 </Base>
-
-<style>
-  h1 {
-    margin-bottom: 1rem;
-  }
- </style>
