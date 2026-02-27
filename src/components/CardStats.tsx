@@ -85,7 +85,7 @@ function countTraits(cards: Card[], mode: CountMode): Entry[] {
     .sort((a, b) => b.value - a.value);
 }
 
-function PieSection({ title, data }: { title: string; data: Entry[] }) {
+function PieSection({ title, data, onClick }: { title: string; data: Entry[]; onClick?: (name: string) => void }) {
   return (
     <div>
       <h3 style={{ fontSize: "1.1rem", margin: "0 0 0.75rem" }}>{title}</h3>
@@ -101,6 +101,8 @@ function PieSection({ title, data }: { title: string; data: Entry[] }) {
               outerRadius={80}
               strokeWidth={0}
               isAnimationActive={false}
+              style={onClick ? { cursor: "pointer" } : undefined}
+              onClick={onClick ? (_, i) => onClick(data[i].name) : undefined}
             >
               {data.map((_, i) => (
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -113,11 +115,13 @@ function PieSection({ title, data }: { title: string; data: Entry[] }) {
           {data.map((entry, i) => (
             <div
               key={entry.name}
+              onClick={onClick ? () => onClick(entry.name) : undefined}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "0.5rem",
                 fontSize: "0.85rem",
+                cursor: onClick ? "pointer" : undefined,
               }}
             >
               <div style={{ width: 10, height: 10, borderRadius: 2, background: COLORS[i % COLORS.length], flexShrink: 0 }} />
@@ -133,7 +137,7 @@ function PieSection({ title, data }: { title: string; data: Entry[] }) {
 
 const LIMIT_OPTIONS = [20, 50, 0] as const;
 
-function BarSection({ title, data }: { title: string; data: Entry[] }) {
+function BarSection({ title, data, onClick }: { title: string; data: Entry[]; onClick?: (name: string) => void }) {
   const [limit, setLimit] = useState(20);
   if (data.length === 0) return null;
   const visible = limit > 0 ? data.slice(0, limit) : data;
@@ -158,6 +162,8 @@ function BarSection({ title, data }: { title: string; data: Entry[] }) {
           data={visible}
           layout="vertical"
           margin={{ left: 0, right: 16, top: 0, bottom: 0 }}
+          onClick={onClick ? (state) => { if (state?.activeLabel) onClick(String(state.activeLabel)); } : undefined}
+          style={onClick ? { cursor: "pointer" } : undefined}
         >
           <XAxis type="number" hide />
           <YAxis
@@ -362,7 +368,7 @@ function remapVictory(filters: Record<string, string> | undefined, key: string):
   return { ...rest, Victory: val };
 }
 
-export default function CardStats({ cards, onCellClick, activeFilters }: { cards: Card[]; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string> }) {
+export default function CardStats({ cards, onCellClick, activeFilters, onChartClick }: { cards: Card[]; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string>; onChartClick?: (kind: "types" | "traits" | "encounters", name: string) => void }) {
   const [mode, setMode] = useState<CountMode>("total");
 
   const typeCounts = useMemo(() => countBy(cards, (c) => c.typeName, mode), [cards, mode]);
@@ -377,11 +383,15 @@ export default function CardStats({ cards, onCellClick, activeFilters }: { cards
           <button style={toggleButtonStyle(mode === "total")} onClick={() => setMode("total")}>Total</button>
         </div>
       </div>
-      <PieSection title="Card Types" data={typeCounts} />
+      <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
+        <PieSection title="Card Types" data={typeCounts} onClick={onChartClick ? (name) => onChartClick("types", name) : undefined} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <BarSection title="Encounter Sets" data={encounterCounts} onClick={onChartClick ? (name) => onChartClick("encounters", name) : undefined} />
+        </div>
+      </div>
       <EnemyStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={remapVictory(activeFilters, "EnemyVictory")} />
       <LocationStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={remapVictory(activeFilters, "LocationVictory")} />
-      <BarSection title="Traits" data={traitCounts} />
-      <BarSection title="Encounter Sets" data={encounterCounts} />
+      <BarSection title="Traits" data={traitCounts} onClick={onChartClick ? (name) => onChartClick("traits", name) : undefined} />
     </div>
   );
 }

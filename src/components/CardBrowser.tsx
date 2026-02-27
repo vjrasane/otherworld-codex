@@ -282,6 +282,22 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     pushURL();
   }, [pushURL]);
 
+  const handleChartClick = useCallback((kind: "types" | "traits" | "encounters", name: string) => {
+    const opts = filterOptions[kind];
+    const option = kind === "traits"
+      ? opts.find((o) => o.value === name)
+      : opts.find((o) => o.label === name);
+    if (!option) return;
+    const current = filtersRef.current[kind];
+    if (current.some((o) => o.value === option.value)) return;
+    const nextFilters = { ...filtersRef.current, [kind]: [...current, option] };
+    setFiltersState(nextFilters);
+    filtersRef.current = nextFilters;
+    setViewModeState("cards");
+    viewModeRef.current = "cards";
+    pushURL();
+  }, [filterOptions, pushURL]);
+
   const handleStatClick = useCallback((category: string, stat: string, value: string) => {
     const key = stat === "Victory" ? (category === "enemy" ? "EnemyVictory" : "LocationVictory") : stat;
     if (statFiltersRef.current[key] === value) return;
@@ -641,7 +657,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
         </div>
       </div>
       {viewMode === "stats" ? (
-        <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} />
+        <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} onChartClick={handleChartClick} />
       ) : (
         <CardGrid key={filterKey} cards={filteredCards} />
       )}
