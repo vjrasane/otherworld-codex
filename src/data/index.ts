@@ -1,6 +1,6 @@
-import cardsJson from "../../../data/cards.json";
-import campaignsJson from "../../../data/campaigns.json";
-import standalonesJson from "../../../data/standalones.json";
+import cardsJson from "../../data/cards.json";
+import campaignsJson from "../../data/campaigns.json";
+import standalonesJson from "../../data/standalones.json";
 
 export interface Card {
   code: string;
@@ -86,7 +86,7 @@ function cardImageUrl(imagesrc?: string): string | undefined {
   return IMAGE_BASE + imagesrc;
 }
 
-function parseCard(raw: (typeof cardsJson)[number]): Card {
+function parseCard(raw: any): Card {
   return {
     code: raw.code,
     name: raw.name,
@@ -119,7 +119,7 @@ function parseCard(raw: (typeof cardsJson)[number]): Card {
   };
 }
 
-const allCards: Card[] = cardsJson.map(parseCard);
+const allCards: Card[] = (cardsJson as any[]).map(parseCard);
 
 const cardsByCode = new Map<string, Card>();
 for (const card of allCards) {

@@ -1,6 +1,6 @@
 node_modules
-web/dist
-web/.astro
+dist
+.astro
 
 .DS_Store
 *.pem

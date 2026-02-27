@@ -12,6 +12,6 @@
   dotenv.enable = true;
 
   processes.web = {
-    exec = "npm --prefix web run dev";
+    exec = "just dev";
   };
 }

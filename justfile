@@ -1,7 +1,7 @@
 set dotenv-load
 
 build:
-    cd web && npx astro build
+    npx astro build
 
 dev:
-    cd web && npx astro preview
+    npx astro dev
