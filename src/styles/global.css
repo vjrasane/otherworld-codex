@@ -30,6 +30,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   caret-color: transparent;
+
+  min-width: fit-content;
 }
 
 input,
