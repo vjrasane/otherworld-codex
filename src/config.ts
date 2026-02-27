@@ -1,2 +1,2 @@
-export const SITE_TITLE = "Otherworld Codex";
-export const SITE_SLUG = "otherworld-codex";
+export const SITE_TITLE = "Arkham Study";
+export const SITE = "arkham.study";
