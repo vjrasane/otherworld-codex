@@ -5,8 +5,12 @@ import Select, {
   components,
 } from "react-select";
 import { CardGrid } from "./CardGrid";
+import CardStats from "./CardStats";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Card } from "@/src/data/card";
+import { css } from "../styles";
+
+type ViewMode = "cards" | "stats";
 
 type Option = { label: string; value: string };
 
@@ -176,10 +180,13 @@ const selectStyles: StylesConfig<Option, true> = {
   }),
 };
 
+
+
 export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
   const [filters, setFiltersState] = useState<Filters>(() =>
     parseURL(filterOptions),
   );
+  const [viewMode, setViewMode] = useState<ViewMode>("cards");
 
   const setFilters = useCallback((next: Filters) => {
     setFiltersState(next);
@@ -209,8 +216,8 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     const active =
       selectedScenarios.length > 0
         ? filterOptions.scenarios.filter((s) =>
-            selectedScenarios.some((sel) => sel.value === s.value),
-          )
+          selectedScenarios.some((sel) => sel.value === s.value),
+        )
         : selectedCampaigns.length > 0
           ? scenarioOptions
           : null;
@@ -291,13 +298,13 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     const activeScenarios =
       scenarios.length > 0
         ? filterOptions.scenarios.filter((s) =>
-            scenarios.some((sel) => sel.value === s.value),
-          )
+          scenarios.some((sel) => sel.value === s.value),
+        )
         : next.length > 0
           ? filterOptions.scenarios.filter((s) => {
-              const codes = new Set(next.map((c) => c.value));
-              return codes.has(s.campaignCode);
-            })
+            const codes = new Set(next.map((c) => c.value));
+            return codes.has(s.campaignCode);
+          })
           : null;
     let encounters = filters.encounters;
     if (activeScenarios) {
@@ -318,8 +325,8 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     const active =
       next.length > 0
         ? filterOptions.scenarios.filter((s) =>
-            next.some((sel) => sel.value === s.value),
-          )
+          next.some((sel) => sel.value === s.value),
+        )
         : selectedCampaigns.length > 0
           ? scenarioOptions
           : null;
@@ -381,76 +388,92 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
 
   return (
     <>
-      <div style={s.filters}>
-        <div>
-          <label style={s.label}>Campaign</label>
-          <Select<Option, true>
-            isMulti
-            options={filterOptions.campaigns}
-            value={selectedCampaigns}
-            onChange={handleCampaignChange}
-            placeholder="All campaigns"
-            styles={selectStyles}
-            components={selectComponents}
-            closeMenuOnSelect={false}
-            hideSelectedOptions={false}
-          />
+      <div style={s.filtersRow}>
+        <div style={s.filters}>
+          <div>
+            <label style={s.label}>Campaign</label>
+            <Select<Option, true>
+              isMulti
+              options={filterOptions.campaigns}
+              value={selectedCampaigns}
+              onChange={handleCampaignChange}
+              placeholder="All campaigns"
+              styles={selectStyles}
+              components={selectComponents}
+              closeMenuOnSelect={false}
+              hideSelectedOptions={false}
+            />
+          </div>
+          <div>
+            <label style={s.label}>Scenario</label>
+            <Select<Option, true>
+              isMulti
+              options={scenarioOptions}
+              value={selectedScenarios}
+              onChange={handleScenarioChange}
+              placeholder="All scenarios"
+              styles={selectStyles}
+              components={selectComponents}
+              closeMenuOnSelect={false}
+              hideSelectedOptions={false}
+            />
+          </div>
+          <div>
+            <label style={s.label}>Encounter Set</label>
+            <Select<Option, true>
+              isMulti
+              options={encounterOptions}
+              value={selectedEncounters}
+              onChange={handleEncounterChange}
+              placeholder="All encounter sets"
+              styles={selectStyles}
+              components={selectComponents}
+              closeMenuOnSelect={false}
+              hideSelectedOptions={false}
+            />
+          </div>
+          <div>
+            <label style={s.label}>Trait</label>
+            <Select<Option, true>
+              isMulti
+              options={traitOptions}
+              value={selectedTraits}
+              onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
+              placeholder="All traits"
+              styles={selectStyles}
+              components={selectComponents}
+              closeMenuOnSelect={false}
+              hideSelectedOptions={false}
+            />
+          </div>
         </div>
-        <div>
-          <label style={s.label}>Scenario</label>
-          <Select<Option, true>
-            isMulti
-            options={scenarioOptions}
-            value={selectedScenarios}
-            onChange={handleScenarioChange}
-            placeholder="All scenarios"
-            styles={selectStyles}
-            components={selectComponents}
-            closeMenuOnSelect={false}
-            hideSelectedOptions={false}
-          />
-        </div>
-        <div>
-          <label style={s.label}>Encounter Set</label>
-          <Select<Option, true>
-            isMulti
-            options={encounterOptions}
-            value={selectedEncounters}
-            onChange={handleEncounterChange}
-            placeholder="All encounter sets"
-            styles={selectStyles}
-            components={selectComponents}
-            closeMenuOnSelect={false}
-            hideSelectedOptions={false}
-          />
-        </div>
-        <div>
-          <label style={s.label}>Trait</label>
-          <Select<Option, true>
-            isMulti
-            options={traitOptions}
-            value={selectedTraits}
-            onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
-            placeholder="All traits"
-            styles={selectStyles}
-            components={selectComponents}
-            closeMenuOnSelect={false}
-            hideSelectedOptions={false}
-          />
+        <div style={s.viewToggleStyle}>
+          <button style={css(s.viewButtonStyle, viewMode === "cards" && s.viewButtonActive)} onClick={() => setViewMode("cards")}>Cards</button>
+          <button style={css(s.viewButtonStyle, viewMode === "stats" && s.viewButtonActive)} onClick={() => setViewMode("stats")}>Stats</button>
         </div>
       </div>
       <div style={s.count}>{filteredCards.length} cards</div>
-      <CardGrid key={filterKey} cards={filteredCards} />
+      {viewMode === "stats" ? (
+        <CardStats cards={filteredCards} />
+      ) : (
+        <CardGrid key={filterKey} cards={filteredCards} />
+      )}
     </>
   );
 }
 
 const s: Record<string, React.CSSProperties> = {
+  filtersRow: {
+    display: "flex",
+    gap: "0.75rem",
+    alignItems: "end",
+    marginBottom: "1rem",
+  },
   filters: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
     gap: "0.75rem",
-    marginBottom: "1rem",
+    flex: 1,
   },
   label: {
     display: "block",
@@ -463,4 +486,29 @@ const s: Record<string, React.CSSProperties> = {
     color: "var(--text-muted)",
     marginBottom: "0.75rem",
   },
+
+  viewToggleStyle: {
+    display: "inline-flex",
+    background: "var(--bg-2)",
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    overflow: "hidden",
+    fontSize: "0.8rem",
+    alignSelf: "end",
+    marginBottom: "0.25rem"
+  },
+  viewButtonStyle: {
+    padding: "0.3rem 0.6rem",
+    background: "transparent",
+    color: "var(--text-muted)",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: 400,
+    font: "inherit",
+  },
+  viewButtonActive: {
+    background: "var(--accent)",
+    color: "var(--bg-0)",
+    fontWeight: 600,
+  }
 };
