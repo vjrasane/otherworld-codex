@@ -258,6 +258,11 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     return params.get("view") === "stats" ? "stats" : "cards";
   });
   const [statFilters, setStatFiltersState] = useState<StatFilters>(parseStatFilters);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  useEffect(() => {
+    const header = document.querySelector("header");
+    if (header) setHeaderHeight(header.getBoundingClientRect().height);
+  }, []);
 
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
@@ -567,7 +572,8 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
   ].join("|");
 
   return (
-    <>
+    <div style={{ marginTop: "-1.5rem" }}>
+      <div style={css(s.stickyHeader, { top: headerHeight })}>
       <div style={s.filtersRow}>
         <div style={s.filters}>
           <div>
@@ -656,16 +662,27 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
           ))}
         </div>
       </div>
+      </div>
+      <div style={{ paddingTop: "0.75rem" }}>
       {viewMode === "stats" ? (
         <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} onChartClick={handleChartClick} />
       ) : (
         <CardGrid key={filterKey} cards={filteredCards} />
       )}
-    </>
+      </div>
+    </div>
   );
 }
 
 const s: Record<string, React.CSSProperties> = {
+  stickyHeader: {
+    position: "sticky",
+    zIndex: 5,
+    background: "var(--bg-0)",
+    paddingTop: "1.5rem",
+    paddingBottom: "0.25rem",
+    borderBottom: "1px solid var(--border)",
+  },
   filtersRow: {
     display: "flex",
     gap: "0.75rem",
