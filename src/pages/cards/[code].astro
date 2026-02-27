@@ -18,6 +18,10 @@ interface Props {
 
 const { card } = Astro.props;
 
+if (card.linkedToCard) {
+  return Astro.redirect(routes.card(card.linkedToCard.code));
+}
+
 const traits = card.traits
   ?.split(".")
   .map((t) => t.trim())

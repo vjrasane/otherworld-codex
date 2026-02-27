@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, type PropsWithChildren } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import MiniSearch, { type SearchResult } from "minisearch";
 import { getCard, type SearchEntry } from "@/src/data";
 import { Search as SearchIcon, X } from "lucide-react";
@@ -97,25 +97,14 @@ export default function Search() {
       case "encounter":
         return routes.encounter(result.code);
       default:
-        return routes.card(result.code);
+        return routes.card(result.code)
     }
   }
 
   return (
-    <div ref={ref} style={{ position: "relative", width: "100%", maxWidth: 600 }}>
-      <label
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          background: "var(--bg-2)",
-          borderRadius: 6,
-          padding: "0.4rem 0.6rem",
-          border: "1px solid var(--border)",
-          cursor: "text",
-        }}
-      >
-        <SearchIcon size={16} style={{ color: "var(--text-muted)", flexShrink: 0 }} />
+    <div ref={ref} style={s.wrapper}>
+      <label style={s.label}>
+        <SearchIcon size={16} style={s.searchIcon} />
         <input
           type="text"
           placeholder="Search..."
@@ -126,14 +115,7 @@ export default function Search() {
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
-          style={{
-            background: "none",
-            border: "none",
-            outline: "none",
-            color: "var(--text-primary)",
-            font: "inherit",
-            width: "100%",
-          }}
+          style={s.input}
         />
         {query && (
           <button
@@ -141,14 +123,7 @@ export default function Search() {
               setQuery("");
               setOpen(false);
             }}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              color: "var(--text-muted)",
-              padding: 0,
-              display: "flex",
-            }}
+            style={s.clearButton}
           >
             <X size={16} />
           </button>
@@ -156,20 +131,7 @@ export default function Search() {
       </label>
 
       {open && results.length > 0 && (
-        <div
-          style={{
-            position: "absolute",
-            top: "calc(100% + 4px)",
-            left: 0,
-            right: 0,
-            background: "var(--bg-1)",
-            border: "1px solid var(--border)",
-            borderRadius: 6,
-            maxHeight: 400,
-            overflowY: "auto",
-            zIndex: 200,
-          }}
-        >
+        <div style={s.dropdown}>
           {results.map((res, i) => {
             return (
               <a
@@ -181,13 +143,7 @@ export default function Search() {
                 }}
                 onMouseEnter={() => setActive(i)}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                  padding: "0.5rem 0.75rem",
-                  color: "var(--text-primary)",
-                  textDecoration: "none",
-                  borderBottom: "1px solid var(--border)",
+                  ...s.resultLink,
                   background: i === active ? "var(--bg-2)" : undefined,
                 }}
               >
@@ -202,31 +158,10 @@ export default function Search() {
 }
 
 const SearchResultText: React.FC<{ title: string, subtitle: string }> = ({ title, subtitle }) => {
-  return <div style={{ minWidth: 0 }}>
-    <div
-      style={{
-        fontWeight: 500,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {title}
-
-    </div>
-    <div
-      style={{
-        fontSize: "0.8rem",
-        color: "var(--text-muted)",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {subtitle}
-    </div>
+  return <div style={s.textWrapper}>
+    <div style={s.title}>{title}</div>
+    <div style={s.subtitle}>{subtitle}</div>
   </div>
-
 }
 
 const SearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) => {
@@ -251,12 +186,7 @@ const IconSearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) =>
     <img
       src={routes.icon(code)}
       alt=""
-      style={{
-        width: 28,
-        height: 28,
-        flexShrink: 0,
-        filter: ICON_FILTER,
-      }}
+      style={s.icon}
     />
     <SearchResultText title={name} subtitle={subtitle} />
   </>
@@ -280,39 +210,111 @@ const CardSearchResultImage: React.FC<{ card: Card }> = ({
   card
 }) => {
   if (card.imageUrl) {
+    const horizontal = HORIZONTAL_TYPES.has(card.typeCode)
     return (
-      <div
-        style={{
-          width: 40,
-          height: HORIZONTAL_TYPES.has(card.typeCode ?? "") ? 28 : 56,
-          flexShrink: 0,
-          userSelect: "none",
-        }}
-      >
-        <img
-          src={card.imageUrl}
-          alt=""
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            borderRadius: 3,
-          }}
-        />
+      <div style={{ ...s.cardThumb, height: horizontal ? 28 : 56 }}>
+        <img src={card.imageUrl} alt="" style={s.cardThumbImg} />
       </div>
     )
   }
-
-  return (
-    <div
-      style={{
-        width: 40,
-        height: 56,
-        flexShrink: 0,
-        background: "var(--bg-3)",
-        borderRadius: 3,
-      }}
-    />
-  )
-
+  return <div style={s.cardThumbPlaceholder} />
 }
+
+const s = {
+  wrapper: {
+    position: "relative",
+    width: "100%",
+    maxWidth: 600,
+  },
+  label: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    background: "var(--bg-2)",
+    borderRadius: 6,
+    padding: "0.4rem 0.6rem",
+    border: "1px solid var(--border)",
+    cursor: "text",
+  },
+  searchIcon: {
+    color: "var(--text-muted)",
+    flexShrink: 0,
+  },
+  input: {
+    background: "none",
+    border: "none",
+    outline: "none",
+    color: "var(--text-primary)",
+    font: "inherit",
+    width: "100%",
+  },
+  clearButton: {
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    color: "var(--text-muted)",
+    padding: 0,
+    display: "flex",
+  },
+  dropdown: {
+    position: "absolute",
+    top: "calc(100% + 4px)",
+    left: 0,
+    right: 0,
+    background: "var(--bg-1)",
+    border: "1px solid var(--border)",
+    borderRadius: 6,
+    maxHeight: 400,
+    overflowY: "auto",
+    zIndex: 200,
+  },
+  resultLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.75rem",
+    padding: "0.5rem 0.75rem",
+    color: "var(--text-primary)",
+    textDecoration: "none",
+    borderBottom: "1px solid var(--border)",
+  },
+  textWrapper: {
+    minWidth: 0,
+  },
+  title: {
+    fontWeight: 500,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  subtitle: {
+    fontSize: "0.8rem",
+    color: "var(--text-muted)",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  icon: {
+    width: 28,
+    height: 28,
+    flexShrink: 0,
+    filter: ICON_FILTER,
+  },
+  cardThumb: {
+    width: 40,
+    flexShrink: 0,
+    userSelect: "none",
+  },
+  cardThumbImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: 3,
+  },
+  cardThumbPlaceholder: {
+    width: 40,
+    height: 56,
+    flexShrink: 0,
+    background: "var(--bg-3)",
+    borderRadius: 3,
+  },
+} satisfies Record<string, React.CSSProperties>;
