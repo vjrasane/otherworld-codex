@@ -163,39 +163,39 @@ function statDistribution(
   return map;
 }
 
-function isPerPlayer(val: number | undefined): boolean {
-  return val != null && val < 0;
+function isVariable(val: number | undefined): boolean {
+  return val == null || val < 0;
 }
 
-type StatRow = { name: string; color: string; [key: string]: string | number };
+type StatRow = { name: string; label?: React.ReactNode; color: string; [key: string]: string | number | React.ReactNode };
 
 function buildEnemyData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys: string[] } {
   const enemies = cards.filter((c) => c.typeCode === "enemy");
-  const statDefs: { name: string; color: string; dist: Map<number, number>; xCount: number }[] = [
-    { name: "Health", color: "76, 86, 106", dist: statDistribution(enemies, (c) => isPerPlayer(c.health) ? undefined : c.health, mode), xCount: 0 },
-    { name: "Fight", color: "208, 135, 112", dist: statDistribution(enemies, (c) => isPerPlayer(c.enemyFight) ? undefined : c.enemyFight, mode), xCount: 0 },
-    { name: "Evade", color: "163, 190, 140", dist: statDistribution(enemies, (c) => isPerPlayer(c.enemyEvade) ? undefined : c.enemyEvade, mode), xCount: 0 },
-    { name: "Damage", color: "191, 97, 106", dist: statDistribution(enemies, (c) => isPerPlayer(c.enemyDamage) ? undefined : c.enemyDamage, mode), xCount: 0 },
-    { name: "Horror", color: "94, 129, 172", dist: statDistribution(enemies, (c) => isPerPlayer(c.enemyHorror) ? undefined : c.enemyHorror, mode), xCount: 0 },
+  const statDefs: { name: string; color: string; dist: Map<number, number>; varCount: number }[] = [
+    { name: "Health", color: "76, 86, 106", dist: statDistribution(enemies, (c) => isVariable(c.health) ? undefined : c.health, mode), varCount: 0 },
+    { name: "Fight", color: "208, 135, 112", dist: statDistribution(enemies, (c) => isVariable(c.enemyFight) ? undefined : c.enemyFight, mode), varCount: 0 },
+    { name: "Evade", color: "163, 190, 140", dist: statDistribution(enemies, (c) => isVariable(c.enemyEvade) ? undefined : c.enemyEvade, mode), varCount: 0 },
+    { name: "Damage", color: "191, 97, 106", dist: statDistribution(enemies, (c) => isVariable(c.enemyDamage) ? undefined : c.enemyDamage, mode), varCount: 0 },
+    { name: "Horror", color: "94, 129, 172", dist: statDistribution(enemies, (c) => isVariable(c.enemyHorror) ? undefined : c.enemyHorror, mode), varCount: 0 },
   ];
   for (const c of enemies) {
     const w = mode === "total" ? c.quantity : 1;
-    if (isPerPlayer(c.health)) statDefs[0].xCount += w;
-    if (isPerPlayer(c.enemyFight)) statDefs[1].xCount += w;
-    if (isPerPlayer(c.enemyEvade)) statDefs[2].xCount += w;
-    if (isPerPlayer(c.enemyDamage)) statDefs[3].xCount += w;
-    if (isPerPlayer(c.enemyHorror)) statDefs[4].xCount += w;
+    if (isVariable(c.health)) statDefs[0].varCount += w;
+    if (isVariable(c.enemyFight)) statDefs[1].varCount += w;
+    if (isVariable(c.enemyEvade)) statDefs[2].varCount += w;
+    if (isVariable(c.enemyDamage)) statDefs[3].varCount += w;
+    if (isVariable(c.enemyHorror)) statDefs[4].varCount += w;
   }
   const allVals = new Set<number>();
   for (const s of statDefs) for (const k of s.dist.keys()) allVals.add(k);
-  const hasX = statDefs.some((s) => s.xCount > 0);
+  const hasVar = statDefs.some((s) => s.varCount > 0);
   const sortedVals = [...allVals].sort((a, b) => a - b);
   const keys = sortedVals.map(String);
-  if (hasX) keys.push("X");
+  if (hasVar) keys.unshift("?");
   const rows: StatRow[] = statDefs.map((s) => {
     const row: StatRow = { name: s.name, color: s.color };
     for (const val of sortedVals) row[String(val)] = s.dist.get(val) ?? 0;
-    if (hasX) row["X"] = s.xCount;
+    if (hasVar) row["?"] = s.varCount;
     return row;
   });
   return { rows, keys };
@@ -203,18 +203,35 @@ function buildEnemyData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys
 
 function buildLocationData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys: string[] } {
   const locations = cards.filter((c) => c.typeCode === "location");
-  const dists: { name: string; color: string; dist: Map<number, number> }[] = [
-    { name: "Shroud", color: "76, 86, 106", dist: statDistribution(locations, (c) => c.shroud, mode) },
-    { name: "Clues", color: "235, 203, 139", dist: statDistribution(locations.filter((c) => c.cluesFixed !== false), (c) => c.clues, mode) },
-    { name: "Clues \u24C5", color: "208, 135, 112", dist: statDistribution(locations.filter((c) => c.cluesFixed === false), (c) => c.clues, mode) },
-  ];
+  const fixedClues = locations.filter((c) => c.cluesFixed === true);
+  const perPlayerClues = locations.filter((c) => !c.cluesFixed);
+
+  const shroudDist = statDistribution(locations, (c) => isVariable(c.shroud) ? undefined : c.shroud, mode);
+  const fixedClueDist = statDistribution(fixedClues, (c) => c.clues, mode);
+  const perPlayerClueDist = statDistribution(perPlayerClues, (c) => c.clues, mode);
+
+  let shroudVarCount = 0;
+  for (const c of locations) {
+    if (isVariable(c.shroud)) shroudVarCount += mode === "total" ? c.quantity : 1;
+  }
+
   const allVals = new Set<number>();
-  for (const d of dists) for (const k of d.dist.keys()) allVals.add(k);
+  for (const m of [shroudDist, fixedClueDist, perPlayerClueDist]) for (const k of m.keys()) allVals.add(k);
   const sortedVals = [...allVals].sort((a, b) => a - b);
+  const hasVar = shroudVarCount > 0;
   const keys = sortedVals.map(String);
+  if (hasVar) keys.unshift("?");
+
+  const dists: { name: string; label?: React.ReactNode; color: string; dist: Map<number, number>; varCount: number }[] = [
+    { name: "Shroud", color: "76, 86, 106", dist: shroudDist, varCount: shroudVarCount },
+    { name: "Clues", color: "235, 203, 139", dist: fixedClueDist, varCount: 0 },
+    { name: "Clues_pp", label: <><i className="icon-per_investigator" />{" "}Clues</>, color: "208, 135, 112", dist: perPlayerClueDist, varCount: 0 },
+  ];
+
   const rows: StatRow[] = dists.map((d) => {
-    const row: StatRow = { name: d.name, color: d.color };
+    const row: StatRow = { name: d.name, label: d.label, color: d.color };
     for (const val of sortedVals) row[String(val)] = d.dist.get(val) ?? 0;
+    if (hasVar) row["?"] = d.varCount;
     return row;
   });
   return { rows, keys };
@@ -250,7 +267,7 @@ function HeatmapChart({ title, rows, keys }: { title: string; rows: StatRow[]; k
         {rows.map((row) => (
           <>
             <div key={row.name} style={{ fontSize: "0.8rem", color: "var(--text-secondary)", paddingRight: "0.5rem", display: "flex", alignItems: "center" }}>
-              {row.name}
+              {row.label ?? row.name}
             </div>
             {keys.map((k) => {
               const val = (row[k] as number) || 0;
@@ -281,12 +298,16 @@ function HeatmapChart({ title, rows, keys }: { title: string; rows: StatRow[]; k
 }
 
 function EnemyStatsChart({ cards, mode }: { cards: Card[]; mode: CountMode }) {
+  const hasEnemies = useMemo(() => cards.some((c) => c.typeCode === "enemy"), [cards]);
   const { rows, keys } = useMemo(() => buildEnemyData(cards, mode), [cards, mode]);
+  if (!hasEnemies) return null;
   return <HeatmapChart title="Enemy Stats" rows={rows} keys={keys} />;
 }
 
 function LocationStatsChart({ cards, mode }: { cards: Card[]; mode: CountMode }) {
+  const hasLocations = useMemo(() => cards.some((c) => c.typeCode === "location"), [cards]);
   const { rows, keys } = useMemo(() => buildLocationData(cards, mode), [cards, mode]);
+  if (!hasLocations) return null;
   return <HeatmapChart title="Location Stats" rows={rows} keys={keys} />;
 }
 
