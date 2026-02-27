@@ -1,11 +1,11 @@
 ---
-import "../styles/global.css";
-import "../styles/icons.css";
-import Search from "../components/Search";
-import { routes } from "../routes";
+import "@/src/styles/global.css";
+import "@/src/styles/icons.css";
+import Search from "@/src/components/Search";
+import { SITE_TITLE } from "@/src/config";
 
 interface Props {
-  title: string;
+  title?: string;
 }
 
 const { title } = Astro.props;
@@ -16,7 +16,7 @@ const { title } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} | Otherworld Codex</title>
+    <title>{[title, SITE_TITLE].filter(s => !!s).join(" | ")}</title>
   </head>
   <body>
     <header class="header">
@@ -54,7 +54,6 @@ const { title } = Astro.props;
   }
 
   .main {
-    max-width: 900px;
     margin: 0 auto;
     padding: 1.5rem 1rem;
   }

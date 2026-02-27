@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { routes } from "../routes";
+import { routes } from "@/src/routes";
 
 type Entry = { name: string; value: number };
 type CountMode = "unique" | "total";

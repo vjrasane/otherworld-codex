@@ -1,47 +1,16 @@
 ---
 import Base from "../layouts/Base.astro";
-import { getAllCampaigns, getAllStandalones } from "../data";
+import { CardGrid } from "../components/CardGrid.tsx";
+import { getAllCampaigns, getAllCards, getAllStandalones } from "../data";
 import { routes } from "../routes";
 
-const campaigns = getAllCampaigns();
-const standalones = getAllStandalones();
+const cards = getAllCards();
+
+const encounterCards = cards.filter(c => !!c.encounterCode)
 ---
 
-<Base title="Campaigns">
-  <h1>Campaigns</h1>
-  <div class="campaigns">
-    {
-      campaigns.map((c) => (
-        <a href={routes.campaign(c.code)} class="campaign-card">
-          <img src={routes.icon(c.code)} alt="" class="campaign-icon" />
-          <div class="campaign-info">
-            <div class="campaign-name">{c.name}</div>
-            <div class="campaign-meta">
-              {c.scenarios.length} scenario{c.scenarios.length !== 1 && "s"}
-            </div>
-          </div>
-        </a>
-      ))
-    }
-  </div>
-
-  <h1>Standalone Scenarios</h1>
-  <div class="standalones">
-    {
-      standalones.map((s) => (
-        <a href={routes.scenario(s.code)} class="campaign-card">
-          <img
-            src={routes.icon(s.encounterCodes[0])}
-            alt=""
-            class="campaign-icon"
-          />
-          <div class="campaign-info">
-            <div class="campaign-name">{s.name}</div>
-          </div>
-        </a>
-      ))
-    }
-  </div>
+<Base>
+  <CardGrid cards={encounterCards} client:only="react" />
 </Base>
 
 <style>

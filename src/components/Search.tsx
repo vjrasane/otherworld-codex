@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import MiniSearch from "minisearch";
-import type { SearchEntry } from "../data";
+import type { SearchEntry } from "@/src/data";
 import { Search as SearchIcon, X } from "lucide-react";
-import { routes } from "../routes";
+import { routes } from "@/src/routes";
 
 const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
 const ICON_FILTER =

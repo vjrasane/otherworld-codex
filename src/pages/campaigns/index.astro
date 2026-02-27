@@ -1,0 +1,97 @@
+---
+import Base from "@/src/layouts/Base.astro";
+import { getAllCampaigns, getAllStandalones } from "@/src/data";
+import { routes } from "@/src/routes";
+
+const campaigns = getAllCampaigns();
+const standalones = getAllStandalones();
+---
+
+<Base title="Campaigns">
+  <h1>Campaigns</h1>
+  <div class="campaigns">
+    {
+      campaigns.map((c) => (
+        <a href={routes.campaign(c.code)} class="campaign-card">
+          <img src={routes.icon(c.code)} alt="" class="campaign-icon" />
+          <div class="campaign-info">
+            <div class="campaign-name">{c.name}</div>
+            <div class="campaign-meta">
+              {c.scenarios.length} scenario{c.scenarios.length !== 1 && "s"}
+            </div>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+
+  <h1>Standalone Scenarios</h1>
+  <div class="standalones">
+    {
+      standalones.map((s) => (
+        <a href={routes.scenario(s.code)} class="campaign-card">
+          <img
+            src={routes.icon(s.encounterCodes[0])}
+            alt=""
+            class="campaign-icon"
+          />
+          <div class="campaign-info">
+            <div class="campaign-name">{s.name}</div>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  h1 + h1,
+  .campaigns + h1,
+  .standalones + h1 {
+    margin-top: 2rem;
+  }
+
+  .campaigns,
+  .standalones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .campaign-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-1);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    transition: border-color 0.15s;
+  }
+
+  .campaign-card:hover {
+    border-color: var(--accent);
+  }
+
+  .campaign-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    filter: invert(73%) sepia(15%) saturate(497%) hue-rotate(169deg) brightness(95%) contrast(88%);
+  }
+
+  .campaign-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .campaign-meta {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+</style>
