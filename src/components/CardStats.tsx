@@ -169,22 +169,30 @@ function isVariable(val: number | undefined): boolean {
 
 type StatRow = { name: string; label?: React.ReactNode; color: string; [key: string]: string | number | React.ReactNode };
 
+function isVarHealth(c: Card): boolean {
+  return isVariable(c.health) || c.healthPerInvestigator === true;
+}
+
+function isNegative(val: number | undefined): boolean {
+  return val != null && val < 0;
+}
+
 function buildEnemyData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys: string[] } {
   const enemies = cards.filter((c) => c.typeCode === "enemy");
   const statDefs: { name: string; color: string; dist: Map<number, number>; varCount: number }[] = [
-    { name: "Health", color: "76, 86, 106", dist: statDistribution(enemies, (c) => isVariable(c.health) ? undefined : c.health, mode), varCount: 0 },
+    { name: "Health", color: "76, 86, 106", dist: statDistribution(enemies, (c) => isVarHealth(c) ? undefined : c.health, mode), varCount: 0 },
     { name: "Fight", color: "208, 135, 112", dist: statDistribution(enemies, (c) => isVariable(c.enemyFight) ? undefined : c.enemyFight, mode), varCount: 0 },
     { name: "Evade", color: "163, 190, 140", dist: statDistribution(enemies, (c) => isVariable(c.enemyEvade) ? undefined : c.enemyEvade, mode), varCount: 0 },
-    { name: "Damage", color: "191, 97, 106", dist: statDistribution(enemies, (c) => isVariable(c.enemyDamage) ? undefined : c.enemyDamage, mode), varCount: 0 },
-    { name: "Horror", color: "94, 129, 172", dist: statDistribution(enemies, (c) => isVariable(c.enemyHorror) ? undefined : c.enemyHorror, mode), varCount: 0 },
+    { name: "Damage", color: "191, 97, 106", dist: statDistribution(enemies, (c) => isNegative(c.enemyDamage) ? undefined : (c.enemyDamage ?? 0), mode), varCount: 0 },
+    { name: "Horror", color: "94, 129, 172", dist: statDistribution(enemies, (c) => isNegative(c.enemyHorror) ? undefined : (c.enemyHorror ?? 0), mode), varCount: 0 },
   ];
   for (const c of enemies) {
     const w = mode === "total" ? c.quantity : 1;
-    if (isVariable(c.health)) statDefs[0].varCount += w;
+    if (isVarHealth(c)) statDefs[0].varCount += w;
     if (isVariable(c.enemyFight)) statDefs[1].varCount += w;
     if (isVariable(c.enemyEvade)) statDefs[2].varCount += w;
-    if (isVariable(c.enemyDamage)) statDefs[3].varCount += w;
-    if (isVariable(c.enemyHorror)) statDefs[4].varCount += w;
+    if (isNegative(c.enemyDamage)) statDefs[3].varCount += w;
+    if (isNegative(c.enemyHorror)) statDefs[4].varCount += w;
   }
   const allVals = new Set<number>();
   for (const s of statDefs) for (const k of s.dist.keys()) allVals.add(k);
@@ -203,8 +211,8 @@ function buildEnemyData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys
 
 function buildLocationData(cards: Card[], mode: CountMode): { rows: StatRow[]; keys: string[] } {
   const locations = cards.filter((c) => c.typeCode === "location");
-  const fixedClues = locations.filter((c) => c.cluesFixed === true);
-  const perPlayerClues = locations.filter((c) => !c.cluesFixed);
+  const fixedClues = locations.filter((c) => c.cluesFixed === true || c.clues === 0);
+  const perPlayerClues = locations.filter((c) => !c.cluesFixed && (c.clues ?? 0) > 0);
 
   const shroudDist = statDistribution(locations, (c) => isVariable(c.shroud) ? undefined : c.shroud, mode);
   const fixedClueDist = statDistribution(fixedClues, (c) => c.clues, mode);
@@ -254,7 +262,7 @@ function textColorForCell(rgb: string, opacity: number): string {
   return lum > 0.18 ? "var(--bg-0)" : "var(--text-primary)";
 }
 
-function HeatmapChart({ title, rows, keys, category, onCellClick }: { title: string; rows: StatRow[]; keys: string[]; category?: string; onCellClick?: (category: string, stat: string, value: string) => void }) {
+function HeatmapChart({ title, rows, keys, category, onCellClick, activeFilters }: { title: string; rows: StatRow[]; keys: string[]; category?: string; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string> }) {
   if (rows.length === 0) return null;
   return (
     <div>
@@ -273,12 +281,14 @@ function HeatmapChart({ title, rows, keys, category, onCellClick }: { title: str
               const val = (row[k] as number) || 0;
               const rowMax = keys.reduce((m, key) => Math.max(m, (row[key] as number) || 0), 0);
               const opacity = rowMax > 0 ? val / rowMax : 0;
+              const active = activeFilters?.[row.name] === k;
+              const clickable = val > 0 && !active && onCellClick && category;
               return (
                 <div
                   key={k}
-                  onClick={val > 0 && onCellClick && category ? () => onCellClick(category, row.name, k) : undefined}
-                  onMouseEnter={val > 0 && onCellClick && category ? (e) => { e.currentTarget.style.outline = "2px solid var(--accent)"; } : undefined}
-                  onMouseLeave={val > 0 && onCellClick && category ? (e) => { e.currentTarget.style.outline = ""; } : undefined}
+                  onClick={clickable ? () => onCellClick(category, row.name, k) : undefined}
+                  onMouseEnter={clickable ? (e) => { e.currentTarget.style.outline = "2px solid var(--accent)"; } : undefined}
+                  onMouseLeave={clickable ? (e) => { e.currentTarget.style.outline = ""; } : undefined}
                   style={{
                     background: `rgba(${row.color}, ${opacity})`,
                     borderRadius: 3,
@@ -287,7 +297,7 @@ function HeatmapChart({ title, rows, keys, category, onCellClick }: { title: str
                     padding: "0.3rem 0.15rem",
                     color: val > 0 ? textColorForCell(row.color as string, opacity) : "transparent",
                     minWidth: 28,
-                    cursor: val > 0 && onCellClick ? "pointer" : undefined,
+                    cursor: clickable ? "pointer" : undefined,
                   }}
                 >
                   {val}
@@ -301,21 +311,21 @@ function HeatmapChart({ title, rows, keys, category, onCellClick }: { title: str
   );
 }
 
-function EnemyStatsChart({ cards, mode, onCellClick }: { cards: Card[]; mode: CountMode; onCellClick?: (category: string, stat: string, value: string) => void }) {
+function EnemyStatsChart({ cards, mode, onCellClick, activeFilters }: { cards: Card[]; mode: CountMode; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string> }) {
   const hasEnemies = useMemo(() => cards.some((c) => c.typeCode === "enemy"), [cards]);
   const { rows, keys } = useMemo(() => buildEnemyData(cards, mode), [cards, mode]);
   if (!hasEnemies) return null;
-  return <HeatmapChart title="Enemy Stats" rows={rows} keys={keys} category="enemy" onCellClick={onCellClick} />;
+  return <HeatmapChart title="Enemy Stats" rows={rows} keys={keys} category="enemy" onCellClick={onCellClick} activeFilters={activeFilters} />;
 }
 
-function LocationStatsChart({ cards, mode, onCellClick }: { cards: Card[]; mode: CountMode; onCellClick?: (category: string, stat: string, value: string) => void }) {
+function LocationStatsChart({ cards, mode, onCellClick, activeFilters }: { cards: Card[]; mode: CountMode; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string> }) {
   const hasLocations = useMemo(() => cards.some((c) => c.typeCode === "location"), [cards]);
   const { rows, keys } = useMemo(() => buildLocationData(cards, mode), [cards, mode]);
   if (!hasLocations) return null;
-  return <HeatmapChart title="Location Stats" rows={rows} keys={keys} category="location" onCellClick={onCellClick} />;
+  return <HeatmapChart title="Location Stats" rows={rows} keys={keys} category="location" onCellClick={onCellClick} activeFilters={activeFilters} />;
 }
 
-export default function CardStats({ cards, onCellClick }: { cards: Card[]; onCellClick?: (category: string, stat: string, value: string) => void }) {
+export default function CardStats({ cards, onCellClick, activeFilters }: { cards: Card[]; onCellClick?: (category: string, stat: string, value: string) => void; activeFilters?: Record<string, string> }) {
   const [mode, setMode] = useState<CountMode>("total");
 
   const typeCounts = useMemo(() => countBy(cards, (c) => c.typeName, mode), [cards, mode]);
@@ -331,8 +341,8 @@ export default function CardStats({ cards, onCellClick }: { cards: Card[]; onCel
         </div>
       </div>
       <PieSection title="Card Types" data={typeCounts} />
-      <EnemyStatsChart cards={cards} mode={mode} onCellClick={onCellClick} />
-      <LocationStatsChart cards={cards} mode={mode} onCellClick={onCellClick} />
+      <EnemyStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={activeFilters} />
+      <LocationStatsChart cards={cards} mode={mode} onCellClick={onCellClick} activeFilters={activeFilters} />
       <BarSection title="Traits" data={traitCounts} />
       <BarSection title="Encounter Sets" data={encounterCounts} />
     </div>

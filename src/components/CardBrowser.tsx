@@ -11,13 +11,26 @@ import type { Card } from "@/src/data/card";
 import { css } from "../styles";
 
 type ViewMode = "cards" | "stats";
-type StatFilter = { stat: string; value: string };
+type StatFilters = Record<string, string>;
 
-function parseStatParam(param: string | null): StatFilter | null {
-  if (!param) return null;
-  const dot = param.indexOf(".");
-  if (dot < 1) return null;
-  return { stat: param.slice(0, dot), value: param.slice(dot + 1) };
+const STAT_PARAM_KEYS: Record<string, string> = {
+  Health: "health", Fight: "fight", Evade: "evade",
+  Damage: "damage", Horror: "horror", Shroud: "shroud",
+  Clues: "clues", Clues_pp: "clues_pp",
+};
+
+const PARAM_TO_STAT = Object.fromEntries(
+  Object.entries(STAT_PARAM_KEYS).map(([k, v]) => [v, k]),
+);
+
+function parseStatFilters(): StatFilters {
+  const params = new URLSearchParams(window.location.search);
+  const result: StatFilters = {};
+  for (const [param, stat] of Object.entries(PARAM_TO_STAT)) {
+    const val = params.get(param);
+    if (val != null) result[stat] = val;
+  }
+  return result;
 }
 
 function isVariable(val: number | undefined): boolean {
@@ -46,10 +59,9 @@ const STAT_TYPE_CODE: Record<string, string> = {
   Clues_pp: "location",
 };
 
-function statFilterLabel(sf: StatFilter): string {
-  const stat = sf.stat === "Clues_pp" ? "Clues/inv" : sf.stat;
-  const value = sf.value === "?" ? "variable" : sf.value;
-  return `${stat} = ${value}`;
+function statChipLabel(stat: string, value: string): string {
+  const label = stat === "Clues_pp" ? "clues/inv" : stat.toLowerCase();
+  return `${label} = ${value}`;
 }
 
 type Option = { label: string; value: string };
@@ -113,7 +125,7 @@ function parseURL(filterOptions: FilterOptions): Filters {
   };
 }
 
-function toURL(filters: Filters, viewMode: ViewMode, statFilter: StatFilter | null): string {
+function toURL(filters: Filters, viewMode: ViewMode, statFilters: StatFilters): string {
   const params = new URLSearchParams();
   for (const [field, key] of Object.entries(PARAM_KEYS)) {
     const selected = filters[field as keyof Filters];
@@ -122,7 +134,10 @@ function toURL(filters: Filters, viewMode: ViewMode, statFilter: StatFilter | nu
     }
   }
   if (viewMode === "stats") params.set("view", "stats");
-  if (statFilter) params.set("stat", `${statFilter.stat}.${statFilter.value}`);
+  for (const [stat, value] of Object.entries(statFilters)) {
+    const param = STAT_PARAM_KEYS[stat];
+    if (param) params.set(param, value);
+  }
   const str = params.toString();
   return str ? `?${str}` : window.location.pathname;
 }
@@ -236,19 +251,17 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     const params = new URLSearchParams(window.location.search);
     return params.get("view") === "stats" ? "stats" : "cards";
   });
-  const [statFilter, setStatFilterState] = useState<StatFilter | null>(() =>
-    parseStatParam(new URLSearchParams(window.location.search).get("stat")),
-  );
+  const [statFilters, setStatFiltersState] = useState<StatFilters>(parseStatFilters);
 
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
   const viewModeRef = useRef(viewMode);
   viewModeRef.current = viewMode;
-  const statFilterRef = useRef(statFilter);
-  statFilterRef.current = statFilter;
+  const statFiltersRef = useRef(statFilters);
+  statFiltersRef.current = statFilters;
 
   const pushURL = useCallback(() => {
-    history.pushState(null, "", toURL(filtersRef.current, viewModeRef.current, statFilterRef.current));
+    history.pushState(null, "", toURL(filtersRef.current, viewModeRef.current, statFiltersRef.current));
   }, []);
 
   const setFilters = useCallback((next: Filters) => {
@@ -264,17 +277,20 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
   }, [pushURL]);
 
   const handleStatClick = useCallback((_category: string, stat: string, value: string) => {
-    const sf: StatFilter = { stat, value };
-    setStatFilterState(sf);
-    statFilterRef.current = sf;
+    if (statFiltersRef.current[stat] === value) return;
+    const next = { ...statFiltersRef.current, [stat]: value };
+    setStatFiltersState(next);
+    statFiltersRef.current = next;
     setViewModeState("cards");
     viewModeRef.current = "cards";
     pushURL();
   }, [pushURL]);
 
-  const clearStatFilter = useCallback(() => {
-    setStatFilterState(null);
-    statFilterRef.current = null;
+  const clearStatFilter = useCallback((stat: string) => {
+    const next = { ...statFiltersRef.current };
+    delete next[stat];
+    setStatFiltersState(next);
+    statFiltersRef.current = next;
     pushURL();
   }, [pushURL]);
 
@@ -283,7 +299,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
       const params = new URLSearchParams(window.location.search);
       setFiltersState(parseURL(filterOptions));
       setViewModeState(params.get("view") === "stats" ? "stats" : "cards");
-      setStatFilterState(parseStatParam(params.get("stat")));
+      setStatFiltersState(parseStatFilters());
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -483,19 +499,26 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
       return true;
     });
 
-    if (statFilter) {
-      const typeCode = STAT_TYPE_CODE[statFilter.stat];
-      const getter = STAT_GETTERS[statFilter.stat];
-      if (typeCode && getter) {
-        result = result.filter((card) => {
-          if (card.typeCode !== typeCode) return false;
-          if (statFilter.value === "?") return isVariable(getter(card));
-          const numVal = parseInt(statFilter.value);
-          if (statFilter.stat === "Clues_pp") return !card.cluesFixed && getter(card) === numVal;
-          if (statFilter.stat === "Clues") return card.cluesFixed === true && getter(card) === numVal;
-          return !isVariable(getter(card)) && getter(card) === numVal;
-        });
-      }
+    for (const [stat, value] of Object.entries(statFilters)) {
+      const typeCode = STAT_TYPE_CODE[stat];
+      const getter = STAT_GETTERS[stat];
+      if (!typeCode || !getter) continue;
+      result = result.filter((card) => {
+        if (card.typeCode !== typeCode) return false;
+        if (value === "?") {
+          if (stat === "Health") return isVariable(card.health) || card.healthPerInvestigator === true;
+          if (stat === "Damage") return card.enemyDamage != null && card.enemyDamage < 0;
+          if (stat === "Horror") return card.enemyHorror != null && card.enemyHorror < 0;
+          return isVariable(getter(card));
+        }
+        const numVal = parseInt(value);
+        if (stat === "Clues_pp") return !card.cluesFixed && (card.clues ?? 0) > 0 && getter(card) === numVal;
+        if (stat === "Clues") return (card.cluesFixed === true || card.clues === 0) && getter(card) === numVal;
+        if (stat === "Health") return !(isVariable(card.health) || card.healthPerInvestigator === true) && getter(card) === numVal;
+        if (stat === "Damage") return (card.enemyDamage ?? 0) === numVal && !(card.enemyDamage != null && card.enemyDamage < 0);
+        if (stat === "Horror") return (card.enemyHorror ?? 0) === numVal && !(card.enemyHorror != null && card.enemyHorror < 0);
+        return !isVariable(getter(card)) && getter(card) === numVal;
+      });
     }
 
     return result;
@@ -507,7 +530,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     selectedEncounters,
     selectedTraits,
     selectedTypes,
-    statFilter,
+    statFilters,
   ]);
 
   const filterKey = [
@@ -516,7 +539,7 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
     selectedEncounters.map((e) => e.value).join(","),
     selectedTraits.map((t) => t.value).join(","),
     selectedTypes.map((t) => t.value).join(","),
-    statFilter ? `${statFilter.stat}.${statFilter.value}` : "",
+    Object.entries(statFilters).map(([k, v]) => `${k}=${v}`).join(","),
   ].join("|");
 
   return (
@@ -600,15 +623,17 @@ export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
         </div>
       </div>
       <div style={s.countRow}>
-        {statFilter && (
-          <button onClick={clearStatFilter} style={s.statChip}>
-            {statFilterLabel(statFilter)} ×
-          </button>
-        )}
         <div style={s.count}>{filteredCards.length} cards</div>
+        <div style={s.statChips}>
+          {Object.entries(statFilters).map(([stat, value]) => (
+            <button key={stat} onClick={() => clearStatFilter(stat)} style={s.statChip}>
+              {statChipLabel(stat, value)} ×
+            </button>
+          ))}
+        </div>
       </div>
       {viewMode === "stats" ? (
-        <CardStats cards={filteredCards} onCellClick={handleStatClick} />
+        <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} />
       ) : (
         <CardGrid key={filterKey} cards={filteredCards} />
       )}
@@ -640,10 +665,16 @@ const s: Record<string, React.CSSProperties> = {
     alignItems: "center",
     gap: "0.5rem",
     marginBottom: "0.75rem",
+    minHeight: 28,
   },
   count: {
     fontSize: "0.85rem",
     color: "var(--text-muted)",
+  },
+  statChips: {
+    display: "flex",
+    gap: "0.35rem",
+    flexWrap: "wrap" as const,
   },
   statChip: {
     display: "inline-flex",
