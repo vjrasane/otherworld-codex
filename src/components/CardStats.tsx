@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { Card } from "@/src/data/card";
+import { isVariable } from "@/src/data/filters";
 
 type Entry = { name: string; value: number };
 type CountMode = "unique" | "total";
@@ -195,10 +196,6 @@ function statDistribution(
     map.set(val, (map.get(val) ?? 0) + weight);
   }
   return map;
-}
-
-function isVariable(val: number | undefined): boolean {
-  return val == null || val < 0;
 }
 
 type StatRow = { name: string; label?: React.ReactNode; color: string; [key: string]: string | number | React.ReactNode };
