@@ -1,6 +1,7 @@
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export const routes = {
+  base,
   campaign: (code: string) => `${base}/campaigns/${code}`,
   scenario: (code: string) => `${base}/scenarios/${code}`,
   encounter: (code: string) => `${base}/encounters/${code}`,
@@ -11,5 +12,6 @@ export const routes = {
     searchIndex: `${base}/search-index.json`,
     encounterCards: `${base}/encounter-cards.json`,
     encounterCardsByCode: `${base}/encounter-cards-by-code.json`,
+    cardMeta: `${base}/card-meta.json`,
   },
 } as const;

@@ -6,7 +6,7 @@ import { type Card } from "../data/card";
 import { capitalize, compact } from "lodash-es";
 import { type SearchEntry } from "../data/search-index";
 import { useCachedQuery } from "../hooks";
-import { QueryOptionsContext, type QueryOptionsMap } from "../data/queries";
+import { QueryOptionsContext, type QueryOptionsMap } from "../data/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../data/query-client";
 

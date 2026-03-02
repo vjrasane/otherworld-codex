@@ -6,8 +6,7 @@ import Select, {
 } from "react-select";
 import { CardGrid } from "./CardGrid";
 import CardStats from "./CardStats";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Card } from "@/src/data/card";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { css } from "../styles";
 import {
   type Option,
@@ -32,12 +31,10 @@ import {
   cascadeEncounterChange,
   filterCards,
 } from "@/src/data/filters";
-
-interface Props {
-  cards: Card[];
-  filterOptions: FilterOptions;
-  cardMeta: Record<string, CardMeta>;
-}
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "../data/query-client";
+import { QueryOptionsContext, type QueryOptionsMap } from "../data/query-client";
+import { useCachedQuery } from "../hooks";
 
 function toOptions(v: MultiValue<Option>): Option[] {
   return [...v];
@@ -61,7 +58,27 @@ function CustomMultiValue(props: MultiValueProps<Option, true>) {
 
 const selectComponents = { MultiValue: CustomMultiValue };
 
-export default function CardBrowser({ cards, filterOptions, cardMeta }: Props) {
+export const CardBrowser: React.FC<{
+  filterOptions: FilterOptions;
+  queryOptions: QueryOptionsMap;
+}> = ({ queryOptions, ...props }) => {
+  return <QueryClientProvider client={queryClient}>
+    <QueryOptionsContext.Provider value={queryOptions}>
+      <CardBrowserComponent {...props} />
+    </QueryOptionsContext.Provider>
+  </QueryClientProvider>
+}
+
+const CardBrowserComponent: React.FC<{
+  filterOptions: FilterOptions;
+}> = ({ filterOptions }) => {
+  const opts = useContext(QueryOptionsContext)
+  const cachedCards = useCachedQuery(opts.encounterCards);
+  const cachedCardMeta = useCachedQuery(opts.cardMeta);
+
+  const cards = useMemo(() => cachedCards ?? [], [cachedCards]);
+  const cardMeta = useMemo(() => cachedCardMeta ?? {}, [cachedCardMeta]);
+
   const [filters, setFiltersState] = useState<Filters>(() =>
     parseURL(window.location.search, filterOptions),
   );

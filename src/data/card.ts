@@ -1,3 +1,4 @@
+import { sortBy } from "lodash-es";
 import cardsJson from "../../data/cards.json";
 
 export interface Card {
@@ -104,7 +105,7 @@ function parseCard(raw: any): Card {
   };
 }
 
-const allCards: Card[] = (cardsJson as any[]).map(parseCard);
+const allCards: Card[] = sortBy((cardsJson as any[]).map(parseCard), "code");
 
 export const encounterCards: Card[] = allCards.filter((c) => !!c.encounterCode);
 
