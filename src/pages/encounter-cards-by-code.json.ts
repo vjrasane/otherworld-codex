@@ -1,10 +1,17 @@
 import type { APIRoute } from "astro";
-import { encounterCardsByCode } from "../data/card";
+import { encounterCardsByCode, type Card } from "../data/card";
 import { hashContent } from "../utils";
+import { type QueryOpts } from "../data/query-client";
+import { routes } from "../routes";
 
 const data = Object.fromEntries(encounterCardsByCode);
 
-export const HASH = hashContent(data);
+const hash = hashContent(data);
+
+export const options: QueryOpts<Record<string, Card>> = {
+  queryKey: ["encounterCardsByCode", hash],
+  route: routes.json.encounterCardsByCode,
+};
 
 export const GET: APIRoute = () => {
   return new Response(JSON.stringify(data), {

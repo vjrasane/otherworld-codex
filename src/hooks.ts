@@ -1,38 +1,9 @@
-import { kebabCase } from "lodash-es";
-import { useEffect, useState } from "react";
-import { SITE_TITLE } from "./config";
+import { toOptions, type QueryOpts } from "./data/query-client";
+import { useQuery } from "@tanstack/react-query";
 
-const cache: Record<string, any> = {};
-
-export function useCachedData<T>(route: string, hash: string): T | null {
-  const prefix = [kebabCase(SITE_TITLE), route].join(":");
-  const cacheKey = [prefix, hash].join(":");
-
-  const [data, setData] = useState<T | null>((cache[cacheKey] as T) ?? null);
-
-  const fetchData = async () => {
-    const res = await fetch(route);
-    const data = await res.json();
-    clearStaleCache(prefix);
-    localStorage.setItem(cacheKey, JSON.stringify(data));
-    cache[cacheKey] = data;
-    setData(data);
-  };
-
-  const getCached = (): T | null => {
-    let cached = cache[cacheKey];
-    if (cached) return cached;
-    cached = localStorage.getItem(cacheKey);
-    if (cached) return JSON.parse(cached);
-    return null;
-  };
-
-  useEffect(() => {
-    const cached = getCached();
-    if (!cached) fetchData();
-    else setData(cached);
-  }, []);
-
+export function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
+  const { data } = useQuery(toOptions(queryOpts));
+  if (!data) return null;
   return data;
 }
 

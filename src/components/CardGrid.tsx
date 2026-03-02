@@ -3,7 +3,7 @@ import { routes } from "@/src/routes";
 import { CardImage } from "./CardImage";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-export const CardGrid = ({ cards }: { cards: Card[] }) => {
+export const CardGrid: React.FC<{ cards: Card[] }> = ({ cards }) => {
   const [count, setCount] = useState(50);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
