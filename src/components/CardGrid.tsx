@@ -17,7 +17,7 @@ export const CardGrid: React.FC<{ cards: Card[] }> = ({ cards }) => {
     return () => observer.disconnect();
   }, []);
 
-  const renderedCards = useMemo(() => cards.slice(0, count), [cards, count])
+  const renderedCards = useMemo(() => cards.slice(0, count), [cards, count]);
 
   return (
     <>
@@ -51,5 +51,4 @@ const s: Record<string, React.CSSProperties> = {
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   },
-}
-
+};

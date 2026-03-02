@@ -2,10 +2,10 @@ import Select, {
   components,
   type MultiValue,
   type MultiValueProps,
-  type StylesConfig,
 } from "react-select";
 
 export type Option = { label: string; value: string };
+
 export const MultiSelect: React.FC<{
   label: string;
   placeholder?: string;
@@ -22,12 +22,35 @@ export const MultiSelect: React.FC<{
         value={value}
         onChange={onChange}
         placeholder={placeholder ?? label}
-        styles={selectStyles}
         unstyled
         classNames={{
-          control: () => "input-field",
+          control: () => "input-field flex items-center flex-nowrap",
+          valueContainer: () =>
+            "flex !flex-nowrap overflow-hidden flex-1 items-center gap-1",
+          menu: () =>
+            "mt-1 bg-bg-1 border border-border rounded-md z-10 overflow-hidden",
+          menuList: () => "max-h-60 overflow-y-auto",
+          option: ({ isFocused, isSelected }) =>
+            `px-3 py-2 text-sm text-text-primary cursor-pointer ${
+              isSelected ? "bg-bg-3" : isFocused ? "bg-bg-2" : ""
+            }`,
+          multiValue: () =>
+            "bg-bg-3 rounded text-sm flex items-center min-w-0 shrink",
+          multiValueLabel: () =>
+            "text-text-primary px-1.5 overflow-hidden text-ellipsis whitespace-nowrap",
+          multiValueRemove: () =>
+            "text-text-muted hover:text-text-primary hover:bg-danger px-0.5 rounded-r",
+          input: () => "text-text-primary",
+          placeholder: () =>
+            "text-text-muted overflow-hidden text-ellipsis whitespace-nowrap",
+          indicatorSeparator: () => "bg-border self-stretch w-px my-2",
+          dropdownIndicator: () =>
+            "text-text-muted hover:text-text-primary px-2",
+          clearIndicator: () =>
+            "text-text-muted hover:text-danger px-2 cursor-pointer",
+          noOptionsMessage: () => "text-text-muted text-sm px-3 py-2",
         }}
-        components={selectComponents}
+        components={{ MultiValue: CustomMultiValue }}
         closeMenuOnSelect={false}
         hideSelectedOptions={false}
       />
@@ -50,88 +73,4 @@ const CustomMultiValue: React.FC<MultiValueProps<Option, true>> = (
       {values.length} selected
     </components.MultiValue>
   );
-};
-
-const selectComponents = { MultiValue: CustomMultiValue };
-
-const selectStyles: StylesConfig<Option, true> = {
-  control: (base, { isFocused }) => ({
-    ...base,
-    background: "var(--color-bg-2)",
-    borderColor: isFocused ? "var(--color-accent)" : "var(--color-border)",
-    boxShadow: isFocused ? "0 0 0 1px var(--color-accent)" : "none",
-    "&:hover": { borderColor: "var(--color-accent)" },
-    flexWrap: "nowrap",
-    padding: "calc(var(--spacing) * 2) calc(var(--spacing) * 3)",
-  }),
-  valueContainer: (base) => ({
-    ...base,
-    flexWrap: "nowrap",
-    overflow: "hidden",
-  }),
-  menu: (base) => ({
-    ...base,
-    background: "var(--color-bg-1)",
-    border: "1px solid var(--color-border)",
-    zIndex: 10,
-  }),
-  option: (base, { isFocused, isSelected }) => ({
-    ...base,
-    background: isSelected
-      ? "var(--color-bg-3)"
-      : isFocused
-        ? "var(--color-bg-2)"
-        : undefined,
-    color: "var(--color-text-primary)",
-    ":active": { background: "var(--color-bg-3)" },
-  }),
-  multiValue: (base) => ({
-    ...base,
-    background: "var(--color-bg-3)",
-    minWidth: 0,
-    flexShrink: 1,
-  }),
-  multiValueLabel: (base) => ({
-    ...base,
-    color: "var(--color-text-primary)",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  }),
-  multiValueRemove: (base) => ({
-    ...base,
-    color: "var(--color-text-muted)",
-    ":hover": {
-      background: "var(--color-danger)",
-      color: "var(--color-text-primary)",
-    },
-  }),
-  input: (base) => ({
-    ...base,
-    color: "var(--color-text-primary)",
-  }),
-  placeholder: (base) => ({
-    ...base,
-    color: "var(--color-text-muted)",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  }),
-  indicatorSeparator: (base) => ({
-    ...base,
-    background: "var(--color-border)",
-  }),
-  dropdownIndicator: (base) => ({
-    ...base,
-    color: "var(--color-text-muted)",
-    ":hover": { color: "var(--color-text-primary)" },
-  }),
-  clearIndicator: (base) => ({
-    ...base,
-    color: "var(--color-text-muted)",
-    ":hover": { color: "var(--color-danger)" },
-  }),
-  noOptionsMessage: (base) => ({
-    ...base,
-    color: "var(--color-text-muted)",
-  }),
 };
