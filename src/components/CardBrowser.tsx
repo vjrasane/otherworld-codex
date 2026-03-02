@@ -6,7 +6,14 @@ import Select, {
 } from "react-select";
 import { CardGrid } from "./CardGrid";
 import CardStats from "./CardStats";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { css } from "../styles";
 import {
   type Option,
@@ -33,7 +40,10 @@ import {
 } from "@/src/data/filters";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../data/query-client";
-import { QueryOptionsContext, type QueryOptionsMap } from "../data/query-client";
+import {
+  QueryOptionsContext,
+  type QueryOptionsMap,
+} from "../data/query-client";
 import { useCachedQuery, useCardMeta, useFilterOptions } from "../hooks";
 import { buildFilterOptions } from "../data/filter-options";
 
@@ -62,22 +72,27 @@ const selectComponents = { MultiValue: CustomMultiValue };
 export const CardBrowser: React.FC<{
   queryOptions: QueryOptionsMap;
 }> = ({ queryOptions }) => {
-  return <QueryClientProvider client={queryClient}>
-    <QueryOptionsContext.Provider value={queryOptions}>
-      <CardBrowserComponent />
-    </QueryOptionsContext.Provider>
-  </QueryClientProvider>
-}
+  return (
+    <QueryClientProvider client={queryClient}>
+      <QueryOptionsContext.Provider value={queryOptions}>
+        <CardBrowserComponent />
+      </QueryOptionsContext.Provider>
+    </QueryClientProvider>
+  );
+};
 
 const CardBrowserComponent: React.FC = () => {
-  const opts = useContext(QueryOptionsContext)
+  const opts = useContext(QueryOptionsContext);
   const cachedCards = useCachedQuery(opts.encounterCards);
   const cachedCardMeta = useCardMeta();
   const cachedFilterOptions = useFilterOptions();
 
   const cards = useMemo(() => cachedCards ?? [], [cachedCards]);
   const cardMeta = useMemo(() => cachedCardMeta ?? {}, [cachedCardMeta]);
-  const filterOptions = useMemo(() => cachedFilterOptions ?? buildFilterOptions([], [], []), [cachedFilterOptions]);
+  const filterOptions = useMemo(
+    () => cachedFilterOptions ?? buildFilterOptions([], [], []),
+    [cachedFilterOptions],
+  );
 
   const [filters, setFiltersState] = useState<Filters>(() =>
     parseURL(window.location.search, filterOptions),
@@ -102,55 +117,88 @@ const CardBrowserComponent: React.FC = () => {
   statFiltersRef.current = statFilters;
 
   const pushURL = useCallback(() => {
-    history.pushState(null, "", toURL(filtersRef.current, viewModeRef.current, statFiltersRef.current, window.location.pathname));
+    history.pushState(
+      null,
+      "",
+      toURL(
+        filtersRef.current,
+        viewModeRef.current,
+        statFiltersRef.current,
+        window.location.pathname,
+      ),
+    );
   }, []);
 
-  const setFilters = useCallback((next: Filters) => {
-    setFiltersState(next);
-    filtersRef.current = next;
-    pushURL();
-  }, [pushURL]);
+  const setFilters = useCallback(
+    (next: Filters) => {
+      setFiltersState(next);
+      filtersRef.current = next;
+      pushURL();
+    },
+    [pushURL],
+  );
 
-  const setViewMode = useCallback((next: ViewMode) => {
-    setViewModeState(next);
-    viewModeRef.current = next;
-    pushURL();
-  }, [pushURL]);
+  const setViewMode = useCallback(
+    (next: ViewMode) => {
+      setViewModeState(next);
+      viewModeRef.current = next;
+      pushURL();
+    },
+    [pushURL],
+  );
 
-  const handleChartClick = useCallback((kind: "types" | "traits" | "encounters", name: string) => {
-    const opts = filterOptions[kind];
-    const option = kind === "traits"
-      ? opts.find((o) => o.value === name)
-      : opts.find((o) => o.label === name);
-    if (!option) return;
-    const current = filtersRef.current[kind];
-    if (current.some((o) => o.value === option.value)) return;
-    const nextFilters = { ...filtersRef.current, [kind]: [...current, option] };
-    setFiltersState(nextFilters);
-    filtersRef.current = nextFilters;
-    setViewModeState("cards");
-    viewModeRef.current = "cards";
-    pushURL();
-  }, [filterOptions, pushURL]);
+  const handleChartClick = useCallback(
+    (kind: "types" | "traits" | "encounters", name: string) => {
+      const opts = filterOptions[kind];
+      const option =
+        kind === "traits"
+          ? opts.find((o) => o.value === name)
+          : opts.find((o) => o.label === name);
+      if (!option) return;
+      const current = filtersRef.current[kind];
+      if (current.some((o) => o.value === option.value)) return;
+      const nextFilters = {
+        ...filtersRef.current,
+        [kind]: [...current, option],
+      };
+      setFiltersState(nextFilters);
+      filtersRef.current = nextFilters;
+      setViewModeState("cards");
+      viewModeRef.current = "cards";
+      pushURL();
+    },
+    [filterOptions, pushURL],
+  );
 
-  const handleStatClick = useCallback((category: string, stat: string, value: string) => {
-    const key = stat === "Victory" ? (category === "enemy" ? "EnemyVictory" : "LocationVictory") : stat;
-    if (statFiltersRef.current[key] === value) return;
-    const next = { ...statFiltersRef.current, [key]: value };
-    setStatFiltersState(next);
-    statFiltersRef.current = next;
-    setViewModeState("cards");
-    viewModeRef.current = "cards";
-    pushURL();
-  }, [pushURL]);
+  const handleStatClick = useCallback(
+    (category: string, stat: string, value: string) => {
+      const key =
+        stat === "Victory"
+          ? category === "enemy"
+            ? "EnemyVictory"
+            : "LocationVictory"
+          : stat;
+      if (statFiltersRef.current[key] === value) return;
+      const next = { ...statFiltersRef.current, [key]: value };
+      setStatFiltersState(next);
+      statFiltersRef.current = next;
+      setViewModeState("cards");
+      viewModeRef.current = "cards";
+      pushURL();
+    },
+    [pushURL],
+  );
 
-  const clearStatFilter = useCallback((stat: string) => {
-    const next = { ...statFiltersRef.current };
-    delete next[stat];
-    setStatFiltersState(next);
-    statFiltersRef.current = next;
-    pushURL();
-  }, [pushURL]);
+  const clearStatFilter = useCallback(
+    (stat: string) => {
+      const next = { ...statFiltersRef.current };
+      delete next[stat];
+      setStatFiltersState(next);
+      statFiltersRef.current = next;
+      pushURL();
+    },
+    [pushURL],
+  );
 
   useEffect(() => {
     const onPopState = () => {
@@ -176,17 +224,36 @@ const CardBrowserComponent: React.FC = () => {
   );
 
   const validEncounterCodes = useMemo(
-    () => computeValidEncounterCodes(selectedScenarios, selectedCampaigns, filterOptions.scenarios, scenarioOptions),
-    [filterOptions.scenarios, scenarioOptions, selectedCampaigns, selectedScenarios],
+    () =>
+      computeValidEncounterCodes(
+        selectedScenarios,
+        selectedCampaigns,
+        filterOptions.scenarios,
+        scenarioOptions,
+      ),
+    [
+      filterOptions.scenarios,
+      scenarioOptions,
+      selectedCampaigns,
+      selectedScenarios,
+    ],
   );
 
   const encounterOptions = useMemo(
-    () => computeEncounterOptions(validEncounterCodes, filterOptions.encounters),
+    () =>
+      computeEncounterOptions(validEncounterCodes, filterOptions.encounters),
     [filterOptions.encounters, validEncounterCodes],
   );
 
   const validTraits = useMemo(
-    () => computeValidTraits(selectedCampaigns, selectedScenarios, selectedEncounters, cards, cardMeta),
+    () =>
+      computeValidTraits(
+        selectedCampaigns,
+        selectedScenarios,
+        selectedEncounters,
+        cards,
+        cardMeta,
+      ),
     [cards, cardMeta, selectedCampaigns, selectedScenarios, selectedEncounters],
   );
 
@@ -196,15 +263,47 @@ const CardBrowserComponent: React.FC = () => {
   );
 
   const typeOptions = useMemo(
-    () => computeTypeOptions(selectedCampaigns, selectedScenarios, selectedEncounters, cards, cardMeta, filterOptions.types),
-    [cards, cardMeta, filterOptions.types, selectedCampaigns, selectedScenarios, selectedEncounters],
+    () =>
+      computeTypeOptions(
+        selectedCampaigns,
+        selectedScenarios,
+        selectedEncounters,
+        cards,
+        cardMeta,
+        filterOptions.types,
+      ),
+    [
+      cards,
+      cardMeta,
+      filterOptions.types,
+      selectedCampaigns,
+      selectedScenarios,
+      selectedEncounters,
+    ],
   );
 
   const handleCampaignChange = (v: MultiValue<Option>) =>
-    setFilters(cascadeCampaignChange(toOptions(v), filters, filterOptions, cards, cardMeta));
+    setFilters(
+      cascadeCampaignChange(
+        toOptions(v),
+        filters,
+        filterOptions,
+        cards,
+        cardMeta,
+      ),
+    );
 
   const handleScenarioChange = (v: MultiValue<Option>) =>
-    setFilters(cascadeScenarioChange(toOptions(v), filters, filterOptions, scenarioOptions, cards, cardMeta));
+    setFilters(
+      cascadeScenarioChange(
+        toOptions(v),
+        filters,
+        filterOptions,
+        scenarioOptions,
+        cards,
+        cardMeta,
+      ),
+    );
 
   const handleEncounterChange = (v: MultiValue<Option>) =>
     setFilters(cascadeEncounterChange(toOptions(v), filters, cards, cardMeta));
@@ -220,7 +319,9 @@ const CardBrowserComponent: React.FC = () => {
     selectedEncounters.map((e) => e.value).join(","),
     selectedTraits.map((t) => t.value).join(","),
     selectedTypes.map((t) => t.value).join(","),
-    Object.entries(statFilters).map(([k, v]) => `${k}=${v}`).join(","),
+    Object.entries(statFilters)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(","),
   ].join("|");
 
   return (
@@ -276,7 +377,9 @@ const CardBrowserComponent: React.FC = () => {
                 isMulti
                 options={traitOptions}
                 value={selectedTraits}
-                onChange={(v) => setFilters({ ...filters, traits: toOptions(v) })}
+                onChange={(v) =>
+                  setFilters({ ...filters, traits: toOptions(v) })
+                }
                 placeholder="All traits"
                 styles={selectStyles}
                 components={selectComponents}
@@ -290,7 +393,9 @@ const CardBrowserComponent: React.FC = () => {
                 isMulti
                 options={typeOptions}
                 value={selectedTypes}
-                onChange={(v) => setFilters({ ...filters, types: toOptions(v) })}
+                onChange={(v) =>
+                  setFilters({ ...filters, types: toOptions(v) })
+                }
                 placeholder="All types"
                 styles={selectStyles}
                 components={selectComponents}
@@ -300,15 +405,35 @@ const CardBrowserComponent: React.FC = () => {
             </div>
           </div>
           <div style={s.viewToggleStyle}>
-            <button style={css(s.viewButtonStyle, viewMode === "cards" && s.viewButtonActive)} onClick={() => setViewMode("cards")}>Cards</button>
-            <button style={css(s.viewButtonStyle, viewMode === "stats" && s.viewButtonActive)} onClick={() => setViewMode("stats")}>Stats</button>
+            <button
+              style={css(
+                s.viewButtonStyle,
+                viewMode === "cards" && s.viewButtonActive,
+              )}
+              onClick={() => setViewMode("cards")}
+            >
+              Cards
+            </button>
+            <button
+              style={css(
+                s.viewButtonStyle,
+                viewMode === "stats" && s.viewButtonActive,
+              )}
+              onClick={() => setViewMode("stats")}
+            >
+              Stats
+            </button>
           </div>
         </div>
         <div style={s.countRow}>
           <div style={s.count}>{filteredCards.length} cards</div>
           <div style={s.statChips}>
             {Object.entries(statFilters).map(([stat, value]) => (
-              <button key={stat} onClick={() => clearStatFilter(stat)} style={s.statChip}>
+              <button
+                key={stat}
+                onClick={() => clearStatFilter(stat)}
+                style={s.statChip}
+              >
                 {statChipLabel(stat, value)} ×
               </button>
             ))}
@@ -317,14 +442,19 @@ const CardBrowserComponent: React.FC = () => {
       </div>
       <div style={{ paddingTop: "0.75rem" }}>
         {viewMode === "stats" ? (
-          <CardStats cards={filteredCards} onCellClick={handleStatClick} activeFilters={statFilters} onChartClick={handleChartClick} />
+          <CardStats
+            cards={filteredCards}
+            onCellClick={handleStatClick}
+            activeFilters={statFilters}
+            onChartClick={handleChartClick}
+          />
         ) : (
           <CardGrid key={filterKey} cards={filteredCards} />
         )}
       </div>
     </div>
   );
-}
+};
 
 const s: Record<string, React.CSSProperties> = {
   stickyHeader: {
@@ -391,7 +521,7 @@ const s: Record<string, React.CSSProperties> = {
     overflow: "hidden",
     fontSize: "0.8rem",
     alignSelf: "end",
-    marginBottom: "0.25rem"
+    marginBottom: "0.25rem",
   },
   viewButtonStyle: {
     padding: "0.3rem 0.6rem",
@@ -406,7 +536,7 @@ const s: Record<string, React.CSSProperties> = {
     background: "var(--accent)",
     color: "var(--bg-0)",
     fontWeight: 600,
-  }
+  },
 };
 
 const selectStyles: StylesConfig<Option, true> = {

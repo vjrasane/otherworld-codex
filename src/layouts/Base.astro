@@ -32,6 +32,12 @@ const { title } = Astro.props;
 </html>
 
 <style>
+  body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
   .header {
     display: flex;
     justify-content: center;
@@ -40,9 +46,11 @@ const { title } = Astro.props;
     padding: 0.75rem 1rem;
     background: var(--bg-1);
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  }
+
+  .main {
+    flex: 1;
+    overflow-y: auto;
   }
 
   .logo {
@@ -56,8 +64,5 @@ const { title } = Astro.props;
     color: var(--accent);
   }
 
-  .main {
-    margin: 0 auto;
-    padding: 1.5rem 1rem;
-  }
+
 </style>
