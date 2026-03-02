@@ -104,30 +104,26 @@ function parseCard(raw: any): Card {
   };
 }
 
-const allCards: Card[] = [];
-for (const raw of cardsJson as any[]) {
-  allCards.push(parseCard(raw));
-}
+const allCards: Card[] = (cardsJson as any[]).map(parseCard);
 
-const cardsByCode = new Map<string, Card>();
-for (const card of allCards) {
-  cardsByCode.set(card.code, card);
-}
+export const encounterCards: Card[] = allCards.filter((c) => !!c.encounterCode);
 
-for (const card of allCards) {
-  if (!card.linkedToCode) continue;
-  const linkedCard = cardsByCode.get(card.linkedToCode);
-  if (!linkedCard) continue;
-  linkedCard.linkedToCard = card;
-}
+export const encounterCardsByCode = new Map<string, Card>(
+  encounterCards.map((c) => [c.code, c]),
+);
 
-const cardsByEncounter = new Map<string, Card[]>();
-for (const card of allCards) {
+encounterCards.forEach((c) => {
+  if (!c.linkedToCode) return;
+  const linkedCard = encounterCardsByCode.get(c.linkedToCode);
+  if (!linkedCard) return;
+  linkedCard.linkedToCard = c;
+});
+
+export const cardsByEncounter = new Map<string, Card[]>();
+for (const card of encounterCards) {
   if (card.encounterCode) {
     const list = cardsByEncounter.get(card.encounterCode) ?? [];
     list.push(card);
     cardsByEncounter.set(card.encounterCode, list);
   }
 }
-
-export { allCards, cardsByCode, cardsByEncounter };

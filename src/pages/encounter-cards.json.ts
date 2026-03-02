@@ -1,13 +1,11 @@
 import type { APIRoute } from "astro";
-import { getSearchIndex } from "../data";
+import { encounterCards } from "../data/card";
 import { hashContent } from "../utils";
 
-const searchIndex = getSearchIndex();
-
-export const HASH = hashContent(searchIndex);
+export const HASH = hashContent(encounterCards);
 
 export const GET: APIRoute = () => {
-  return new Response(JSON.stringify(searchIndex), {
+  return new Response(JSON.stringify(encounterCards), {
     headers: { "Content-Type": "application/json" },
   });
 };

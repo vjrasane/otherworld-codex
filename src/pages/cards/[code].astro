@@ -1,12 +1,11 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { CardImage } from "../../components/CardImage.tsx";
-import { getAllCards } from "../../data";
-import type { Card } from "../../data/card";
+import { encounterCards, type Card } from "../../data/card";
 import { routes } from "../../routes";
 
 export function getStaticPaths() {
-  return getAllCards().map((c) => ({
+  return encounterCards.map((c) => ({
     params: { code: c.code },
     props: { card: c },
   }));

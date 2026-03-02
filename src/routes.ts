@@ -7,5 +7,9 @@ export const routes = {
   card: (code: string) => `${base}/cards/${code}`,
   icon: (code: string) => `${base}/icons/${code}.svg`,
   index: `${base}/`,
-  searchIndex: `${base}/search-index.json`,
+  json: {
+    searchIndex: `${base}/search-index.json`,
+    encounterCards: `${base}/encounter-cards.json`,
+    encounterCardsByCode: `${base}/encounter-cards-by-code.json`,
+  },
 } as const;

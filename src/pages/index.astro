@@ -1,15 +1,15 @@
 ---
 import Base from "../layouts/Base.astro";
 import CardBrowser from "../components/CardBrowser.tsx";
-import { getAllCampaigns, getAllCards, getAllStandalones } from "../data";
+import { getAllCampaigns, getAllStandalones } from "../data";
+import { encounterCards } from "../data/card"
 import { sortBy } from "lodash-es";
 
-const cards = getAllCards();
 const campaigns = getAllCampaigns();
 const standalones = getAllStandalones();
 
-let encounterCards = cards.filter((c) => !!c.encounterCode);
-encounterCards = sortBy(encounterCards, "code");
+let cards = encounterCards
+cards = sortBy(cards, "code");
 
 // Reverse maps: encounterCode → campaign/scenario codes
 const encounterToCampaigns = new Map<string, Set<string>>();
@@ -47,7 +47,7 @@ const cardMeta: Record<
     traits: string[];
   }
 > = {};
-for (const card of encounterCards) {
+for (const card of cards) {
   const ec = card.encounterCode!;
   const traits = card.traits
     ? card.traits
@@ -87,7 +87,7 @@ const scenarioOptions = [
 ];
 
 const encounterMap = new Map<string, string>();
-for (const card of encounterCards) {
+for (const card of cards) {
   if (
     card.encounterCode &&
     card.encounterName &&
@@ -101,7 +101,7 @@ const encounterOptions = [...encounterMap.entries()]
   .sort((a, b) => a.label.localeCompare(b.label));
 
 const traitSet = new Set<string>();
-for (const card of encounterCards) {
+for (const card of cards) {
   if (card.traits) {
     card.traits
       .split(".")
@@ -115,7 +115,7 @@ const traitOptions = [...traitSet]
   .map((t) => ({ label: t, value: t }));
 
 const typeMap = new Map<string, string>();
-for (const card of encounterCards) {
+for (const card of cards) {
   if (!typeMap.has(card.typeCode)) {
     typeMap.set(card.typeCode, card.typeName);
   }
@@ -135,7 +135,7 @@ const filterOptions = {
 
 <Base>
   <CardBrowser
-    cards={encounterCards}
+    cards={cards}
     filterOptions={filterOptions}
     cardMeta={cardMeta}
     client:only="react"
