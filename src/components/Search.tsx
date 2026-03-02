@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo, useContext } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import MiniSearch, { type SearchResult } from "minisearch";
 import { Search as SearchIcon, X } from "lucide-react";
 import { routes } from "@/src/routes";
 import { type Card } from "../data/card";
 import { capitalize, compact } from "lodash-es";
 import { type SearchEntry } from "../data/search-index";
-import { useCachedQuery } from "../hooks";
+import { useEncounterCardsByCode, useSearchIndex } from "../hooks";
 import { QueryOptionsContext, type QueryOptionsMap } from "../data/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../data/query-client";
@@ -24,8 +24,7 @@ function useDebouncedValue<T>(value: T, ms: number): T {
 }
 
 function useSearch() {
-  const { searchIndex } = useContext(QueryOptionsContext)
-  const entries = useCachedQuery(searchIndex)
+  const entries = useSearchIndex()
 
   return useMemo(() => {
     if (!entries) return null
@@ -63,7 +62,6 @@ export const Search: React.FC<{
 
 
 const SearchField: React.FC = () => {
-  const { encounterCardsByCode } = useContext(QueryOptionsContext)
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
@@ -71,8 +69,6 @@ const SearchField: React.FC = () => {
   const debouncedQuery = useDebouncedValue(query, 200);
 
   const search = useSearch()
-
-  useCachedQuery(encounterCardsByCode)
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -216,8 +212,7 @@ const IconSearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) =>
 const CardSearchResultItem: React.FC<{ code: string }> = ({
   code
 }) => {
-  const { encounterCardsByCode } = useContext(QueryOptionsContext)
-  const cardsByCode = useCachedQuery(encounterCardsByCode)
+  const cardsByCode = useEncounterCardsByCode()
   const card = cardsByCode?.[code]
   if (!card) return null
   const { name, xp, subname, packName } = card

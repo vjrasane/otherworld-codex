@@ -119,12 +119,3 @@ encounterCards.forEach((c) => {
   if (!linkedCard) return;
   linkedCard.linkedToCard = c;
 });
-
-export const cardsByEncounter = new Map<string, Card[]>();
-for (const card of encounterCards) {
-  if (card.encounterCode) {
-    const list = cardsByEncounter.get(card.encounterCode) ?? [];
-    list.push(card);
-    cardsByEncounter.set(card.encounterCode, list);
-  }
-}

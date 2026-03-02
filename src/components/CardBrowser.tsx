@@ -34,7 +34,8 @@ import {
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../data/query-client";
 import { QueryOptionsContext, type QueryOptionsMap } from "../data/query-client";
-import { useCachedQuery } from "../hooks";
+import { useCachedQuery, useCardMeta, useFilterOptions } from "../hooks";
+import { buildFilterOptions } from "../data/filter-options";
 
 function toOptions(v: MultiValue<Option>): Option[] {
   return [...v];
@@ -59,25 +60,24 @@ function CustomMultiValue(props: MultiValueProps<Option, true>) {
 const selectComponents = { MultiValue: CustomMultiValue };
 
 export const CardBrowser: React.FC<{
-  filterOptions: FilterOptions;
   queryOptions: QueryOptionsMap;
-}> = ({ queryOptions, ...props }) => {
+}> = ({ queryOptions }) => {
   return <QueryClientProvider client={queryClient}>
     <QueryOptionsContext.Provider value={queryOptions}>
-      <CardBrowserComponent {...props} />
+      <CardBrowserComponent />
     </QueryOptionsContext.Provider>
   </QueryClientProvider>
 }
 
-const CardBrowserComponent: React.FC<{
-  filterOptions: FilterOptions;
-}> = ({ filterOptions }) => {
+const CardBrowserComponent: React.FC = () => {
   const opts = useContext(QueryOptionsContext)
   const cachedCards = useCachedQuery(opts.encounterCards);
-  const cachedCardMeta = useCachedQuery(opts.cardMeta);
+  const cachedCardMeta = useCardMeta();
+  const cachedFilterOptions = useFilterOptions();
 
   const cards = useMemo(() => cachedCards ?? [], [cachedCards]);
   const cardMeta = useMemo(() => cachedCardMeta ?? {}, [cachedCardMeta]);
+  const filterOptions = useMemo(() => cachedFilterOptions ?? buildFilterOptions([], [], []), [cachedFilterOptions]);
 
   const [filters, setFiltersState] = useState<Filters>(() =>
     parseURL(window.location.search, filterOptions),
