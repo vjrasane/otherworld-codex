@@ -1,8 +1,14 @@
 import type { APIRoute } from "astro";
-import { encounterCards, type Card } from "../data/card";
+import { cards, type Card } from "../data";
 import { hashContent } from "../utils";
 import type { QueryOpts } from "../data/query-client";
 import { routes } from "../routes";
+import { sortBy } from "lodash/fp";
+
+const encounterCards = sortBy(
+  "code",
+  cards.filter((c) => !!c.encounter_code),
+);
 
 const hash = hashContent(encounterCards);
 

@@ -2,11 +2,7 @@ import type { APIRoute } from "astro";
 import { hashContent } from "../utils";
 import type { QueryOpts } from "../data/query-client";
 import { routes } from "../routes";
-import { parseCampaigns, type Campaign } from "../data/campaign";
-import campaignsJson from "@/data/campaigns.json";
-import { encounterCards } from "../data/card";
-
-const campaigns = parseCampaigns(campaignsJson, encounterCards);
+import { type Campaign, campaigns } from "../data";
 
 const hash = hashContent(campaigns);
 

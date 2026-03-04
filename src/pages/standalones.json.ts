@@ -2,15 +2,11 @@ import type { APIRoute } from "astro";
 import { hashContent } from "../utils";
 import type { QueryOpts } from "../data/query-client";
 import { routes } from "../routes";
-import { parseStandalones, type Standalone } from "../data/campaign";
-import standalonesJson from "@/data/standalones.json";
-import { encounterCards } from "../data/card";
-
-const standalones = parseStandalones(standalonesJson, encounterCards);
+import { type Scenario, standalones } from "@/src/data";
 
 const hash = hashContent(standalones);
 
-export const options: QueryOpts<Standalone[]> = {
+export const options: QueryOpts<Scenario[]> = {
   queryKey: ["standalones", hash],
   route: routes.base + "/standalones.json",
 };

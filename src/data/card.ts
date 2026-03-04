@@ -1,121 +1,139 @@
-import { sortBy } from "lodash-es";
-import cardsJson from "../../data/cards.json";
-
-export interface Card {
-  code: string;
-  name: string;
-  typeCode: string;
-  typeName: string;
-  factionCode: string;
-  factionName: string;
-  packCode: string;
-  packName: string;
-  encounterCode?: string;
-  encounterName?: string;
-  traits?: string;
-  quantity: number;
-  imageUrl?: string;
-  doubleSided: boolean;
-  backImageUrl?: string;
-  backName?: string;
-  text?: string;
-  flavor?: string;
-  subname?: string;
-  xp?: number;
-  cost?: number;
-  health?: number;
-  sanity?: number;
-  skillWillpower?: number;
-  skillIntellect?: number;
-  skillCombat?: number;
-  skillAgility?: number;
-  enemyFight?: number;
-  enemyEvade?: number;
-  enemyDamage?: number;
-  enemyHorror?: number;
-  shroud?: number;
-  clues?: number;
-  cluesFixed?: boolean;
-  victory?: number;
-  healthPerInvestigator?: boolean;
-  isUnique: boolean;
-  position: number;
-  slot?: string;
-  linkedCard?: Card;
-  linkedToCode?: string;
-  linkedToCard?: Card;
-}
+import { z } from "astro/zod";
+import type { Meta } from "./meta";
+import type {
+  Campaign,
+  RawCampaign,
+  RawScenario,
+  Scenario,
+} from "@/src/data/campaign";
 
 const IMAGE_BASE = "https://arkhamdb.com";
 
-function cardImageUrl(imagesrc?: string): string | undefined {
-  if (!imagesrc) return undefined;
-  return IMAGE_BASE + imagesrc;
+function imageUrl(src?: string): string | undefined {
+  return src ? IMAGE_BASE + src : undefined;
 }
 
-function parseBaseCard(raw: any): Card {
-  return {
-    code: raw.code,
-    name: raw.name,
-    typeCode: raw.type_code,
-    typeName: raw.type_name,
-    factionCode: raw.faction_code,
-    factionName: raw.faction_name,
-    packCode: raw.pack_code,
-    packName: raw.pack_name,
-    encounterCode: raw.encounter_code ?? undefined,
-    encounterName: raw.encounter_name ?? undefined,
-    traits: raw.traits ?? undefined,
-    quantity: raw.quantity,
-    imageUrl: cardImageUrl(raw.imagesrc),
-    doubleSided: raw.double_sided ?? false,
-    backImageUrl: cardImageUrl(raw.backimagesrc ?? undefined),
-    backName: raw.back_name ?? undefined,
-    text: raw.text ?? undefined,
-    flavor: raw.flavor ?? undefined,
-    subname: raw.subname ?? undefined,
-    cost: (raw as Record<string, unknown>).cost as number | undefined,
-    health: raw.health ?? undefined,
-    sanity: raw.sanity ?? undefined,
-    xp: raw.xp ?? undefined,
-    skillWillpower: raw.skill_willpower ?? undefined,
-    skillIntellect: raw.skill_intellect ?? undefined,
-    skillCombat: raw.skill_combat ?? undefined,
-    skillAgility: raw.skill_agility ?? undefined,
-    enemyFight: raw.enemy_fight ?? undefined,
-    enemyEvade: raw.enemy_evade ?? undefined,
-    enemyDamage: raw.enemy_damage ?? undefined,
-    enemyHorror: raw.enemy_horror ?? undefined,
-    shroud: raw.shroud ?? undefined,
-    clues: raw.clues ?? undefined,
-    cluesFixed: raw.clues_fixed ?? undefined,
-    victory: raw.victory ?? undefined,
-    healthPerInvestigator: raw.health_per_investigator ?? undefined,
-    isUnique: raw.is_unique,
-    position: raw.position,
-    slot: raw.real_slot || undefined,
-  };
-}
-
-function parseCard(raw: any): Card {
-  return {
-    ...parseBaseCard(raw),
-    linkedToCode: raw.linked_to_code ?? undefined,
-    linkedCard: raw.linked_card ? parseBaseCard(raw.linked_card) : undefined,
-  };
-}
-
-const allCards: Card[] = sortBy((cardsJson as any[]).map(parseCard), "code");
-
-export const encounterCards: Card[] = allCards.filter((c) => !!c.encounterCode);
-
-export const encounterCardsByCode = new Map<string, Card>(
-  encounterCards.map((c) => [c.code, c]),
-);
-
-encounterCards.forEach((c) => {
-  if (!c.linkedToCode) return;
-  const linkedCard = encounterCardsByCode.get(c.linkedToCode);
-  if (!linkedCard) return;
-  linkedCard.linkedToCard = c;
+const RawLinkedCard = z.object({
+  code: z.string(),
+  name: z.string(),
+  type_code: z.string(),
+  type_name: z.string(),
+  faction_code: z.string(),
+  faction_name: z.string(),
+  pack_code: z.string(),
+  pack_name: z.string(),
+  encounter_code: z.string().optional(),
+  encounter_name: z.string().optional(),
+  traits: z
+    .string()
+    .transform((str) =>
+      str
+        .split(".")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    )
+    .optional(),
+  quantity: z.number(),
+  imagesrc: z.string().optional(),
+  double_sided: z.boolean().default(false),
+  backimagesrc: z.string().optional(),
+  back_name: z.string().optional(),
+  text: z.string().optional(),
+  flavor: z.string().optional(),
+  subname: z.string().optional(),
+  xp: z.number().optional(),
+  cost: z.number().optional(),
+  health: z.number().optional(),
+  sanity: z.number().optional(),
+  skill_willpower: z.number().optional(),
+  skill_intellect: z.number().optional(),
+  skill_combat: z.number().optional(),
+  skill_agility: z.number().optional(),
+  enemy_fight: z.number().optional(),
+  enemy_evade: z.number().optional(),
+  enemy_damage: z.number().optional(),
+  enemy_horror: z.number().optional(),
+  shroud: z.number().optional(),
+  clues: z.number().optional(),
+  clues_fixed: z.boolean().optional(),
+  victory: z.number().optional(),
+  health_per_investigator: z.boolean().optional(),
+  is_unique: z.boolean(),
+  position: z.number(),
+  real_slot: z.string().optional(),
 });
+
+export type RawLinkedCard = z.infer<typeof RawLinkedCard>;
+
+export const RawCard = RawLinkedCard.extend({
+  linked_to_code: z.string().optional(),
+  linked_card: RawLinkedCard.optional(),
+});
+
+export type RawCard = z.infer<typeof RawCard>;
+
+interface CardMeta extends Meta {
+  linkedToCard?: Card;
+  imageUrl?: string;
+}
+
+const buildCardMeta = (
+  card: RawCard,
+  campaigns: Campaign[],
+  standalones: Scenario[],
+): Meta => {
+  const { encounter_code, traits, type_code } = card;
+  const meta = { traits: traits ?? [], types: [type_code] };
+  if (!encounter_code) return meta;
+  const campaignsMeta = campaigns
+    .filter((c) =>
+      c.scenarios.some((s) => s.encounterCodes.includes(encounter_code)),
+    )
+    .map((c) => c.code);
+  const scenariosMeta = [
+    ...campaigns.flatMap((c) => c.scenarios),
+    ...standalones,
+  ]
+    .filter((s) => s.encounterCodes.includes(encounter_code))
+    .map((c) => c.code);
+
+  return {
+    ...meta,
+    campaigns: campaignsMeta,
+    scenarios: scenariosMeta,
+    encounters: [encounter_code],
+  };
+};
+
+export type Card = RawCard & {
+  meta: CardMeta;
+};
+
+export function buildCards(
+  raws: RawCard[],
+  campaigns: RawCampaign[],
+  standalones: RawScenario[],
+): Card[] {
+  const processed = raws.map((raw) => {
+    const meta = {
+      imageUrl: imageUrl(raw.imagesrc),
+      ...buildCardMeta(raw, campaigns, standalones),
+    };
+    return { ...raw, meta };
+  });
+
+  const links: Map<string, Card> = new Map(
+    processed
+      .filter((d) => !!d.linked_card)
+      .map((d) => [d.linked_card!.code, d]),
+  );
+
+  const linked = processed.map((card) => {
+    const linkedToCard = links.get(card.code);
+    if (!linkedToCard) return card;
+    const meta = { ...card.meta, linkedToCard };
+    return { ...card, meta };
+  });
+
+  return linked;
+}

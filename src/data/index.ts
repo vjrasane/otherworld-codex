@@ -1,32 +1,23 @@
-import { type Campaign, type Scenario, type Standalone } from "./campaign";
-import { type Card } from "./card";
-import { type EncounterSet } from "./encounter-set";
-import { type SearchEntry } from "./search-index";
+import { z } from "astro/zod";
 
-export function getCampaign(code: string): Campaign | undefined {
-  return campaignsByCode.get(code);
-}
+import cardsJson from "@/data/cards.json";
+import campaignsJson from "@/data/campaigns.json";
+import standalonesJson from "@/data/standalones.json";
+import { buildCards, RawCard } from "@/src/data/card";
+import {
+  buildCampaigns,
+  buildScenarios,
+  RawCampaign,
+  RawScenario,
+} from "@/src/data/campaign";
 
-export function getAllCampaigns(): Campaign[] {
-  return campaigns;
-}
+const rawCards = z.array(RawCard).parse(cardsJson);
+const rawCampaigns = z.array(RawCampaign).parse(campaignsJson);
+const rawStandalones = z.array(RawScenario).parse(standalonesJson);
 
-export function getScenario(code: string): Scenario | undefined {
-  return scenariosByCode.get(code);
-}
+export const cards = buildCards(rawCards, rawCampaigns, rawStandalones);
+export const campaigns = buildCampaigns(rawCampaigns, cards);
+export const standalones = buildScenarios(rawStandalones, cards);
 
-export function getStandalone(code: string): Standalone | undefined {
-  return standalonesByCode.get(code);
-}
-
-export function getAllStandalones(): Standalone[] {
-  return standalones;
-}
-
-export function getEncounterCards(code: string): Card[] {
-  return cardsByEncounter.get(code) ?? [];
-}
-
-export function getSearchIndex(): SearchEntry[] {
-  return searchIndex;
-}
+export type { Card } from "@/src/data/card";
+export type { Campaign, Scenario } from "@/src/data/campaign";
