@@ -1,12 +1,13 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CampaignCharts from "../../components/CampaignCharts";
-import { getAllCampaigns, getEncounterSet, getCampaignCards } from "../../data";
-import type { Campaign } from "../../data";
+import  { type Campaign, campaigns, cards as allCards } from "@/src/data";
+import  { getCampaignCards } from "@/src/data/campaign";
+import  { getEncounterSet } from "@/src/data/encounter-set";
 import { routes } from "../../routes";
 
 export function getStaticPaths() {
-  return getAllCampaigns().map((c) => ({
+  return campaigns.map((c) => ({
     params: { code: c.code },
     props: { campaign: c },
   }));
@@ -17,16 +18,16 @@ interface Props {
 }
 
 const { campaign } = Astro.props;
-const cards = getCampaignCards(campaign);
+const cards = getCampaignCards(campaign, allCards);
 
 function aggregate(countBy: "unique" | "total") {
   const typeMap = new Map<string, number>();
   const traitMap = new Map<string, number>();
   for (const card of cards) {
     const n = countBy === "total" ? card.quantity : 1;
-    typeMap.set(card.typeName, (typeMap.get(card.typeName) ?? 0) + n);
+    typeMap.set(card.type_name, (typeMap.get(card.type_name) ?? 0) + n);
     if (card.traits) {
-      for (const t of card.traits.split(". ").map((s) => s.replace(/\.$/, "").trim()).filter(Boolean)) {
+      for (const t of card.traits) {
         traitMap.set(t, (traitMap.get(t) ?? 0) + n);
       }
     }
@@ -42,9 +43,9 @@ const total = aggregate("total");
 const chartCards = cards.map((c) => ({
   code: c.code,
   name: c.name,
-  typeName: c.typeName,
-  typeCode: c.typeCode,
-  imageUrl: c.imageUrl,
+  typeName: c.type_name,
+  typeCode: c.type_code,
+  imageUrl: c.meta.imageUrl,
   traits: c.traits,
 }));
 
@@ -85,7 +86,7 @@ for (const s of campaign.scenarios) {
       <h2>Encounter Sets</h2>
       <div class="encounter-tags">
         {encounterCodes.map((ec) => {
-          const es = getEncounterSet(ec);
+        const es = getEncounterSet(ec, allCards);
           if (!es) return null;
           return (
             <a href={routes.encounter(es.code)} class="encounter-tag">

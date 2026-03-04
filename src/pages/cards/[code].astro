@@ -1,8 +1,10 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { CardImage } from "../../components/CardImage.tsx";
-import { encounterCards, type Card } from "../../data/card";
+import { type Card, cards } from "@/src/data";
 import { routes } from "../../routes";
+
+const encounterCards = cards.filter(c => !!c.encounter_code)
 
 export function getStaticPaths() {
   return encounterCards.map((c) => ({
@@ -17,14 +19,10 @@ interface Props {
 
 const { card } = Astro.props;
 
-if (card.linkedToCard) {
-  return Astro.redirect(routes.card(card.linkedToCard.code));
+if (card.meta.linkedToCard) {
+  return Astro.redirect(routes.card(card.meta.linkedToCard.code));
 }
 
-const traits = card.traits
-  ?.split(".")
-  .map((t) => t.trim())
-  .filter(Boolean);
 
 function formatText(text: string): string {
   return text
@@ -38,13 +36,13 @@ function formatText(text: string): string {
   <div class="card-detail">
     <div class="image-column">
       <CardImage card={card} />
-      {card.doubleSided && <CardImage card={card} back />}
-      {card.linkedCard && <CardImage card={card.linkedCard} />}
+      {card.double_sided && <CardImage card={card} back />}
+      {card.linked_card && <CardImage card={card.linked_card} />}
     </div>
     <div class="info-column">
       <div class="type-line">
-        <span class="type-name">{card.typeName}</span>
-        {card.factionName && <span class="faction">· {card.factionName}</span>}
+        <span class="type-name">{card.type_name}</span>
+        {card.faction_name && <span class="faction">· {card.faction_name}</span>}
       </div>
       <h1>
         {card.name}
@@ -52,9 +50,9 @@ function formatText(text: string): string {
       </h1>
 
       {
-        traits && traits.length > 0 && (
+        card.traits && card.traits.length > 0 && (
           <div class="traits">
-            {traits.map((t) => (
+            {card.traits.map((t) => (
               <span class="trait">{t}</span>
             ))}
           </div>
@@ -66,13 +64,13 @@ function formatText(text: string): string {
       {card.flavor && <div class="flavor">{card.flavor}</div>}
 
       <dl class="stats">
-        {card.cost !== undefined && <><dt>Cost</dt><dd>{card.cost}</dd></>}
-        {card.health !== undefined && <><dt>Health</dt><dd>{card.health}</dd></>}
-        {card.sanity !== undefined && <><dt>Sanity</dt><dd>{card.sanity}</dd></>}
-        {card.skillWillpower !== undefined && <><dt>Willpower</dt><dd>{card.skillWillpower}</dd></>}
-        {card.skillIntellect !== undefined && <><dt>Intellect</dt><dd>{card.skillIntellect}</dd></>}
-        {card.skillCombat !== undefined && <><dt>Combat</dt><dd>{card.skillCombat}</dd></>}
-        {card.skillAgility !== undefined && <><dt>Agility</dt><dd>{card.skillAgility}</dd></>}
+        {card.cost != null && <><dt>Cost</dt><dd>{card.cost}</dd></>}
+        {card.health != null && <><dt>Health</dt><dd>{card.health}</dd></>}
+        {card.sanity != null && <><dt>Sanity</dt><dd>{card.sanity}</dd></>}
+        {card.skillWillpower != null && <><dt>Willpower</dt><dd>{card.skillWillpower}</dd></>}
+        {card.skillIntellect != null && <><dt>Intellect</dt><dd>{card.skillIntellect}</dd></>}
+        {card.skillCombat != null && <><dt>Combat</dt><dd>{card.skillCombat}</dd></>}
+        {card.skillAgility != null && <><dt>Agility</dt><dd>{card.skillAgility}</dd></>}
       </dl>
 
       <div class="meta">

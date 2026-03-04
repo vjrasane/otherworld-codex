@@ -1,23 +1,17 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CardImage from "../../components/CardImage.astro";
-import {
-  getAllCampaigns,
-  getAllStandalones,
-  getEncounterSet,
-  getEncounterCards,
-} from "../../data";
-import type { Scenario, Standalone } from "../../data";
 import { routes } from "../../routes";
+import type { Scenario } from "@/src/data/campaign";
+import  { getEncounterSet } from "@/src/data/encounter-set";
+import { campaigns, standalones, cards as allCards } from "@/src/data";
 
 interface Props {
   scenario: Scenario | null;
-  standalone: Standalone | null;
+  standalone: Scenario | null;
 }
 
 export function getStaticPaths() {
-  const campaigns = getAllCampaigns();
-  const standalones = getAllStandalones();
   const paths: { params: { code: string }; props: Props }[] = [];
   for (const c of campaigns) {
     for (const s of c.scenarios) {
@@ -66,9 +60,9 @@ const encounterCodes = scenario?.encounterCodes ?? standalone!.encounterCodes;
   <div class="encounter-sections">
     {
       encounterCodes.map((ec) => {
-        const es = getEncounterSet(ec);
+      const es = getEncounterSet(ec, allCards);
         if (!es) return null;
-        const cards = getEncounterCards(ec);
+        const cards = es.cards;
         return (
           <section class="encounter-section">
             <h2>
@@ -85,9 +79,9 @@ const encounterCodes = scenario?.encounterCodes ?? standalone!.encounterCodes;
               {cards.map((card) => (
                 <a href={routes.card(card.code)} class="card-link">
                   <CardImage
-                    imageUrl={card.imageUrl}
+                    imageUrl={card.meta.imageUrl}
                     name={card.name}
-                    typeCode={card.typeCode}
+                    typeCode={card.type_code}
                   />
                   <div class="card-name">{card.name}</div>
                 </a>

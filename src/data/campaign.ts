@@ -1,5 +1,6 @@
 import { z } from "astro/zod";
-import type { Card } from "@/src/data/card";
+import type { Card, RawCard } from "@/src/data/card";
+import type { Meta } from "@/src/data/meta";
 
 export const RawScenario = z.object({
   code: z.string(),
@@ -12,7 +13,7 @@ export const RawScenario = z.object({
 });
 
 export type Scenario = RawScenario & {
-  imageUrl?: string;
+  meta: Meta;
 };
 
 export const RawCampaign = z.object({
@@ -25,22 +26,93 @@ export const RawCampaign = z.object({
 export type RawScenario = z.infer<typeof RawScenario>;
 export type RawCampaign = z.infer<typeof RawCampaign>;
 
-export interface Campaign {
-  code: string;
-  name: string;
-  order: number;
+export type Campaign = RawCampaign & {
   scenarios: Scenario[];
-  imageUrl?: string;
-}
+  meta: Meta;
+};
+
+export const getCampaignCards = <
+  TCampaign extends RawCampaign,
+  TCard extends RawCard,
+>(
+  campaign: TCampaign,
+  cards: TCard[],
+) => {
+  return campaign.scenarios.flatMap((s) => getScenarioCards(s, cards));
+};
+
+const getScenarioCards = <TScenario extends RawScenario, TCard extends RawCard>(
+  scenario: TScenario,
+  cards: TCard[],
+): TCard[] => {
+  const encounterCards = cards
+    .filter((c) => !!c.encounter_code)
+    .filter((c) => scenario.encounterCodes.includes(c.encounter_code!));
+  return encounterCards;
+};
+
+const getScenarioTraits = (
+  scenarios: RawScenario[],
+  cards: Card[],
+): string[] => {
+  const getTraits = (s: RawScenario): string[] =>
+    getScenarioCards(s, cards).flatMap((c) => c.traits ?? []);
+
+  return [...new Set(scenarios.flatMap(getTraits)).values()];
+};
+
+const getScenarioTypes = (
+  scenarios: RawScenario[],
+  cards: Card[],
+): string[] => {
+  const getTypes = (s: RawScenario): string[] =>
+    getScenarioCards(s, cards).map((c) => c.type_code);
+
+  return [...new Set(scenarios.flatMap(getTypes)).values()];
+};
+
+const buildScenarioMeta = (
+  scenario: RawScenario,
+  campaigns: RawCampaign[],
+  cards: Card[],
+): Meta => {
+  const campaignsMeta = campaigns
+    .filter((c) => c.scenarios.some((s) => s.code === scenario.code))
+    .map((c) => c.code);
+  const traits = getScenarioTraits([scenario], cards);
+  const types = getScenarioTypes([scenario], cards);
+  return {
+    campaigns: campaignsMeta,
+    encounters: scenario.encounterCodes,
+    traits,
+    types,
+  };
+};
 
 export const buildScenarios = (
   raw: RawScenario[],
+  campaigns: RawCampaign[],
   cards: Card[],
 ): Scenario[] => {
   return raw.map((s) => {
-    const imageCard = cards.find((c) => c.meta.scenarios?.includes(s.code));
-    return { ...s, imageUrl: imageCard?.meta.imageUrl };
+    return {
+      ...s,
+      meta: buildScenarioMeta(s, campaigns, cards),
+    };
   });
+};
+
+const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]): Meta => {
+  const scenariosMeta = campaign.scenarios.map((s) => s.code);
+  const encountersMeta = campaign.scenarios.flatMap((s) => s.encounterCodes);
+  const traits = getScenarioTraits(campaign.scenarios, cards);
+  const types = getScenarioTypes(campaign.scenarios, cards);
+  return {
+    scenarios: scenariosMeta,
+    encounters: encountersMeta,
+    traits,
+    types,
+  };
 };
 
 export const buildCampaigns = (
@@ -50,7 +122,8 @@ export const buildCampaigns = (
   return raw.map((c) => {
     return {
       ...c,
-      scenarios: buildScenarios(c.scenarios, cards),
+      scenarios: buildScenarios(c.scenarios, raw, cards),
+      meta: buildCampaignMeta(c, cards),
     };
   });
 };

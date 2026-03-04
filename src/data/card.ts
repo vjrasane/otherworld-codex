@@ -9,7 +9,7 @@ import type {
 
 const IMAGE_BASE = "https://arkhamdb.com";
 
-function imageUrl(src?: string): string | undefined {
+function imageUrl(src?: string | null): string | undefined {
   return src ? IMAGE_BASE + src : undefined;
 }
 
@@ -22,8 +22,8 @@ const RawLinkedCard = z.object({
   faction_name: z.string(),
   pack_code: z.string(),
   pack_name: z.string(),
-  encounter_code: z.string().optional(),
-  encounter_name: z.string().optional(),
+  encounter_code: z.string().nullish(),
+  encounter_name: z.string().nullish(),
   traits: z
     .string()
     .transform((str) =>
@@ -32,35 +32,35 @@ const RawLinkedCard = z.object({
         .map((s) => s.trim())
         .filter(Boolean),
     )
-    .optional(),
+    .nullish(),
   quantity: z.number(),
-  imagesrc: z.string().optional(),
+  imagesrc: z.string().nullish(),
   double_sided: z.boolean().default(false),
-  backimagesrc: z.string().optional(),
-  back_name: z.string().optional(),
-  text: z.string().optional(),
-  flavor: z.string().optional(),
-  subname: z.string().optional(),
-  xp: z.number().optional(),
-  cost: z.number().optional(),
-  health: z.number().optional(),
-  sanity: z.number().optional(),
-  skill_willpower: z.number().optional(),
-  skill_intellect: z.number().optional(),
-  skill_combat: z.number().optional(),
-  skill_agility: z.number().optional(),
-  enemy_fight: z.number().optional(),
-  enemy_evade: z.number().optional(),
-  enemy_damage: z.number().optional(),
-  enemy_horror: z.number().optional(),
-  shroud: z.number().optional(),
-  clues: z.number().optional(),
-  clues_fixed: z.boolean().optional(),
-  victory: z.number().optional(),
-  health_per_investigator: z.boolean().optional(),
+  backimagesrc: z.string().nullish(),
+  back_name: z.string().nullish(),
+  text: z.string().nullish(),
+  flavor: z.string().nullish(),
+  subname: z.string().nullish(),
+  xp: z.number().nullish(),
+  cost: z.number().nullish(),
+  health: z.number().nullish(),
+  sanity: z.number().nullish(),
+  skill_willpower: z.number().nullish(),
+  skill_intellect: z.number().nullish(),
+  skill_combat: z.number().nullish(),
+  skill_agility: z.number().nullish(),
+  enemy_fight: z.number().nullish(),
+  enemy_evade: z.number().nullish(),
+  enemy_damage: z.number().nullish(),
+  enemy_horror: z.number().nullish(),
+  shroud: z.number().nullish(),
+  clues: z.number().nullish(),
+  clues_fixed: z.boolean().nullish(),
+  victory: z.number().nullish(),
+  health_per_investigator: z.boolean().nullish(),
   is_unique: z.boolean(),
   position: z.number(),
-  real_slot: z.string().optional(),
+  real_slot: z.string().nullish(),
 });
 
 export type RawLinkedCard = z.infer<typeof RawLinkedCard>;
@@ -72,15 +72,21 @@ export const RawCard = RawLinkedCard.extend({
 
 export type RawCard = z.infer<typeof RawCard>;
 
+export type Card = RawCard & {
+  linked_card?: Card;
+  meta: CardMeta;
+};
+
 interface CardMeta extends Meta {
   linkedToCard?: Card;
   imageUrl?: string;
+  backImageUrl?: string;
 }
 
 const buildCardMeta = (
   card: RawCard,
-  campaigns: Campaign[],
-  standalones: Scenario[],
+  campaigns: RawCampaign[],
+  standalones: RawScenario[],
 ): Meta => {
   const { encounter_code, traits, type_code } = card;
   const meta = { traits: traits ?? [], types: [type_code] };
@@ -105,8 +111,22 @@ const buildCardMeta = (
   };
 };
 
-export type Card = RawCard & {
-  meta: CardMeta;
+const buildCard = (
+  raw: RawCard,
+  campaigns: RawCampaign[],
+  standalones: RawScenario[],
+): Card => {
+  const meta = {
+    imageUrl: imageUrl(raw.imagesrc),
+    backimageUrl: imageUrl(raw.backimagesrc),
+    ...buildCardMeta(raw, campaigns, standalones),
+  };
+  return {
+    ...raw,
+    linked_card:
+      raw.linked_card && buildCard(raw.linked_card, campaigns, standalones),
+    meta,
+  };
 };
 
 export function buildCards(
@@ -114,13 +134,7 @@ export function buildCards(
   campaigns: RawCampaign[],
   standalones: RawScenario[],
 ): Card[] {
-  const processed = raws.map((raw) => {
-    const meta = {
-      imageUrl: imageUrl(raw.imagesrc),
-      ...buildCardMeta(raw, campaigns, standalones),
-    };
-    return { ...raw, meta };
-  });
+  const processed = raws.map((raw) => buildCard(raw, campaigns, standalones));
 
   const links: Map<string, Card> = new Map(
     processed

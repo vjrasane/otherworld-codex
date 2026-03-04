@@ -1,20 +1,20 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CardImage from "@/src/components/CardImage.astro";
-import { getAllEncounterSets, getAllCampaigns, getAllStandalones } from "../../data";
-import type { EncounterSet, Scenario, Standalone } from "../../data";
 import { routes } from "../../routes";
+import type { EncounterSet } from "@/src/data/encounter-set";
+import type { Scenario } from "@/src/data/campaign";
+import { campaigns } from "@/src/data";
 
 interface EncounterPageProps {
   encounterSet: EncounterSet;
   scenarios: Scenario[];
-  standalones: Standalone[];
+  standalones: Scenario[];
 }
 
 export function getStaticPaths() {
-  const allEncounters = getAllEncounterSets();
-  const campaigns = getAllCampaigns();
-  const allStandalones = getAllStandalones();
+const allEncounters: EncounterSet[] = [];
+const allStandalones: Scenario[] = [];
 
   return allEncounters.map((es) => {
     const scenarios: Scenario[] = [];
@@ -73,9 +73,9 @@ const { encounterSet, scenarios, standalones } = Astro.props as EncounterPagePro
       encounterSet.cards.map((card) => (
         <a href={routes.card(card.code)} class="card-link">
           <CardImage
-            imageUrl={card.imageUrl}
+            imageUrl={card.meta.imageUrl}
             name={card.name}
-            typeCode={card.typeCode}
+            typeCode={card.type_code}
           />
           <div class="card-name">{card.name}</div>
         </a>

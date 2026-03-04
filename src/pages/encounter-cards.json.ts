@@ -3,11 +3,11 @@ import { cards, type Card } from "../data";
 import { hashContent } from "../utils";
 import type { QueryOpts } from "../data/query-client";
 import { routes } from "../routes";
-import { sortBy } from "lodash/fp";
+import { sortBy } from "lodash-es";
 
 const encounterCards = sortBy(
-  "code",
   cards.filter((c) => !!c.encounter_code),
+  "code",
 );
 
 const hash = hashContent(encounterCards);

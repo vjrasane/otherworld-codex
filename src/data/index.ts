@@ -17,7 +17,7 @@ const rawStandalones = z.array(RawScenario).parse(standalonesJson);
 
 export const cards = buildCards(rawCards, rawCampaigns, rawStandalones);
 export const campaigns = buildCampaigns(rawCampaigns, cards);
-export const standalones = buildScenarios(rawStandalones, cards);
+export const standalones = buildScenarios(rawStandalones, rawCampaigns, cards);
 
 export type { Card } from "@/src/data/card";
 export type { Campaign, Scenario } from "@/src/data/campaign";

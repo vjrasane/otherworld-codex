@@ -21,7 +21,7 @@ interface ChartCard {
   typeName: string;
   typeCode: string;
   imageUrl?: string;
-  traits?: string;
+  traits?: string[] | null;
 }
 
 type Filter = { kind: "type"; value: string } | { kind: "trait"; value: string } | null;
@@ -59,15 +59,10 @@ const toggleButtonStyle = (active: boolean): React.CSSProperties => ({
   font: "inherit",
 });
 
-function parseTraits(traits?: string): string[] {
-  if (!traits) return [];
-  return traits.split(". ").map((s) => s.replace(/\.$/, "").trim()).filter(Boolean);
-}
-
 function filterCards(cards: ChartCard[], filter: Filter): ChartCard[] {
   if (!filter) return [];
   if (filter.kind === "type") return cards.filter((c) => c.typeName === filter.value);
-  return cards.filter((c) => parseTraits(c.traits).includes(filter.value));
+  return cards.filter((c) => c.traits?.includes(filter.value));
 }
 
 function CardGrid({ cards, onClose }: { cards: ChartCard[]; onClose: () => void }) {
