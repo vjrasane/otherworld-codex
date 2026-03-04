@@ -1,5 +1,4 @@
 import { type Card } from "@/src/data/card";
-import { routes } from "@/src/routes";
 import { CardImage } from "./CardImage";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -23,7 +22,7 @@ export const CardGrid: React.FC<{ cards: Card[] }> = ({ cards }) => {
     <>
       <div style={s.grid}>
         {renderedCards.map((card) => (
-          <a key={card.code} href={routes.card(card.code)} style={s.cardLink}>
+          <a key={card.code} style={s.cardLink}>
             <CardImage card={card} />
             <div style={s.cardName}>{card.name}</div>
           </a>

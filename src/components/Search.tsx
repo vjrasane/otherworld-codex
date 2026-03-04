@@ -99,24 +99,11 @@ const SearchField: React.FC = () => {
       setActive((i) => (i <= 0 ? results.length - 1 : i - 1));
     } else if (e.key === "Enter" && active >= 0) {
       e.preventDefault();
-      window.location.href = href(results[active]);
     } else if (e.key === "Escape") {
       setOpen(false);
     }
   }
 
-  function href(result: Record<string, string>) {
-    switch (result.type) {
-      case "campaign":
-        return routes.campaign(result.code);
-      case "scenario":
-        return routes.scenario(result.code);
-      case "encounter":
-        return routes.encounter(result.code);
-      default:
-        return routes.card(result.code)
-    }
-  }
 
   return (
     <div ref={ref} style={s.wrapper}>
@@ -153,7 +140,6 @@ const SearchField: React.FC = () => {
             return (
               <a
                 key={res.id}
-                href={href(res)}
                 onClick={() => {
                   setOpen(false);
                   setQuery("");
@@ -215,9 +201,9 @@ const CardSearchResultItem: React.FC<{ code: string }> = ({
   const cardsByCode = useEncounterCardsByCode()
   const card = cardsByCode?.[code]
   if (!card) return null
-  const { name, xp, subname, packName } = card
+  const { name, xp, subname, pack_name } = card
   const title = compact([name, xp && `(${xp})`, subname && `· ${subname}`]).join(" ")
-  const subtitle = compact(["Card", packName && `· ${packName}`]).join(" ")
+  const subtitle = compact(["Card", pack_name && `· ${pack_name}`]).join(" ")
   return <>
     <CardSearchResultImage card={card} />
     <SearchResultText title={title} subtitle={subtitle} />
@@ -228,11 +214,11 @@ const CardSearchResultItem: React.FC<{ code: string }> = ({
 const CardSearchResultImage: React.FC<{ card: Card }> = ({
   card
 }) => {
-  if (card.imageUrl) {
-    const horizontal = HORIZONTAL_TYPES.has(card.typeCode)
+  if (card.meta.imageUrl) {
+    const horizontal = HORIZONTAL_TYPES.has(card.type_code)
     return (
       <div style={{ ...s.cardThumb, height: horizontal ? 28 : 56 }}>
-        <img src={card.imageUrl} alt="" style={s.cardThumbImg} />
+        <img src={card.meta.imageUrl} alt="" style={s.cardThumbImg} />
       </div>
     )
   }

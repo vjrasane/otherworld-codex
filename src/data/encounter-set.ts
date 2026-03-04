@@ -1,4 +1,4 @@
-import { type Card } from "./card";
+import { RawCard, type Card } from "./card";
 import type { Meta } from "./meta";
 
 export interface EncounterSet {
@@ -6,13 +6,13 @@ export interface EncounterSet {
   name: string;
   packCode: string;
   packName: string;
-  cards: Card[];
+  cards: RawCard[];
   meta: Meta;
 }
 
 export const getEncounterSet = (
   encounterCode: string,
-  cards: Card[],
+  cards: RawCard[],
 ): EncounterSet | null => {
   const encounterCards = cards.filter(
     (c) => c.encounter_code === encounterCode,
@@ -27,4 +27,23 @@ export const getEncounterSet = (
     cards: encounterCards,
     meta: {},
   };
+};
+
+export const buildEncounterSets = (
+  cards: RawCard[],
+): Map<string, EncounterSet> => {
+  return cards.reduce((acc, curr) => {
+    if (!curr.encounter_code) return acc;
+    const set = acc.get(curr.encounter_code) ?? {
+      code: curr.encounter_code,
+      name: curr.encounter_name ?? "",
+      packCode: curr.pack_code,
+      packName: curr.pack_name,
+      cards: [],
+      meta: {},
+    };
+    set.cards.push(curr);
+    acc.set(curr.encounter_code, set);
+    return acc;
+  }, new Map<string, EncounterSet>());
 };

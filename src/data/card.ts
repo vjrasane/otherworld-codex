@@ -6,6 +6,7 @@ import type {
   RawScenario,
   Scenario,
 } from "@/src/data/campaign";
+import type { EncounterSet } from "./encounter-set";
 
 const IMAGE_BASE = "https://arkhamdb.com";
 
@@ -83,58 +84,40 @@ interface CardMeta extends Meta {
   backImageUrl?: string;
 }
 
-const buildCardMeta = (
-  card: RawCard,
-  campaigns: RawCampaign[],
-  standalones: RawScenario[],
-): Meta => {
-  const { encounter_code, traits, type_code } = card;
-  const meta = { traits: traits ?? [], types: [type_code] };
-  if (!encounter_code) return meta;
-  const campaignsMeta = campaigns
-    .filter((c) =>
-      c.scenarios.some((s) => s.encounterCodes.includes(encounter_code)),
-    )
-    .map((c) => c.code);
-  const scenariosMeta = [
-    ...campaigns.flatMap((c) => c.scenarios),
-    ...standalones,
-  ]
-    .filter((s) => s.encounterCodes.includes(encounter_code))
-    .map((c) => c.code);
-
-  return {
-    ...meta,
-    campaigns: campaignsMeta,
-    scenarios: scenariosMeta,
-    encounters: [encounter_code],
-  };
-};
-
-const buildCard = (
-  raw: RawCard,
-  campaigns: RawCampaign[],
-  standalones: RawScenario[],
-): Card => {
-  const meta = {
-    imageUrl: imageUrl(raw.imagesrc),
-    backimageUrl: imageUrl(raw.backimagesrc),
-    ...buildCardMeta(raw, campaigns, standalones),
-  };
-  return {
-    ...raw,
-    linked_card:
-      raw.linked_card && buildCard(raw.linked_card, campaigns, standalones),
-    meta,
-  };
-};
-
 export function buildCards(
   raws: RawCard[],
+  encounters: Map<string, EncounterSet>,
   campaigns: RawCampaign[],
   standalones: RawScenario[],
 ): Card[] {
-  const processed = raws.map((raw) => buildCard(raw, campaigns, standalones));
+  const encountersToCampaigns = new Map<string, string[]>();
+  const encountersToScenarios = new Map<string, string[]>();
+
+  const buildCardMeta = (card: RawCard): Meta => {
+    const { encounter_code, traits, type_code } = card;
+    const meta = { traits: traits ?? [], types: [type_code] };
+    if (!encounter_code) return meta;
+    return {
+      ...meta,
+      campaigns: encountersToCampaigns.get(encounter_code),
+      scenarios: encountersToScenarios.get(encounter_code),
+      encounters: [encounter_code],
+    };
+  };
+
+  const buildCard = (raw: RawCard): Card => {
+    const meta = {
+      imageUrl: imageUrl(raw.imagesrc),
+      backimageUrl: imageUrl(raw.backimagesrc),
+      ...buildCardMeta(raw),
+    };
+    return {
+      ...raw,
+      linked_card: raw.linked_card && buildCard(raw.linked_card),
+      meta,
+    };
+  };
+  const processed = raws.map(buildCard);
 
   const links: Map<string, Card> = new Map(
     processed

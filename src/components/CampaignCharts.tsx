@@ -10,7 +10,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { routes } from "@/src/routes";
 
 type Entry = { name: string; value: number };
 type CountMode = "unique" | "total";
@@ -102,7 +101,6 @@ function CardGrid({ cards, onClose }: { cards: ChartCard[]; onClose: () => void 
           return (
             <a
               key={card.code}
-              href={routes.card(card.code)}
               style={{ color: "var(--text-primary)", textDecoration: "none" }}
             >
               {card.imageUrl ? (

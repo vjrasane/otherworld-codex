@@ -10,12 +10,20 @@ import {
   RawCampaign,
   RawScenario,
 } from "@/src/data/campaign";
+import { buildEncounterSets } from "./encounter-set";
 
 const rawCards = z.array(RawCard).parse(cardsJson);
 const rawCampaigns = z.array(RawCampaign).parse(campaignsJson);
 const rawStandalones = z.array(RawScenario).parse(standalonesJson);
 
-export const cards = buildCards(rawCards, rawCampaigns, rawStandalones);
+const encounterSets = buildEncounterSets(rawCards);
+
+export const cards = buildCards(
+  rawCards,
+  encounterSets,
+  rawCampaigns,
+  rawStandalones,
+);
 export const campaigns = buildCampaigns(rawCampaigns, cards);
 export const standalones = buildScenarios(rawStandalones, rawCampaigns, cards);
 
