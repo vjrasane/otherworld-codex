@@ -12,6 +12,7 @@ import {
 } from "@/src/data/campaign";
 import { buildEncounterSets } from "./encounter-set";
 import { buildTraits } from "@/src/data/trait";
+import { buildTypes } from "@/src/data/type";
 
 const rawCards = z.array(RawCard).safeParse(cardsJson);
 if (!rawCards.success)
@@ -42,6 +43,7 @@ export const encounterSets = buildEncounterSets(
   rawStandalones.data,
 );
 export const traits = buildTraits(cards, campaigns, standalones);
+export const types = buildTypes(cards, campaigns, standalones);
 
 export type { Card } from "@/src/data/card";
 export type { Campaign, Scenario } from "@/src/data/campaign";
