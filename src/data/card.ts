@@ -67,12 +67,11 @@ export const RawCard = z.object({
 export type RawCard = z.infer<typeof RawCard>;
 
 export type Card = RawCard & {
-  linked_card?: Card;
   meta: CardMeta;
 };
 
 interface CardMeta extends Meta {
-  linkedToCard?: Card;
+  parentCard?: Card;
   imageUrl?: string;
   backImageUrl?: string;
 }
@@ -107,25 +106,22 @@ export function buildCards(
   const buildCard = (raw: RawCard): Card => {
     const meta = {
       imageUrl: imageUrl(raw.imagesrc),
-      backimageUrl: imageUrl(raw.backimagesrc),
+      backImageUrl: imageUrl(raw.backimagesrc),
       ...buildCardMeta(raw),
     };
     return { ...raw, meta };
   };
   const processed = raws.map(buildCard);
 
-  const links: Map<string, Card> = new Map(
+  const parentsByChildCode = new Map<string, Card>(
     processed
-      .filter((d) => !!d.linked_card)
-      .map((d) => [d.linked_card!.code, d]),
+      .filter((d) => !!d.linked_to_code)
+      .map((d) => [d.linked_to_code!, d]),
   );
 
-  const linked = processed.map((card) => {
-    const linkedToCard = links.get(card.code);
-    if (!linkedToCard) return card;
-    const meta = { ...card.meta, linkedToCard };
-    return { ...card, meta };
+  return processed.map((card) => {
+    const parentCard = parentsByChildCode.get(card.code);
+    if (!parentCard) return card;
+    return { ...card, meta: { ...card.meta, parentCard } };
   });
-
-  return linked;
 }

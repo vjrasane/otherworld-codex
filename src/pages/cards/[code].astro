@@ -18,8 +18,8 @@ interface Props {
 
 const { card } = Astro.props;
 
-if (card.meta.linkedToCard) {
-  return Astro.redirect(routes.card(card.meta.linkedToCard.code));
+if (card.meta.parentCard) {
+  return Astro.redirect(routes.card(card.meta.parentCard.code));
 }
 
 
