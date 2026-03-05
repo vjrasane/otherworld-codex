@@ -32,6 +32,8 @@ export interface QueryOpts<T> {
   route: string;
 }
 
+export type InferQueryResult<T> = T extends QueryOpts<infer R> ? R : never;
+
 export type QueryOptionsMap = {
   encounterCards: QueryOpts<Card[]>;
   encounterSets: QueryOpts<EncounterSet[]>;

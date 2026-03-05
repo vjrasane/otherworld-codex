@@ -9,7 +9,7 @@ import { SearchField } from "./SearchField";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Filter } from "lucide-react";
 import { CardGrid } from "./CardGrid";
-import { useCachedQuery, useCardMeta, useFilterOptions } from "../hooks";
+import { useCachedRequest, useFilterOptions } from "../hooks";
 import { flow, set } from "lodash/fp";
 import type { Card } from "@/src/data/card";
 import type { Meta } from "@/src/data/meta";
@@ -30,8 +30,7 @@ export const CardBrowser: React.FC = () => {
 };
 
 const useFilteredCards = (filters: Filters) => {
-  const opts = useContext(QueryOptionsContext);
-  const cards = useCachedQuery(opts.encounterCards);
+  const cards = useCachedRequest("encounterCards");
 
   const filter = combine(
     filterBy("campaigns"),

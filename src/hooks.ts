@@ -2,6 +2,8 @@ import { fromPairs } from "lodash-es";
 import {
   QueryOptionsContext,
   toOptions,
+  type InferQueryResult,
+  type QueryOptionsMap,
   type QueryOpts,
 } from "./data/query-client";
 import { useQuery } from "@tanstack/react-query";
@@ -9,16 +11,19 @@ import { useContext } from "react";
 import { buildSearchIndex } from "./data/search-index";
 import { buildFilterOptions } from "./data/filter-options";
 
-export function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
+function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
   const { data } = useQuery(toOptions(queryOpts));
   if (!data) return null;
   return data;
 }
 
-export const useEncounterSets = () => {
-  const { encounterSets } = useContext(QueryOptionsContext);
-  const sets = useCachedQuery(encounterSets);
-  return sets;
+export const useCachedRequest = <K extends keyof QueryOptionsMap>(
+  queryKey: K,
+): InferQueryResult<QueryOptionsMap[K]> => {
+  const ctx = useContext(QueryOptionsContext);
+  const opts = ctx[queryKey];
+  const result = useCachedQuery(opts as any);
+  return result as any;
 };
 
 export const useEncounterCardsByCode = () => {
