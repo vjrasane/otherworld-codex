@@ -2,26 +2,39 @@ import { z } from "astro/zod";
 import type { Card, RawCard } from "@/src/data/card";
 import type { Meta } from "@/src/data/meta";
 
-export const RawScenario = z.object({
-  code: z.string(),
-  name: z.string(),
-  header: z.string().optional(),
-  order: z.number(),
-  campaignCode: z.string(),
-  campaignName: z.string(),
-  encounterCodes: z.array(z.string()),
-});
+export const RawScenario = z
+  .object({
+    scenarioCode: z.string(),
+    scenarioName: z.string(),
+    scenarioHeader: z.string().optional(),
+    scenarioOrder: z.number(),
+    encounterCodes: z.array(z.string()),
+  })
+  .transform((s) => ({
+    code: s.scenarioCode,
+    name: s.scenarioName,
+    order: s.scenarioOrder,
+    header: s.scenarioHeader,
+    encounterCodes: s.encounterCodes,
+  }));
 
 export type Scenario = RawScenario & {
   meta: Meta;
 };
 
-export const RawCampaign = z.object({
-  code: z.string(),
-  name: z.string(),
-  order: z.number(),
-  scenarios: z.array(RawScenario),
-});
+export const RawCampaign = z
+  .object({
+    campaignCode: z.string(),
+    campaignName: z.string(),
+    campaignOrder: z.number(),
+    scenarios: z.array(RawScenario),
+  })
+  .transform((c) => ({
+    code: c.campaignCode,
+    name: c.campaignName,
+    order: c.campaignOrder,
+    scenarios: c.scenarios,
+  }));
 
 export type RawScenario = z.infer<typeof RawScenario>;
 export type RawCampaign = z.infer<typeof RawCampaign>;

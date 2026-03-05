@@ -1,5 +1,7 @@
+import type { RawScenario, RawCampaign } from "@/src/data/campaign";
 import { RawCard, type Card } from "./card";
 import type { Meta } from "./meta";
+import { uniq } from "lodash-es";
 
 export interface EncounterSet {
   code: string;
@@ -46,4 +48,38 @@ export const buildEncounterSets = (
     acc.set(curr.encounter_code, set);
     return acc;
   }, new Map<string, EncounterSet>());
+};
+
+const groupBy = <T, K>(accessor: (item: T) => K, arr: T[]): Map<K, T[]> => {
+  return arr.reduce((acc, curr) => {
+    const _arr = acc.get(accessor(curr)) ?? [];
+    _arr.push(curr);
+    acc.set(accessor(curr), _arr);
+    return acc;
+  }, new Map<K, T[]>());
+};
+
+export const buildEncountersToScenariosMap = (
+  campaigns: RawCampaign[],
+  standalones: RawScenario[],
+) => {
+  const scenarios = [...campaigns.flatMap((c) => c.scenarios), ...standalones];
+  return scenarios.reduce((map, sc) => {
+    for (const en of sc.encounterCodes) {
+      const arr = map.get(en) ?? [];
+      map.set(en, uniq([...arr, sc.code]));
+    }
+    return map;
+  }, new Map<string, string[]>());
+};
+
+export const buildEncountersToCampaignsMap = (campaigns: RawCampaign[]) => {
+  return campaigns.reduce((map, cm) => {
+    const ens = uniq(cm.scenarios.flatMap((s) => s.encounterCodes));
+    for (const en of ens) {
+      const arr = map.get(en) ?? [];
+      map.set(en, uniq([...arr, cm.code]));
+    }
+    return map;
+  }, new Map<string, string[]>());
 };

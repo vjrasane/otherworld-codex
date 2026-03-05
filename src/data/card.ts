@@ -6,7 +6,11 @@ import type {
   RawScenario,
   Scenario,
 } from "@/src/data/campaign";
-import type { EncounterSet } from "./encounter-set";
+import {
+  buildEncountersToCampaignsMap,
+  buildEncountersToScenariosMap,
+  type EncounterSet,
+} from "@/src/data/encounter-set";
 
 const IMAGE_BASE = "https://arkhamdb.com";
 
@@ -14,7 +18,7 @@ function imageUrl(src?: string | null): string | undefined {
   return src ? IMAGE_BASE + src : undefined;
 }
 
-const RawLinkedCard = z.object({
+export const RawCard = z.object({
   code: z.string(),
   name: z.string(),
   type_code: z.string(),
@@ -62,13 +66,7 @@ const RawLinkedCard = z.object({
   is_unique: z.boolean(),
   position: z.number(),
   real_slot: z.string().nullish(),
-});
-
-export type RawLinkedCard = z.infer<typeof RawLinkedCard>;
-
-export const RawCard = RawLinkedCard.extend({
   linked_to_code: z.string().optional(),
-  linked_card: RawLinkedCard.optional(),
 });
 
 export type RawCard = z.infer<typeof RawCard>;
@@ -86,12 +84,14 @@ interface CardMeta extends Meta {
 
 export function buildCards(
   raws: RawCard[],
-  encounters: Map<string, EncounterSet>,
   campaigns: RawCampaign[],
   standalones: RawScenario[],
 ): Card[] {
-  const encountersToCampaigns = new Map<string, string[]>();
-  const encountersToScenarios = new Map<string, string[]>();
+  const encountersToCampaigns = buildEncountersToCampaignsMap(campaigns);
+  const encountersToScenarios = buildEncountersToScenariosMap(
+    campaigns,
+    standalones,
+  );
 
   const buildCardMeta = (card: RawCard): Meta => {
     const { encounter_code, traits, type_code } = card;
@@ -111,11 +111,7 @@ export function buildCards(
       backimageUrl: imageUrl(raw.backimagesrc),
       ...buildCardMeta(raw),
     };
-    return {
-      ...raw,
-      linked_card: raw.linked_card && buildCard(raw.linked_card),
-      meta,
-    };
+    return { ...raw, meta };
   };
   const processed = raws.map(buildCard);
 

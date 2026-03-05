@@ -10,7 +10,7 @@ import { routes } from "@/src/routes";
   <div class="campaigns">
     {
       campaigns.map((c) => (
-        <a href={routes.campaign(c.code)} class="campaign-card">
+        <a class="campaign-card">
           <img src={routes.icon(c.code)} alt="" class="campaign-icon" />
           <div class="campaign-info">
             <div class="campaign-name">{c.name}</div>
@@ -27,7 +27,7 @@ import { routes } from "@/src/routes";
   <div class="standalones">
     {
       standalones.map((s) => (
-        <a href={routes.scenario(s.code)} class="campaign-card">
+        <a class="campaign-card">
           <img
             src={routes.icon(s.encounterCodes[0])}
             alt=""
