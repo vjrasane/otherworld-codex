@@ -4,15 +4,11 @@ import cardsJson from "@/data/cards.json";
 import campaignsJson from "@/data/campaigns.json";
 import standalonesJson from "@/data/standalones.json";
 import { buildCards, RawCard } from "@/src/data/card";
-import {
-  buildCampaigns,
-  buildScenarios,
-  RawCampaign,
-  RawScenario,
-} from "@/src/data/campaign";
+import { buildCampaigns, RawCampaign } from "@/src/data/campaign";
 import { buildEncounterSets } from "./encounter-set";
 import { buildTraits } from "@/src/data/trait";
 import { buildTypes } from "@/src/data/card-type";
+import { buildScenario, buildStandalone, RawScenario } from "./scenario";
 
 const rawCards = z.array(RawCard).safeParse(cardsJson);
 if (!rawCards.success)
@@ -32,18 +28,27 @@ export const cards = buildCards(
   rawStandalones.data,
 );
 export const campaigns = buildCampaigns(rawCampaigns.data, cards);
-export const standalones = buildScenarios(
-  rawStandalones.data,
-  rawCampaigns.data,
-  cards,
+
+const campaignScenarios = rawCampaigns.data.flatMap((cm) =>
+  cm.scenarios.map((sc) => buildScenario(sc, cm, rawCards.data)),
 );
+const standalones = rawStandalones.data.map((st) =>
+  buildStandalone(st, rawCards.data),
+);
+
+export const scenarios = [...campaignScenarios, ...standalones];
 export const encounterSets = buildEncounterSets(
   rawCards.data,
   rawCampaigns.data,
   rawStandalones.data,
 );
-export const traits = buildTraits(cards, campaigns, standalones);
-export const types = buildTypes(cards, campaigns, standalones);
+export const traits = buildTraits(
+  cards,
+  rawCampaigns.data,
+  rawStandalones.data,
+);
+export const types = buildTypes(cards, rawCampaigns.data, rawStandalones.data);
 
 export type { Card } from "@/src/data/card";
-export type { Campaign, Scenario } from "@/src/data/campaign";
+export type { Campaign } from "@/src/data/campaign";
+export type { Scenario } from "@/src/data/scenario";

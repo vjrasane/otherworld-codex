@@ -3,10 +3,11 @@ import { QueryClient, queryOptions } from "@tanstack/react-query";
 import { get, set, del } from "idb-keyval";
 import type { Card } from "./card";
 import { createContext } from "react";
-import type { Campaign, Scenario } from "./campaign";
+import type { Campaign } from "./campaign";
 import type { EncounterSet } from "./encounter-set";
 import type { Trait } from "./trait";
 import type { CardType } from "./card-type";
+import type { Scenario } from "./scenario";
 
 const expiry = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -35,10 +36,10 @@ export interface QueryOpts<T> {
 export type InferQueryResult<T> = T extends QueryOpts<infer R> ? R : never;
 
 export type QueryOptionsMap = {
-  encounterCards: QueryOpts<Card[]>;
+  cards: QueryOpts<Card[]>;
   encounterSets: QueryOpts<EncounterSet[]>;
   campaigns: QueryOpts<Campaign[]>;
-  standalones: QueryOpts<Scenario[]>;
+  scenarios: QueryOpts<Scenario[]>;
   traits: QueryOpts<Trait[]>;
   types: QueryOpts<CardType[]>;
 };

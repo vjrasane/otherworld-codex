@@ -6,7 +6,8 @@ import {
   buildEncountersToCampaignsMap,
   buildEncountersToScenariosMap,
 } from "./encounter-set";
-import type { RawCampaign, RawScenario } from "./campaign";
+import type { RawCampaign } from "./campaign";
+import type { RawScenario } from "./scenario";
 
 export interface Trait {
   __type: "trait";

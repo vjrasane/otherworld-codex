@@ -1,16 +1,11 @@
 import { z } from "astro/zod";
 import type { Meta } from "./meta";
-import type {
-  Campaign,
-  RawCampaign,
-  RawScenario,
-  Scenario,
-} from "@/src/data/campaign";
+import type { RawCampaign } from "@/src/data/campaign";
 import {
   buildEncountersToCampaignsMap,
   buildEncountersToScenariosMap,
-  type EncounterSet,
 } from "@/src/data/encounter-set";
+import type { RawScenario } from "./scenario";
 
 const IMAGE_BASE = "https://arkhamdb.com";
 
@@ -81,6 +76,10 @@ interface CardMeta extends Meta {
   imageUrl?: string;
   backImageUrl?: string;
 }
+
+export type EncounterCard = Card & {
+  encounter_code: string;
+};
 
 export function buildCards(
   raws: RawCard[],

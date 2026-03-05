@@ -5,10 +5,4 @@ export const routes = {
   card: (code: string) => `${base}/cards/${code}`,
   icon: (code: string) => `${base}/icons/${code}.svg`,
   index: `${base}/`,
-  json: {
-    searchIndex: `${base}/search-index.json`,
-    encounterCards: `${base}/encounter-cards.json`,
-    encounterCardsByCode: `${base}/encounter-cards-by-code.json`,
-    cardMeta: `${base}/card-meta.json`,
-  },
 } as const;

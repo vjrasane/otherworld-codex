@@ -15,7 +15,11 @@ import {
 } from "react";
 import { Filter } from "lucide-react";
 import { CardGrid } from "./CardGrid";
-import { useCachedRequest, useFilterOptions } from "../hooks";
+import {
+  useCachedRequest,
+  useEncounterCards,
+  useFilterOptions,
+} from "../hooks";
 import { set } from "lodash/fp";
 import {
   toFilterOption,
@@ -128,7 +132,7 @@ const restrict = combineRestrict(
 );
 
 const useFilteredCards = (filters: Filters) => {
-  const cards = useCachedRequest("encounterCards");
+  const cards = useEncounterCards();
 
   const filteredCards = useMemo(
     () => cards?.filter((c) => filter(filters, c)) ?? [],

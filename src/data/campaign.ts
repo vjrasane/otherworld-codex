@@ -1,27 +1,12 @@
 import { z } from "astro/zod";
 import type { Card, RawCard } from "@/src/data/card";
 import type { Meta } from "@/src/data/meta";
-
-export const RawScenario = z
-  .object({
-    scenarioCode: z.string(),
-    scenarioName: z.string(),
-    scenarioHeader: z.string().optional(),
-    scenarioOrder: z.number(),
-    encounterCodes: z.array(z.string()),
-  })
-  .transform((s) => ({
-    code: s.scenarioCode,
-    name: s.scenarioName,
-    order: s.scenarioOrder,
-    header: s.scenarioHeader,
-    encounterCodes: s.encounterCodes,
-  }));
-
-export type Scenario = RawScenario & {
-  __type: "scenario";
-  meta: Meta;
-};
+import {
+  RawScenario,
+  getScenarioCards,
+  getScenarioTraits,
+  getScenarioTypes,
+} from "./scenario";
 
 export const RawCampaign = z
   .object({
@@ -37,12 +22,10 @@ export const RawCampaign = z
     scenarios: c.scenarios,
   }));
 
-export type RawScenario = z.infer<typeof RawScenario>;
 export type RawCampaign = z.infer<typeof RawCampaign>;
 
-export type Campaign = RawCampaign & {
+export type Campaign = Omit<RawCampaign, "scenarios"> & {
   __type: "campaign";
-  scenarios: Scenario[];
   meta: Meta;
 };
 
@@ -56,75 +39,13 @@ export const getCampaignCards = <
   return campaign.scenarios.flatMap((s) => getScenarioCards(s, cards));
 };
 
-const getScenarioCards = <TScenario extends RawScenario, TCard extends RawCard>(
-  scenario: TScenario,
-  cards: TCard[],
-): TCard[] => {
-  const encounterCards = cards
-    .filter((c) => !!c.encounter_code)
-    .filter((c) => scenario.encounterCodes.includes(c.encounter_code!));
-  return encounterCards;
-};
-
-const getScenarioTraits = (
-  scenarios: RawScenario[],
-  cards: Card[],
-): string[] => {
-  const getTraits = (s: RawScenario): string[] =>
-    getScenarioCards(s, cards).flatMap((c) => c.traits ?? []);
-
-  return [...new Set(scenarios.flatMap(getTraits)).values()];
-};
-
-const getScenarioTypes = (
-  scenarios: RawScenario[],
-  cards: Card[],
-): string[] => {
-  const getTypes = (s: RawScenario): string[] =>
-    getScenarioCards(s, cards).map((c) => c.type_code);
-
-  return [...new Set(scenarios.flatMap(getTypes)).values()];
-};
-
-const buildScenarioMeta = (
-  scenario: RawScenario,
-  campaigns: RawCampaign[],
-  cards: Card[],
-) => {
-  const campaignsMeta = campaigns
-    .filter((c) => c.scenarios.some((s) => s.code === scenario.code))
-    .map((c) => c.code);
-  const traits = getScenarioTraits([scenario], cards);
-  const types = getScenarioTypes([scenario], cards);
-  return {
-    campaigns: campaignsMeta,
-    scenarios: [scenario.code],
-    encounters: scenario.encounterCodes,
-    traits,
-    types,
-  };
-};
-
-export const buildScenarios = (
-  raw: RawScenario[],
-  campaigns: RawCampaign[],
-  cards: Card[],
-): Scenario[] => {
-  return raw.map((s) => {
-    return {
-      ...s,
-      __type: "scenario" as const,
-      meta: buildScenarioMeta(s, campaigns, cards),
-    };
-  });
-};
-
 const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]) => {
   const scenariosMeta = campaign.scenarios.map((s) => s.code);
   const encountersMeta = campaign.scenarios.flatMap((s) => s.encounterCodes);
   const traits = getScenarioTraits(campaign.scenarios, cards);
   const types = getScenarioTypes(campaign.scenarios, cards);
   return {
+    type: "campaign" as const,
     campaigns: [campaign.code],
     scenarios: scenariosMeta,
     encounters: encountersMeta,
@@ -141,7 +62,6 @@ export const buildCampaigns = (
     return {
       ...c,
       __type: "campaign" as const,
-      scenarios: buildScenarios(c.scenarios, raw, cards),
       meta: buildCampaignMeta(c, cards),
     };
   });

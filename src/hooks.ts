@@ -1,4 +1,3 @@
-import { fromPairs } from "lodash-es";
 import {
   QueryOptionsContext,
   toOptions,
@@ -10,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import { buildSearchIndex } from "./data/search-index";
 import { type FilterOptions } from "./data/filters";
+import { type EncounterCard } from "./data/card";
+import { encounterSets } from "./data";
 
 function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
   const { data } = useQuery(toOptions(queryOpts));
@@ -26,47 +27,43 @@ export const useCachedRequest = <K extends keyof QueryOptionsMap>(
   return result as any;
 };
 
-export const useEncounterCardsByCode = () => {
-  const { encounterCards } = useContext(QueryOptionsContext);
-  const cards = useCachedQuery(encounterCards);
-  const queryKey = ["encounterCardsByCode", ...encounterCards.queryKey];
+export const useEncounterCards = () => {
+  const opts = useContext(QueryOptionsContext);
+  const cards = useCachedQuery(opts.cards);
+
   const { data } = useQuery({
-    queryKey,
+    queryKey: ["encounterCards", opts.cards.queryKey],
     queryFn: () => {
       if (!cards) return null;
-      return fromPairs(cards.map((c) => [c.code, c]));
+      return cards.filter((ca): ca is EncounterCard => !!ca.encounter_code);
+    },
+    enabled: !!cards,
+  });
+
+  return data;
+};
+
+export const useEncounterCardsByCode = () => {
+  const opts = useContext(QueryOptionsContext);
+  const cards = useEncounterCards();
+  const { data } = useQuery({
+    queryKey: ["encounterCardsByCode", ...opts.cards.queryKey],
+    queryFn: () => {
+      if (!cards) return null;
+      return Object.fromEntries(cards.map((c) => [c.code, c])) as Record<
+        string,
+        EncounterCard
+      >;
     },
     enabled: !!cards,
   });
   return data;
 };
 
-export const useScenarios = () => {
-  const opts = useContext(QueryOptionsContext);
-  const campaigns = useCachedQuery(opts.campaigns);
-  const standalones = useCachedQuery(opts.standalones);
-  const queryKey = [
-    "scenarios",
-    ...opts.campaigns.queryKey,
-    ...opts.standalones.queryKey,
-  ];
-  const { data } = useQuery({
-    queryKey,
-    queryFn: () => {
-      if (!campaigns) return null;
-      if (!standalones) return null;
-      return [...campaigns.flatMap((s) => s.scenarios), ...standalones];
-    },
-    enabled: !!campaigns && !!standalones,
-  });
-
-  return data;
-};
-
 export const useFilterOptions = () => {
   const opts = useContext(QueryOptionsContext);
   const campaigns = useCachedQuery(opts.campaigns);
-  const standalones = useCachedQuery(opts.standalones);
+  const scenarios = useCachedQuery(opts.scenarios);
   const encounters = useCachedQuery(opts.encounterSets);
   const traits = useCachedQuery(opts.traits);
   const types = useCachedQuery(opts.types);
@@ -74,48 +71,46 @@ export const useFilterOptions = () => {
     queryKey: [
       "filterOptions",
       ...opts.campaigns.queryKey,
-      ...opts.standalones.queryKey,
+      ...opts.scenarios.queryKey,
       ...opts.encounterSets.queryKey,
       ...opts.traits.queryKey,
       ...opts.types.queryKey,
     ],
     queryFn: (): FilterOptions | null => {
       if (!campaigns) return null;
-      if (!standalones) return null;
+      if (!scenarios) return null;
       if (!encounters) return null;
       if (!traits) return null;
       if (!types) return null;
-      const scenarios = [
-        ...campaigns.flatMap((s) => s.scenarios),
-        ...standalones,
-      ];
       return { campaigns, scenarios, encounters, traits, types };
     },
-    enabled:
-      !!campaigns && !!standalones && !!encounters && !!traits && !!types,
+    enabled: !!campaigns && !!scenarios && !!encounters && !!traits && !!types,
   });
   return data;
 };
 
 export const useSearchIndex = () => {
   const opts = useContext(QueryOptionsContext);
-  const cards = useCachedQuery(opts.encounterCards);
+  const cards = useEncounterCards();
   const campaigns = useCachedQuery(opts.campaigns);
-  const standalones = useCachedQuery(opts.standalones);
+  const scenarios = useCachedQuery(opts.scenarios);
+  const encounterSets = useCachedQuery(opts.encounterSets);
   const { data } = useQuery({
     queryKey: [
       "searchIndex",
-      ...opts.encounterCards.queryKey,
+      ...opts.cards.queryKey,
       ...opts.campaigns.queryKey,
-      ...opts.standalones.queryKey,
+      ...opts.scenarios.queryKey,
+      ...opts.encounterSets.queryKey,
     ],
     queryFn: () => {
       if (!cards) return null;
       if (!campaigns) return null;
-      if (!standalones) return null;
-      return buildSearchIndex(cards, campaigns, standalones);
+      if (!scenarios) return null;
+      if (!encounterSets) return null;
+      return buildSearchIndex(cards, campaigns, scenarios, encounterSets);
     },
-    enabled: !!cards && !!campaigns && !!standalones,
+    enabled: !!cards && !!campaigns && !!scenarios && !!encounterSets,
   });
   return data;
 };

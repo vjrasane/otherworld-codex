@@ -6,7 +6,10 @@ import { type Card } from "../data/card";
 import { capitalize, compact } from "lodash-es";
 import { type SearchEntry } from "../data/search-index";
 import { useEncounterCardsByCode, useSearchIndex } from "../hooks";
-import { QueryOptionsContext, type QueryOptionsMap } from "../data/query-client";
+import {
+  QueryOptionsContext,
+  type QueryOptionsMap,
+} from "../data/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../data/query-client";
 
@@ -24,20 +27,14 @@ function useDebouncedValue<T>(value: T, ms: number): T {
 }
 
 function useSearch() {
-  const entries = useSearchIndex()
+  const entries = useSearchIndex();
 
   return useMemo(() => {
-    if (!entries) return null
+    if (!entries) return null;
     if (entries.length === 0) return null;
     const ms = new MiniSearch<SearchEntry>({
       fields: ["name"],
-      storeFields: [
-        "type",
-        "code",
-        "name",
-        "packName",
-        "campaignName"
-      ],
+      storeFields: ["type", "code", "name", "packName", "campaignName"],
       searchOptions: {
         prefix: true,
         fuzzy: 0.2,
@@ -45,21 +42,20 @@ function useSearch() {
     });
     ms.addAll(entries);
     return (query: string) => ms.search(query);
-  }, [entries])
+  }, [entries]);
 }
 
 export const Search: React.FC<{
-  queryOptions: QueryOptionsMap
-}> = ({
-  queryOptions
-}) => {
-    return <QueryClientProvider client={queryClient}>
+  queryOptions: QueryOptionsMap;
+}> = ({ queryOptions }) => {
+  return (
+    <QueryClientProvider client={queryClient}>
       <QueryOptionsContext.Provider value={queryOptions}>
         <SearchField />
       </QueryOptionsContext.Provider>
     </QueryClientProvider>
-  }
-
+  );
+};
 
 const SearchField: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -68,7 +64,7 @@ const SearchField: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const debouncedQuery = useDebouncedValue(query, 200);
 
-  const search = useSearch()
+  const search = useSearch();
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -103,7 +99,6 @@ const SearchField: React.FC = () => {
       setOpen(false);
     }
   }
-
 
   return (
     <div ref={ref} style={s.wrapper}>
@@ -152,78 +147,86 @@ const SearchField: React.FC = () => {
               >
                 <SearchResultItem result={res} />
               </a>
-            )
+            );
           })}
         </div>
       )}
     </div>
   );
-}
+};
 
-const SearchResultText: React.FC<{ title: string, subtitle: string }> = ({ title, subtitle }) => {
-  return <div style={s.textWrapper}>
-    <div style={s.title}>{title}</div>
-    <div style={s.subtitle}>{subtitle}</div>
-  </div>
-}
+const SearchResultText: React.FC<{ title: string; subtitle: string }> = ({
+  title,
+  subtitle,
+}) => {
+  return (
+    <div style={s.textWrapper}>
+      <div style={s.title}>{title}</div>
+      <div style={s.subtitle}>{subtitle}</div>
+    </div>
+  );
+};
 
 const SearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) => {
-
-  const { type, code } = result
+  const { type, code } = result;
   switch (type) {
     case "card": {
-      return <CardSearchResultItem code={code} />
+      return <CardSearchResultItem code={code} />;
     }
 
     default: {
-      return <IconSearchResultItem result={result} />
+      return <IconSearchResultItem result={result} />;
     }
   }
-}
+};
 
-const IconSearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) => {
-  const { type, code, name, packName, campaignName } = result
-  const subtitle = compact([capitalize(type), packName && `· ${packName}`, campaignName && `· ${campaignName}`]).join(" ")
-  return <>
-    <img
-      src={routes.icon(code)}
-      alt=""
-      style={s.icon}
-    />
-    <SearchResultText title={name} subtitle={subtitle} />
-  </>
-}
-
-
-const CardSearchResultItem: React.FC<{ code: string }> = ({
-  code
+const IconSearchResultItem: React.FC<{ result: SearchResult }> = ({
+  result,
 }) => {
-  const cardsByCode = useEncounterCardsByCode()
-  const card = cardsByCode?.[code]
-  if (!card) return null
-  const { name, xp, subname, pack_name } = card
-  const title = compact([name, xp && `(${xp})`, subname && `· ${subname}`]).join(" ")
-  const subtitle = compact(["Card", pack_name && `· ${pack_name}`]).join(" ")
-  return <>
-    <CardSearchResultImage card={card} />
-    <SearchResultText title={title} subtitle={subtitle} />
-  </>
-}
+  const { type, code, name, packName, campaignName } = result;
+  const subtitle = compact([
+    capitalize(type),
+    packName && `· ${packName}`,
+    campaignName && `· ${campaignName}`,
+  ]).join(" ");
+  return (
+    <>
+      <img src={routes.icon(code)} alt="" style={s.icon} />
+      <SearchResultText title={name} subtitle={subtitle} />
+    </>
+  );
+};
 
+const CardSearchResultItem: React.FC<{ code: string }> = ({ code }) => {
+  const cardsByCode = useEncounterCardsByCode();
+  const card = cardsByCode?.[code];
+  if (!card) return null;
+  const { name, xp, subname, pack_name } = card;
+  const title = compact([
+    name,
+    xp && `(${xp})`,
+    subname && `· ${subname}`,
+  ]).join(" ");
+  const subtitle = compact(["Card", pack_name && `· ${pack_name}`]).join(" ");
+  return (
+    <>
+      <CardSearchResultImage card={card} />
+      <SearchResultText title={title} subtitle={subtitle} />
+    </>
+  );
+};
 
-const CardSearchResultImage: React.FC<{ card: Card }> = ({
-  card
-}) => {
+const CardSearchResultImage: React.FC<{ card: Card }> = ({ card }) => {
   if (card.meta.imageUrl) {
-    const horizontal = HORIZONTAL_TYPES.has(card.type_code)
+    const horizontal = HORIZONTAL_TYPES.has(card.type_code);
     return (
       <div style={{ ...s.cardThumb, height: horizontal ? 28 : 56 }}>
         <img src={card.meta.imageUrl} alt="" style={s.cardThumbImg} />
       </div>
-    )
+    );
   }
-  return <div style={s.cardThumbPlaceholder} />
-}
+  return <div style={s.cardThumbPlaceholder} />;
+};
 
 const s = {
   wrapper: {

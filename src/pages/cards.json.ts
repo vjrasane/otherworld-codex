@@ -5,20 +5,17 @@ import type { QueryOpts } from "../data/query-client";
 import { routes } from "../routes";
 import { sortBy } from "lodash-es";
 
-const encounterCards = sortBy(
-  cards.filter((c) => !!c.encounter_code),
-  "code",
-);
+const data = sortBy(cards, "code");
 
-const hash = hashContent(encounterCards);
+const hash = hashContent(data);
 
 export const options: QueryOpts<Card[]> = {
-  queryKey: ["encounterCards", hash],
-  route: routes.json.encounterCards,
+  queryKey: ["cards", hash],
+  route: routes.base + "/cards.json",
 };
 
 export const GET: APIRoute = () => {
-  return new Response(JSON.stringify(encounterCards), {
+  return new Response(JSON.stringify(data), {
     headers: { "Content-Type": "application/json" },
   });
 };

@@ -1,7 +1,8 @@
-import type { RawScenario, RawCampaign } from "@/src/data/campaign";
+import type { RawCampaign } from "@/src/data/campaign";
+import type { RawScenario } from "@/src/data/scenario";
 import { RawCard } from "./card";
 import type { Meta } from "./meta";
-import { uniq } from "lodash-es";
+import { uniq, uniqBy } from "lodash-es";
 
 export interface EncounterSet {
   __type: "encounterSet";
@@ -9,7 +10,6 @@ export interface EncounterSet {
   name: string;
   packCode: string;
   packName: string;
-  cards: RawCard[];
   meta: Meta;
 }
 
@@ -28,7 +28,6 @@ export const getEncounterSet = (
     name: first.encounter_name ?? encounterCode,
     packName: first.pack_name,
     packCode: first.pack_code,
-    cards: encounterCards,
     meta: {},
   };
 };
@@ -38,20 +37,22 @@ export const buildEncounterSets = (
   campaigns: RawCampaign[],
   standalones: RawScenario[],
 ): EncounterSet[] => {
+  const encountersToCardsMap = buildEncountersToCardsMap(cards);
   const encountersToScenarios = buildEncountersToScenariosMap(
     campaigns,
     standalones,
   );
   const encountersToCampaigns = buildEncountersToCampaignsMap(campaigns);
 
-  const buildEncounterMeta = (encounter: EncounterSet) => {
+  const buildEncounterMeta = (enc: string) => {
+    const cards = encountersToCardsMap.get(enc) ?? [];
     return {
       type: "encounterSet" as const,
-      campaigns: encountersToCampaigns.get(encounter.code),
-      scenarios: encountersToScenarios.get(encounter.code),
-      encounters: [encounter.code],
-      traits: uniq(encounter.cards.flatMap((c) => c.traits ?? [])),
-      types: uniq(encounter.cards.map((c) => c.type_code)),
+      campaigns: encountersToCampaigns.get(enc),
+      scenarios: encountersToScenarios.get(enc),
+      encounters: [enc],
+      traits: uniq(cards.flatMap((c) => c.traits ?? [])),
+      types: uniq(cards.map((c) => c.type_code)),
     };
   };
 
@@ -63,19 +64,22 @@ export const buildEncounterSets = (
       name: ca.encounter_name ?? "",
       packCode: ca.pack_code,
       packName: ca.pack_name,
-      cards: [],
-      meta: {},
+      meta: buildEncounterMeta(ca.encounter_code),
     };
-    set.cards.push(ca);
     map.set(ca.encounter_code, set);
     return map;
   }, new Map<string, EncounterSet>());
 
-  encounters.forEach((en) => {
-    en.meta = buildEncounterMeta(en);
-  });
-
   return [...encounters.values()];
+};
+
+const buildEncountersToCardsMap = (cards: RawCard[]) => {
+  return cards.reduce((map, ca) => {
+    if (!ca.encounter_code) return map;
+    const arr = map.get(ca.encounter_code) ?? [];
+    map.set(ca.encounter_code, uniqBy([...arr, ca], "code"));
+    return map;
+  }, new Map<string, RawCard[]>());
 };
 
 export const buildEncountersToScenariosMap = (
