@@ -6,7 +6,13 @@ import {
 } from "../data/query-client";
 import { MultiSelect } from "./MultiSelect";
 import { SearchField } from "./SearchField";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type SetStateAction,
+} from "react";
 import { Filter } from "lucide-react";
 import { CardGrid } from "./CardGrid";
 import { useCachedRequest, useFilterOptions } from "../hooks";
@@ -189,7 +195,22 @@ const useFilters = () => {
     }));
   }, [filterOptions]);
 
-  return [filters, setFilters] as const;
+  const updateFilters = useCallback((updater: SetStateAction<Filters>) => {
+    setFilters((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(next)) {
+        if (Array.isArray(value) && value.length) {
+          params.set(key, value.map((v) => v.value).join(","));
+        }
+      }
+      const qs = params.toString();
+      history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+      return next;
+    });
+  }, []);
+
+  return [filters, updateFilters] as const;
 };
 
 export default function ({ queryOptions }: { queryOptions: QueryOptionsMap }) {
