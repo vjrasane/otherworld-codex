@@ -1,5 +1,5 @@
 import type { RawScenario, RawCampaign } from "@/src/data/campaign";
-import { RawCard, type Card } from "./card";
+import { RawCard } from "./card";
 import type { Meta } from "./meta";
 import { uniq } from "lodash-es";
 
@@ -33,30 +33,45 @@ export const getEncounterSet = (
 
 export const buildEncounterSets = (
   cards: RawCard[],
-): Map<string, EncounterSet> => {
-  return cards.reduce((acc, curr) => {
-    if (!curr.encounter_code) return acc;
-    const set = acc.get(curr.encounter_code) ?? {
-      code: curr.encounter_code,
-      name: curr.encounter_name ?? "",
-      packCode: curr.pack_code,
-      packName: curr.pack_name,
+  campaigns: RawCampaign[],
+  standalones: RawScenario[],
+): EncounterSet[] => {
+  const encountersToScenarios = buildEncountersToScenariosMap(
+    campaigns,
+    standalones,
+  );
+  const encountersToCampaigns = buildEncountersToCampaignsMap(campaigns);
+
+  const buildEncounterMeta = (encounter: EncounterSet): Meta => {
+    return {
+      campaigns: encountersToCampaigns.get(encounter.code),
+      scenarios: encountersToScenarios.get(encounter.code),
+      encounters: [encounter.code],
+      traits: uniq(encounter.cards.flatMap((c) => c.traits ?? [])),
+      types: uniq(encounter.cards.map((c) => c.type_code)),
+    };
+  };
+
+  const encounters = cards.reduce((map, ca) => {
+    if (!ca.encounter_code) return map;
+    const set: EncounterSet = map.get(ca.encounter_code) ?? {
+      code: ca.encounter_code,
+      name: ca.encounter_name ?? "",
+      packCode: ca.pack_code,
+      packName: ca.pack_name,
       cards: [],
       meta: {},
     };
-    set.cards.push(curr);
-    acc.set(curr.encounter_code, set);
-    return acc;
+    set.cards.push(ca);
+    map.set(ca.encounter_code, set);
+    return map;
   }, new Map<string, EncounterSet>());
-};
 
-const groupBy = <T, K>(accessor: (item: T) => K, arr: T[]): Map<K, T[]> => {
-  return arr.reduce((acc, curr) => {
-    const _arr = acc.get(accessor(curr)) ?? [];
-    _arr.push(curr);
-    acc.set(accessor(curr), _arr);
-    return acc;
-  }, new Map<K, T[]>());
+  encounters.forEach((en) => {
+    en.meta = buildEncounterMeta(en);
+  });
+
+  return [...encounters.values()];
 };
 
 export const buildEncountersToScenariosMap = (

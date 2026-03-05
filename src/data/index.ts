@@ -11,6 +11,7 @@ import {
   RawScenario,
 } from "@/src/data/campaign";
 import { buildEncounterSets } from "./encounter-set";
+import { buildTraits } from "@/src/data/trait";
 
 const rawCards = z.array(RawCard).safeParse(cardsJson);
 if (!rawCards.success)
@@ -24,8 +25,6 @@ if (!rawStandalones.success)
     "Standalone scenarios data is invalid: " + rawStandalones.error.message,
   );
 
-const encounterSets = buildEncounterSets(rawCards.data);
-
 export const cards = buildCards(
   rawCards.data,
   rawCampaigns.data,
@@ -37,6 +36,12 @@ export const standalones = buildScenarios(
   rawCampaigns.data,
   cards,
 );
+export const encounterSets = buildEncounterSets(
+  rawCards.data,
+  rawCampaigns.data,
+  rawStandalones.data,
+);
+export const traits = buildTraits(cards, campaigns, standalones);
 
 export type { Card } from "@/src/data/card";
 export type { Campaign, Scenario } from "@/src/data/campaign";

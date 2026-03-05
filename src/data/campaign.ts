@@ -96,6 +96,7 @@ const buildScenarioMeta = (
   const types = getScenarioTypes([scenario], cards);
   return {
     campaigns: campaignsMeta,
+    scenarios: [scenario.code],
     encounters: scenario.encounterCodes,
     traits,
     types,
@@ -121,6 +122,7 @@ const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]): Meta => {
   const traits = getScenarioTraits(campaign.scenarios, cards);
   const types = getScenarioTypes(campaign.scenarios, cards);
   return {
+    campaigns: [campaign.code],
     scenarios: scenariosMeta,
     encounters: encountersMeta,
     traits,

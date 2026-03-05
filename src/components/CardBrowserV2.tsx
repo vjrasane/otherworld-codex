@@ -11,7 +11,8 @@ import { Filter } from "lucide-react";
 import { CardGrid } from "./CardGrid";
 import { useCachedQuery, useCardMeta, useFilterOptions } from "../hooks";
 import { flow, set } from "lodash/fp";
-import type { Card } from "../data/card";
+import type { Card } from "@/src/data/card";
+import type { Meta } from "@/src/data/meta";
 
 export const CardBrowser: React.FC = () => {
   const [filters, setFilters] = useFilters();
@@ -30,62 +31,19 @@ export const CardBrowser: React.FC = () => {
 
 const useFilteredCards = (filters: Filters) => {
   const opts = useContext(QueryOptionsContext);
-  const meta = useCardMeta();
   const cards = useCachedQuery(opts.encounterCards);
 
-  const filterByCampaign = (card: Card): boolean => {
-    if (!filters.campaigns.length) return true;
-    const m = meta?.[card.code];
-    if (!m) return false;
-    return filters.campaigns.some((f) => m.campaignCodes.includes(f.value));
-  };
-
-  const filterByScenario = (card: Card): boolean => {
-    if (!filters.scenarios.length) return true;
-    const m = meta?.[card.code];
-    if (!m) return false;
-    return filters.scenarios.some((f) => m.scenarioCodes.includes(f.value));
-  };
-
-  const filterByEncounter = (card: Card): boolean => {
-    if (!filters.encounters.length) return true;
-    const m = meta?.[card.code];
-    if (!m) return false;
-    return filters.encounters.some((f) => m.encounterCode === f.value);
-  };
-
-  const filterByTrait = (card: Card): boolean => {
-    if (!filters.traits.length) return true;
-    const m = meta?.[card.code];
-    if (!m) return false;
-    return filters.traits.some((f) => m.traits.includes(f.value));
-  };
-
-  const filterByType = (card: Card): boolean => {
-    if (!filters.types.length) return true;
-    return filters.types.some((f) => card.typeCode === f.value);
-  };
-
-  const filterByText = (card: Card): boolean => {
-    if (!filters.text) return true;
-    if (card.name.toLowerCase().includes(filters.text.toLowerCase()))
-      return true;
-    if (card.text?.toLowerCase().includes(filters.text.toLowerCase()))
-      return true;
-    return false;
-  };
+  const filter = combine(
+    filterBy("campaigns"),
+    filterBy("scenarios"),
+    filterBy("encounters"),
+    filterBy("traits"),
+    filterBy("types"),
+    filterByText,
+  );
 
   const filteredCards = useMemo(
-    () =>
-      cards?.filter((card) => {
-        if (!filterByCampaign(card)) return false;
-        if (!filterByScenario(card)) return false;
-        if (!filterByEncounter(card)) return false;
-        if (!filterByTrait(card)) return false;
-        if (!filterByType(card)) return false;
-        if (!filterByText(card)) return false;
-        return true;
-      }) ?? [],
+    () => cards?.filter((c) => filter(filters, c)) ?? [],
     [cards, filters],
   );
 
@@ -221,3 +179,32 @@ export default function ({ queryOptions }: { queryOptions: QueryOptionsMap }) {
     </QueryClientProvider>
   );
 }
+
+type FilterFunc = (filters: Filters, card: Card) => boolean;
+
+const filterBy =
+  <K extends keyof Filters & keyof Meta>(key: K): FilterFunc =>
+  (filters, card) => {
+    const filter = filters[key];
+    if (!Array.isArray(filter)) return true;
+    if (!filter.length) return true;
+    const meta = card.meta[key];
+    return filter.some((f) => meta?.includes(f.value));
+  };
+
+const filterByText: FilterFunc = (filters, card) => {
+  if (!filters.text.length) return true;
+  if (card.name.toLowerCase().includes(filters.text.toLowerCase())) return true;
+  if (card.text?.toLowerCase().includes(filters.text.toLowerCase()))
+    return true;
+  return false;
+};
+
+const combine =
+  (...funcs: FilterFunc[]): FilterFunc =>
+  (filters, card) => {
+    for (const func of funcs) {
+      if (!func(filters, card)) return false;
+    }
+    return true;
+  };

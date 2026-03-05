@@ -1,10 +1,10 @@
 import { experimental_createQueryPersister } from "@tanstack/query-persist-client-core";
-import { QueryClient, queryOptions, useQuery } from "@tanstack/react-query";
+import { QueryClient, queryOptions } from "@tanstack/react-query";
 import { get, set, del } from "idb-keyval";
-import type { SearchEntry } from "./search-index";
 import type { Card } from "./card";
 import { createContext } from "react";
-import type { Campaign, Standalone } from "./campaign";
+import type { Campaign, Scenario } from "./campaign";
+import type { EncounterSet } from "./encounter-set";
 
 const expiry = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -32,8 +32,9 @@ export interface QueryOpts<T> {
 
 export type QueryOptionsMap = {
   encounterCards: QueryOpts<Card[]>;
+  encounterSets: QueryOpts<EncounterSet[]>;
   campaigns: QueryOpts<Campaign[]>;
-  standalones: QueryOpts<Standalone[]>;
+  standalones: QueryOpts<Scenario[]>;
 };
 
 export const QueryOptionsContext = createContext<QueryOptionsMap>(
