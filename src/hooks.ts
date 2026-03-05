@@ -90,13 +90,7 @@ export const useFilterOptions = () => {
         ...campaigns.flatMap((s) => s.scenarios),
         ...standalones,
       ];
-      return {
-        campaigns: campaigns.map(toFilterOption),
-        scenarios: scenarios.map(toFilterOption),
-        encounters: encounters.map(toFilterOption),
-        traits: traits.map(toFilterOption),
-        types: types.map(toFilterOption),
-      };
+      return { campaigns, scenarios, encounters, traits, types };
     },
     enabled:
       !!campaigns && !!standalones && !!encounters && !!traits && !!types,

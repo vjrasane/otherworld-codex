@@ -10,12 +10,14 @@ export type StatFilters = Record<string, string>;
 export type Option = { label: string; value: string };
 
 export interface FilterOptions {
-  campaigns: Option[];
-  scenarios: Option[];
-  encounters: Option[];
-  traits: Option[];
-  types: Option[];
+  campaigns: Campaign[];
+  scenarios: Scenario[];
+  encounters: EncounterSet[];
+  traits: Trait[];
+  types: CardType[];
 }
+
+export type FilterOptionType = FilterOptions[keyof FilterOptions][number];
 
 export interface Filters {
   campaigns: Option[];
@@ -25,9 +27,10 @@ export interface Filters {
   types: Option[];
 }
 
-export const toFilterOption = (
-  item: Campaign | Scenario | EncounterSet | Trait | CardType,
-): Option => {
+export const toFilterOptions = (items: FilterOptionType[]) =>
+  items.map(toFilterOption);
+
+export const toFilterOption = (item: FilterOptionType): Option => {
   switch (item.__type) {
     case "campaign":
     case "scenario":
