@@ -12,7 +12,7 @@ import {
 } from "@/src/data/campaign";
 import { buildEncounterSets } from "./encounter-set";
 import { buildTraits } from "@/src/data/trait";
-import { buildTypes } from "@/src/data/type";
+import { buildTypes } from "@/src/data/card-type";
 
 const rawCards = z.array(RawCard).safeParse(cardsJson);
 if (!rawCards.success)

@@ -9,8 +9,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import { buildSearchIndex } from "./data/search-index";
-import { buildFilterOptions } from "./data/filter-options";
-import { toFilterOption, type FilterOptions } from "./data/filters";
+import { type FilterOptions } from "./data/filters";
 
 function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
   const { data } = useQuery(toOptions(queryOpts));
