@@ -4,16 +4,25 @@ import {
   QueryOptionsContext,
   type QueryOptionsMap,
 } from "../data/query-client";
-import { MultiSelect, type Option } from "./MultiSelect";
+import { MultiSelect } from "./MultiSelect";
 import { SearchField } from "./SearchField";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Filter } from "lucide-react";
 import { CardGrid } from "./CardGrid";
 import { useCachedRequest, useFilterOptions } from "../hooks";
 import { set } from "lodash/fp";
-import type { Card } from "@/src/data/card";
-import type { Meta } from "@/src/data/meta";
-import { toFilterOptions, type FilterOptions } from "../data/filters";
+import {
+  toFilterOption,
+  toFilterOptions,
+  toOptionId,
+  type Filters,
+  type FilterOptions,
+  combineFilters,
+  filterBy,
+  filterByText,
+  combineRestrict,
+  restrictBy,
+} from "../data/filters";
 
 export const CardBrowser: React.FC = () => {
   const [filters, setFilters] = useFilters();
@@ -28,83 +37,6 @@ export const CardBrowser: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const useFilteredCards = (filters: Filters) => {
-  const cards = useCachedRequest("encounterCards");
-
-  const filter = combineFilters(
-    filterBy("campaigns"),
-    filterBy("scenarios"),
-    filterBy("encounters"),
-    filterBy("traits"),
-    filterBy("types"),
-    filterByText,
-  );
-
-  const filteredCards = useMemo(
-    () => cards?.filter((c) => filter(filters, c)) ?? [],
-    [cards, filters],
-  );
-
-  return filteredCards;
-};
-
-interface Filters {
-  campaigns: Option[];
-  scenarios: Option[];
-  encounters: Option[];
-  traits: Option[];
-  types: Option[];
-  text: string;
-}
-
-const useAvailableOptions = (filters: Filters) => {
-  const filterOptions = useFilterOptions();
-
-  return useMemo(() => {
-    if (!filterOptions)
-      return {
-        campaigns: [],
-        scenarios: [],
-        encounters: [],
-        traits: [],
-        types: [],
-      };
-    const restricted = restrict(filters, filterOptions);
-    return {
-      campaigns: toFilterOptions(restricted.campaigns),
-      scenarios: toFilterOptions(restricted.scenarios),
-      encounters: toFilterOptions(restricted.encounters),
-      traits: toFilterOptions(restricted.traits),
-      types: toFilterOptions(restricted.types),
-    };
-  }, [filters, filterOptions]);
-};
-
-const useFilters = () => {
-  const [filters, setFilters] = useState<Filters>(() => ({
-    campaigns: [],
-    scenarios: [],
-    encounters: [],
-    traits: [],
-    types: [],
-    text: "",
-  }));
-
-  // const initFromUrl = <T extends Option>(key: string, options: T[]): void => {
-  //   const val = params.get(key);
-  //   if (!val) return;
-  //   const values = new Set(val.split(","));
-  //   const filters = options.filter((o) => values.has(o.value));
-  //   setFilters(set(key, filters));
-  // };
-
-  // useEffect(() => initFromUrl("scenarios", []), []);
-  // useEffect(() => initFromUrl("encounters", []), []);
-  // useEffect(() => initFromUrl("traits", []), []);
-
-  return [filters, setFilters] as const;
 };
 
 const Filters: React.FC<{
@@ -172,6 +104,94 @@ const Filters: React.FC<{
   );
 };
 
+const filter = combineFilters(
+  filterBy("campaigns"),
+  filterBy("scenarios"),
+  filterBy("encounters"),
+  filterBy("traits"),
+  filterBy("types"),
+  filterByText,
+);
+
+const restrict = combineRestrict(
+  restrictBy("campaigns"),
+  restrictBy("scenarios"),
+  restrictBy("encounters"),
+  restrictBy("traits"),
+  restrictBy("types"),
+);
+
+const useFilteredCards = (filters: Filters) => {
+  const cards = useCachedRequest("encounterCards");
+
+  const filteredCards = useMemo(
+    () => cards?.filter((c) => filter(filters, c)) ?? [],
+    [cards, filters],
+  );
+
+  return filteredCards;
+};
+
+const useAvailableOptions = (filters: Filters) => {
+  const filterOptions = useFilterOptions();
+
+  return useMemo(() => {
+    if (!filterOptions)
+      return {
+        campaigns: [],
+        scenarios: [],
+        encounters: [],
+        traits: [],
+        types: [],
+      };
+    const restricted = restrict(filters, filterOptions);
+    return {
+      campaigns: toFilterOptions(restricted.campaigns),
+      scenarios: toFilterOptions(restricted.scenarios),
+      encounters: toFilterOptions(restricted.encounters),
+      traits: toFilterOptions(restricted.traits),
+      types: toFilterOptions(restricted.types),
+    };
+  }, [filters, filterOptions]);
+};
+
+const useFilters = () => {
+  const filterOptions = useFilterOptions();
+  const [filters, setFilters] = useState<Filters>(() => ({
+    campaigns: [],
+    scenarios: [],
+    encounters: [],
+    traits: [],
+    types: [],
+    text: "",
+  }));
+
+  useEffect(() => {
+    if (!filterOptions) return;
+    const params = new URLSearchParams(window.location.search);
+
+    const initFromUrl = <K extends keyof FilterOptions>(key: K): Filters[K] => {
+      const val = params.get(key);
+      if (!val) return [];
+      const values = new Set(val.split(","));
+      return filterOptions[key]
+        .filter((opt) => values.has(toOptionId(opt)))
+        .map(toFilterOption);
+    };
+
+    setFilters((prev) => ({
+      ...prev,
+      campaigns: initFromUrl("campaigns"),
+      scenarios: initFromUrl("scenarios"),
+      encounters: initFromUrl("encounters"),
+      traits: initFromUrl("traits"),
+      types: initFromUrl("types"),
+    }));
+  }, [filterOptions]);
+
+  return [filters, setFilters] as const;
+};
+
 export default function ({ queryOptions }: { queryOptions: QueryOptionsMap }) {
   return (
     <QueryClientProvider client={queryClient}>
@@ -181,70 +201,3 @@ export default function ({ queryOptions }: { queryOptions: QueryOptionsMap }) {
     </QueryClientProvider>
   );
 }
-
-type FilterFunc = (filters: Filters, card: Card) => boolean;
-
-const filterBy =
-  <K extends keyof Filters & keyof Meta>(key: K): FilterFunc =>
-  (filters, card) => {
-    const filter = filters[key];
-    if (!Array.isArray(filter)) return true;
-    if (!filter.length) return true;
-    const meta = card.meta[key];
-    return filter.some((f) => meta?.includes(f.value));
-  };
-
-const filterByText: FilterFunc = (filters, card) => {
-  if (!filters.text.length) return true;
-  if (card.name.toLowerCase().includes(filters.text.toLowerCase())) return true;
-  if (card.text?.toLowerCase().includes(filters.text.toLowerCase()))
-    return true;
-  return false;
-};
-
-const combineFilters =
-  (...funcs: FilterFunc[]): FilterFunc =>
-  (filters, card) => {
-    for (const func of funcs) {
-      if (!func(filters, card)) return false;
-    }
-    return true;
-  };
-
-type RestrictFunc = (filters: Filters, opts: FilterOptions) => FilterOptions;
-
-const restrictBy =
-  <K extends keyof Filters & keyof Meta & keyof FilterOptions>(
-    filterKey: K,
-  ): RestrictFunc =>
-  (filters, filterOpts) => {
-    const filter = filters[filterKey];
-    if (!Array.isArray(filter)) return filterOpts;
-    if (!filter.length) return filterOpts;
-    return (
-      Object.entries(filterOpts) as [
-        keyof FilterOptions,
-        FilterOptions[keyof FilterOptions],
-      ][]
-    ).reduce((opts, [optKey, opt]) => {
-      if (optKey === filterKey) return opts; // do not restrict based on own key
-      const restricted = opt.filter((o) =>
-        filter.some((f) => o.meta[filterKey]?.includes(f.value)),
-      );
-      return { ...opts, restricted };
-    }, {} as FilterOptions);
-  };
-
-const combineRestrict =
-  (...funcs: RestrictFunc[]): RestrictFunc =>
-  (filters, filterOpts) => {
-    return funcs.reduce((acc, curr) => curr(filters, acc), filterOpts);
-  };
-
-const restrict = combineRestrict(
-  restrictBy("campaigns"),
-  restrictBy("scenarios"),
-  restrictBy("encounters"),
-  restrictBy("traits"),
-  restrictBy("types"),
-);
