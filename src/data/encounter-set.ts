@@ -4,6 +4,7 @@ import type { Meta } from "./meta";
 import { uniq } from "lodash-es";
 
 export interface EncounterSet {
+  __type: "encounterSet";
   code: string;
   name: string;
   packCode: string;
@@ -22,6 +23,7 @@ export const getEncounterSet = (
   const [first] = encounterCards;
   if (!first) return null;
   return {
+    __type: "encounterSet",
     code: encounterCode,
     name: first.encounter_name ?? encounterCode,
     packName: first.pack_name,
@@ -42,8 +44,9 @@ export const buildEncounterSets = (
   );
   const encountersToCampaigns = buildEncountersToCampaignsMap(campaigns);
 
-  const buildEncounterMeta = (encounter: EncounterSet): Meta => {
+  const buildEncounterMeta = (encounter: EncounterSet) => {
     return {
+      type: "encounterSet" as const,
       campaigns: encountersToCampaigns.get(encounter.code),
       scenarios: encountersToScenarios.get(encounter.code),
       encounters: [encounter.code],
@@ -55,6 +58,7 @@ export const buildEncounterSets = (
   const encounters = cards.reduce((map, ca) => {
     if (!ca.encounter_code) return map;
     const set: EncounterSet = map.get(ca.encounter_code) ?? {
+      __type: "encounterSet",
       code: ca.encounter_code,
       name: ca.encounter_name ?? "",
       packCode: ca.pack_code,

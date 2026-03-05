@@ -19,6 +19,7 @@ export const RawScenario = z
   }));
 
 export type Scenario = RawScenario & {
+  __type: "scenario";
   meta: Meta;
 };
 
@@ -40,6 +41,7 @@ export type RawScenario = z.infer<typeof RawScenario>;
 export type RawCampaign = z.infer<typeof RawCampaign>;
 
 export type Campaign = RawCampaign & {
+  __type: "campaign";
   scenarios: Scenario[];
   meta: Meta;
 };
@@ -88,7 +90,7 @@ const buildScenarioMeta = (
   scenario: RawScenario,
   campaigns: RawCampaign[],
   cards: Card[],
-): Meta => {
+) => {
   const campaignsMeta = campaigns
     .filter((c) => c.scenarios.some((s) => s.code === scenario.code))
     .map((c) => c.code);
@@ -111,12 +113,13 @@ export const buildScenarios = (
   return raw.map((s) => {
     return {
       ...s,
+      __type: "scenario" as const,
       meta: buildScenarioMeta(s, campaigns, cards),
     };
   });
 };
 
-const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]): Meta => {
+const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]) => {
   const scenariosMeta = campaign.scenarios.map((s) => s.code);
   const encountersMeta = campaign.scenarios.flatMap((s) => s.encounterCodes);
   const traits = getScenarioTraits(campaign.scenarios, cards);
@@ -137,6 +140,7 @@ export const buildCampaigns = (
   return raw.map((c) => {
     return {
       ...c,
+      __type: "campaign" as const,
       scenarios: buildScenarios(c.scenarios, raw, cards),
       meta: buildCampaignMeta(c, cards),
     };

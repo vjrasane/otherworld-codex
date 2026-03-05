@@ -7,7 +7,9 @@ import {
 import type { Meta } from "./meta";
 import { uniq, uniqBy } from "lodash-es";
 
-export interface Type {
+export interface CardType {
+  __type: "cardType";
+  name: string;
   code: string;
   meta: Meta;
 }
@@ -16,7 +18,7 @@ export const buildTypes = (
   cards: RawCard[],
   campaigns: RawCampaign[],
   standalones: RawScenario[],
-): Type[] => {
+): CardType[] => {
   const encountersToScenarios = buildEncountersToScenariosMap(
     campaigns,
     standalones,
@@ -46,9 +48,11 @@ export const buildTypes = (
     };
   };
 
-  const types = uniq(cards.map((c) => c.type_code)).map((code) => ({
-    code,
-    meta: buildTypeMeta(code),
+  const types = uniqBy(cards, "type_code").map((ca) => ({
+    __type: "cardType" as const,
+    name: ca.type_name,
+    code: ca.type_code,
+    meta: buildTypeMeta(ca.type_code),
   }));
 
   return types;

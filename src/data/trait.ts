@@ -9,6 +9,7 @@ import {
 import type { RawCampaign, RawScenario } from "./campaign";
 
 export interface Trait {
+  __type: "trait";
   name: string;
   meta: Meta;
 }
@@ -26,7 +27,7 @@ export const buildTraits = (
 
   const traitsToCards = buildTraitsToCardsMap(cards);
 
-  const buildTraitMeta = (trait: string): Meta => {
+  const buildTraitMeta = (trait: string) => {
     const cas = traitsToCards.get(trait) ?? [];
     const ens = uniq(
       cas.map((ca) => ca.encounter_code).filter((enc): enc is string => !!enc),
@@ -48,6 +49,7 @@ export const buildTraits = (
   };
 
   const traits = uniq(cards.flatMap((c) => c.traits ?? [])).map((name) => ({
+    __type: "trait" as const,
     name,
     meta: buildTraitMeta(name),
   }));

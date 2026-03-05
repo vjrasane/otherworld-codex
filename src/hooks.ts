@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import { buildSearchIndex } from "./data/search-index";
 import { buildFilterOptions } from "./data/filter-options";
+import { toFilterOption, type FilterOptions } from "./data/filters";
 
 function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
   const { data } = useQuery(toOptions(queryOpts));
@@ -41,25 +42,64 @@ export const useEncounterCardsByCode = () => {
   return data;
 };
 
-export const useFilterOptions = () => {
+export const useScenarios = () => {
   const opts = useContext(QueryOptionsContext);
-  const cards = useCachedQuery(opts.encounterCards);
   const campaigns = useCachedQuery(opts.campaigns);
   const standalones = useCachedQuery(opts.standalones);
+  const queryKey = [
+    "scenarios",
+    ...opts.campaigns.queryKey,
+    ...opts.standalones.queryKey,
+  ];
+  const { data } = useQuery({
+    queryKey,
+    queryFn: () => {
+      if (!campaigns) return null;
+      if (!standalones) return null;
+      return [...campaigns.flatMap((s) => s.scenarios), ...standalones];
+    },
+    enabled: !!campaigns && !!standalones,
+  });
+
+  return data;
+};
+
+export const useFilterOptions = () => {
+  const opts = useContext(QueryOptionsContext);
+  const campaigns = useCachedQuery(opts.campaigns);
+  const standalones = useCachedQuery(opts.standalones);
+  const encounters = useCachedQuery(opts.encounterSets);
+  const traits = useCachedQuery(opts.traits);
+  const types = useCachedQuery(opts.types);
   const { data } = useQuery({
     queryKey: [
       "filterOptions",
-      ...opts.encounterCards.queryKey,
       ...opts.campaigns.queryKey,
       ...opts.standalones.queryKey,
+      ...opts.encounterSets.queryKey,
+      ...opts.traits.queryKey,
+      ...opts.types.queryKey,
     ],
-    queryFn: () => {
-      if (!cards) return null;
+    queryFn: (): FilterOptions | null => {
       if (!campaigns) return null;
       if (!standalones) return null;
-      return buildFilterOptions(cards, campaigns, standalones);
+      if (!encounters) return null;
+      if (!traits) return null;
+      if (!types) return null;
+      const scenarios = [
+        ...campaigns.flatMap((s) => s.scenarios),
+        ...standalones,
+      ];
+      return {
+        campaigns: campaigns.map(toFilterOption),
+        scenarios: scenarios.map(toFilterOption),
+        encounters: encounters.map(toFilterOption),
+        traits: traits.map(toFilterOption),
+        types: types.map(toFilterOption),
+      };
     },
-    enabled: !!cards && !!campaigns && !!standalones,
+    enabled:
+      !!campaigns && !!standalones && !!encounters && !!traits && !!types,
   });
   return data;
 };
