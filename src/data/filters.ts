@@ -114,11 +114,12 @@ export const restrictFromCards = (
     "pools",
   ];
 
+  const hasText = filters.text.length > 0;
   const hasFilters = metaKeys.some((k) => {
     const f = filters[k];
     return Array.isArray(f) && f.length > 0;
   });
-  if (!hasFilters) return opts;
+  if (!hasFilters && !hasText) return opts;
 
   return Object.fromEntries(
     (
@@ -128,7 +129,9 @@ export const restrictFromCards = (
       ][]
     ).map(([optKey, optValues]) => {
       const otherKeys = metaKeys.filter((k) => k !== optKey);
-      const filter = combineFilters(...otherKeys.map(filterBy));
+      const filterFuncs: FilterFunc<Card>[] = otherKeys.map(filterBy);
+      if (hasText) filterFuncs.push(filterByText);
+      const filter = combineFilters(...filterFuncs);
       const matching = cards.filter((c) => filter(filters, c));
       const values = new Set(matching.flatMap((c) => c.meta[optKey] ?? []));
       const restricted = optValues.filter((o) => values.has(toOptionId(o)));
