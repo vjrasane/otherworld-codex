@@ -1,5 +1,7 @@
 import { z } from "astro/zod";
 import type { Meta } from "./meta";
+
+export type CardPoolType = "player" | "mythos";
 import type { RawCampaign } from "@/src/data/campaign";
 import {
   buildEncountersToCampaignsMap,

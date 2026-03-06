@@ -2,10 +2,9 @@ import type { Campaign } from "./campaign";
 import type { Scenario } from "./scenario";
 import type { Card } from "./card";
 import type { EncounterSet } from "./encounter-set";
-import type { Trait } from "./trait";
-import type { CardType } from "./card-type";
+import type { CardPoolType } from "./card";
 import type { Meta } from "./meta";
-import type { CardPool } from "./card-pool";
+import { capitalize } from "lodash-es";
 
 export type ViewMode = "cards" | "stats";
 export type StatFilters = Record<string, string>;
@@ -16,9 +15,9 @@ export interface FilterOptions {
   campaigns: Campaign[];
   scenarios: Scenario[];
   encounters: EncounterSet[];
-  traits: Trait[];
-  pools: CardPool[];
-  types: CardType[];
+  traits: string[];
+  pools: CardPoolType[];
+  types: string[];
 }
 
 export type FilterOptionType = FilterOptions[keyof FilterOptions][number];
@@ -34,16 +33,12 @@ export interface Filters {
 }
 
 export const toOptionId = (item: FilterOptionType): string => {
+  if (typeof item === "string") return item;
   switch (item.__type) {
     case "campaign":
     case "scenario":
     case "encounterSet":
-    case "cardType":
       return item.code;
-    case "trait":
-      return item.name;
-    case "cardPool":
-      return item.type;
   }
 };
 
@@ -56,48 +51,20 @@ export const toFilterOptions = (
 };
 
 export const toFilterOption = (item: FilterOptionType): Option => {
+  if (typeof item === "string") {
+    return { label: capitalize(item), value: item };
+  }
   switch (item.__type) {
     case "campaign":
     case "scenario":
     case "encounterSet":
-    case "cardType":
       return {
         label: item.name,
         value: item.code,
       };
-    case "cardPool":
-      return {
-        label: item.type,
-        value: item.type,
-      };
-    case "trait":
-      return {
-        label: item.name,
-        value: item.name,
-      };
   }
 };
 
-export const restrictFilterOptions = (
-  filters: Filters,
-  opts: FilterOptions,
-): FilterOptions => {
-  const optKeys = Object.keys(opts) as (keyof FilterOptions)[];
-  return Object.fromEntries(
-    (
-      Object.entries(opts) as [
-        keyof FilterOptions,
-        FilterOptions[keyof FilterOptions],
-      ][]
-    ).map(([optKey, optValues]) => {
-      const filter: FilterFunc<FilterOptionType> = combineFilters(
-        ...optKeys.filter((k) => k !== optKey).map(filterBy),
-      );
-      const filteredValues = optValues.filter((o) => filter(filters, o));
-      return [optKey, filteredValues] as const;
-    }),
-  ) as unknown as FilterOptions;
-};
 
 type FilterFunc<TItem extends { meta: Meta }> = (
   filters: Filters,

@@ -1,4 +1,4 @@
-import type { CardPoolType } from "./card-pool";
+import type { CardPoolType } from "./card";
 
 export interface Meta {
   pools: CardPoolType[];

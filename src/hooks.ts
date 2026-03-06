@@ -6,11 +6,11 @@ import {
   type QueryOpts,
 } from "./data/query-client";
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { buildSearchIndex } from "./data/search-index";
 import { type FilterOptions } from "./data/filters";
 import { type EncounterCard } from "./data/card";
-import { encounterSets } from "./data";
+import { uniq } from "lodash-es";
 
 function useCachedQuery<T>(queryOpts: QueryOpts<T>): T | null {
   const { data } = useQuery(toOptions(queryOpts));
@@ -65,30 +65,19 @@ export const useFilterOptions = () => {
   const campaigns = useCachedQuery(opts.campaigns);
   const scenarios = useCachedQuery(opts.scenarios);
   const encounters = useCachedQuery(opts.encounterSets);
-  const traits = useCachedQuery(opts.traits);
-  const types = useCachedQuery(opts.cardTypes);
-  const pools = useCachedQuery(opts.cardPools);
-  const { data } = useQuery({
-    queryKey: [
-      "filterOptions",
-      ...opts.campaigns.queryKey,
-      ...opts.scenarios.queryKey,
-      ...opts.encounterSets.queryKey,
-      ...opts.traits.queryKey,
-      ...opts.cardTypes.queryKey,
-    ],
-    queryFn: (): FilterOptions | null => {
-      if (!campaigns) return null;
-      if (!scenarios) return null;
-      if (!encounters) return null;
-      if (!traits) return null;
-      if (!types) return null;
-      if (!pools) return null;
-      return { campaigns, scenarios, encounters, traits, types, pools };
-    },
-    enabled: !!campaigns && !!scenarios && !!encounters && !!traits && !!types,
-  });
-  return data;
+  const cards = useCachedQuery(opts.cards);
+
+  return useMemo((): FilterOptions | null => {
+    if (!campaigns || !scenarios || !encounters || !cards) return null;
+    return {
+      campaigns,
+      scenarios,
+      encounters,
+      traits: uniq(cards.flatMap((c) => c.traits ?? [])),
+      types: uniq(cards.map((c) => c.type_code)),
+      pools: ["player", "mythos"],
+    };
+  }, [campaigns, scenarios, encounters, cards]);
 };
 
 export const useSearchIndex = () => {

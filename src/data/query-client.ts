@@ -5,10 +5,7 @@ import type { Card } from "./card";
 import { createContext } from "react";
 import type { Campaign } from "./campaign";
 import type { EncounterSet } from "./encounter-set";
-import type { Trait } from "./trait";
-import type { CardType } from "./card-type";
 import type { Scenario } from "./scenario";
-import type { CardPool } from "./card-pool";
 
 const expiry = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -41,9 +38,6 @@ export type QueryOptionsMap = {
   encounterSets: QueryOpts<EncounterSet[]>;
   campaigns: QueryOpts<Campaign[]>;
   scenarios: QueryOpts<Scenario[]>;
-  traits: QueryOpts<Trait[]>;
-  cardTypes: QueryOpts<CardType[]>;
-  cardPools: QueryOpts<CardPool[]>;
 };
 
 export const QueryOptionsContext = createContext<QueryOptionsMap>(

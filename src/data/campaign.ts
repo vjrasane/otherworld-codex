@@ -1,12 +1,6 @@
 import { z } from "astro/zod";
-import type { Card, RawCard } from "@/src/data/card";
-import type { Meta } from "@/src/data/meta";
-import {
-  RawScenario,
-  getScenarioCards,
-  getScenarioTraits,
-  getScenarioTypes,
-} from "./scenario";
+import type { RawCard } from "@/src/data/card";
+import { RawScenario, getScenarioCards } from "./scenario";
 
 export const RawCampaign = z
   .object({
@@ -26,7 +20,6 @@ export type RawCampaign = z.infer<typeof RawCampaign>;
 
 export type Campaign = Omit<RawCampaign, "scenarios"> & {
   __type: "campaign";
-  meta: Meta;
 };
 
 export const getCampaignCards = <
@@ -39,31 +32,12 @@ export const getCampaignCards = <
   return campaign.scenarios.flatMap((s) => getScenarioCards(s, cards));
 };
 
-const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]) => {
-  const scenariosMeta = campaign.scenarios.map((s) => s.code);
-  const encountersMeta = campaign.scenarios.flatMap((s) => s.encounterCodes);
-  const traits = getScenarioTraits(campaign.scenarios, cards);
-  const types = getScenarioTypes(campaign.scenarios, cards);
-  return {
-    type: "campaign" as const,
-    campaigns: [campaign.code],
-    scenarios: scenariosMeta,
-    encounters: encountersMeta,
-    traits,
-    types,
-    pools: ["mythos"],
-  };
-};
-
-export const buildCampaigns = (
-  raw: RawCampaign[],
-  cards: Card[],
-): Campaign[] => {
+export const buildCampaigns = (raw: RawCampaign[]): Campaign[] => {
   return raw.map((c) => {
+    const { scenarios, ...rest } = c;
     return {
-      ...c,
+      ...rest,
       __type: "campaign" as const,
-      meta: buildCampaignMeta(c, cards),
     };
   });
 };
