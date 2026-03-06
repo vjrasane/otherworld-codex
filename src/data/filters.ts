@@ -1,4 +1,5 @@
-import type { Campaign, Scenario } from "./campaign";
+import type { Campaign } from "./campaign";
+import type { Scenario } from "./scenario";
 import type { Card } from "./card";
 import type { EncounterSet } from "./encounter-set";
 import type { Trait } from "./trait";
@@ -41,8 +42,13 @@ export const toOptionId = (item: FilterOptionType) => {
   }
 };
 
-export const toFilterOptions = (items: FilterOptionType[]) =>
-  items.map(toFilterOption);
+export const toFilterOptions = (
+  opts: FilterOptions,
+): { [K in keyof FilterOptions]: Option[] } => {
+  return Object.fromEntries(
+    Object.entries(opts).map(([k, v]) => [k, v.map(toFilterOption)]),
+  ) as { [K in keyof FilterOptions]: Option[] };
+};
 
 export const toFilterOption = (item: FilterOptionType): Option => {
   switch (item.__type) {
@@ -61,40 +67,35 @@ export const toFilterOption = (item: FilterOptionType): Option => {
       };
   }
 };
-type RestrictFunc = (filters: Filters, opts: FilterOptions) => FilterOptions;
 
-export const restrictBy =
-  <K extends keyof Filters & keyof Meta & keyof FilterOptions>(
-    filterKey: K,
-  ): RestrictFunc =>
-  (filters, filterOpts) => {
-    const filter = filters[filterKey];
-    if (!Array.isArray(filter)) return filterOpts;
-    if (!filter.length) return filterOpts;
-    return (
-      Object.entries(filterOpts) as [
+export const restrictFilterOptions = (
+  filters: Filters,
+  opts: FilterOptions,
+): FilterOptions => {
+  const optKeys = Object.keys(opts) as (keyof FilterOptions)[];
+  return Object.fromEntries(
+    (
+      Object.entries(opts) as [
         keyof FilterOptions,
         FilterOptions[keyof FilterOptions],
       ][]
-    ).reduce((opts, [optKey, opt]) => {
-      if (optKey === filterKey) return opts; // do not restrict based on own key
-      const restricted = opt.filter((o) =>
-        filter.some((f) => o.meta[filterKey]?.includes(f.value)),
+    ).map(([optKey, optValues]) => {
+      const filter: FilterFunc<FilterOptionType> = combineFilters(
+        ...optKeys.filter((k) => k !== optKey).map(filterBy),
       );
-      return { ...opts, [optKey]: restricted };
-    }, filterOpts);
-  };
+      const filteredValues = optValues.filter((o) => filter(filters, o));
+      return [optKey, filteredValues] as const;
+    }),
+  ) as unknown as FilterOptions;
+};
 
-export const combineRestrict =
-  (...funcs: RestrictFunc[]): RestrictFunc =>
-  (filters, filterOpts) => {
-    return funcs.reduce((acc, curr) => curr(filters, acc), filterOpts);
-  };
+type FilterFunc<TItem extends { meta: Meta }> = (
+  filters: Filters,
+  item: TItem,
+) => boolean;
 
-type FilterFunc = (filters: Filters, card: Card) => boolean;
-
-export const filterBy =
-  <K extends keyof Filters & keyof Meta>(key: K): FilterFunc =>
+const filterBy =
+  <K extends keyof Filters & keyof Meta>(key: K): FilterFunc<{ meta: Meta }> =>
   (filters, card) => {
     const filter = filters[key];
     if (!Array.isArray(filter)) return true;
@@ -103,7 +104,7 @@ export const filterBy =
     return filter.some((f) => meta?.includes(f.value));
   };
 
-export const filterByText: FilterFunc = (filters, card) => {
+const filterByText: FilterFunc<Card> = (filters, card) => {
   if (!filters.text.length) return true;
   if (card.name.toLowerCase().includes(filters.text.toLowerCase())) return true;
   if (card.text?.toLowerCase().includes(filters.text.toLowerCase()))
@@ -111,11 +112,22 @@ export const filterByText: FilterFunc = (filters, card) => {
   return false;
 };
 
-export const combineFilters =
-  (...funcs: FilterFunc[]): FilterFunc =>
+const combineFilters =
+  <TItem extends { meta: Meta }>(
+    ...funcs: FilterFunc<TItem>[]
+  ): FilterFunc<TItem> =>
   (filters, card) => {
     for (const func of funcs) {
       if (!func(filters, card)) return false;
     }
     return true;
   };
+
+export const filterCard: FilterFunc<Card> = combineFilters(
+  filterBy("campaigns"),
+  filterBy("scenarios"),
+  filterBy("encounters"),
+  filterBy("traits"),
+  filterBy("types"),
+  filterByText,
+);

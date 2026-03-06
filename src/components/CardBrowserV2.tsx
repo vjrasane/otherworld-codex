@@ -15,11 +15,7 @@ import {
 } from "react";
 import { Filter } from "lucide-react";
 import { CardGrid } from "./CardGrid";
-import {
-  useCachedRequest,
-  useEncounterCards,
-  useFilterOptions,
-} from "../hooks";
+import { useEncounterCards, useFilterOptions } from "../hooks";
 import { set } from "lodash/fp";
 import {
   toFilterOption,
@@ -27,12 +23,9 @@ import {
   toOptionId,
   type Filters,
   type FilterOptions,
-  combineFilters,
-  filterBy,
-  filterByText,
-  combineRestrict,
-  restrictBy,
-} from "../data/filters";
+  filterCard,
+  restrictFilterOptions,
+} from "@/src/data/filters";
 
 export const CardBrowser: React.FC = () => {
   const [filters, setFilters] = useFilters();
@@ -114,28 +107,11 @@ const Filters: React.FC<{
   );
 };
 
-const filter = combineFilters(
-  filterBy("campaigns"),
-  filterBy("scenarios"),
-  filterBy("encounters"),
-  filterBy("traits"),
-  filterBy("types"),
-  filterByText,
-);
-
-const restrict = combineRestrict(
-  restrictBy("campaigns"),
-  restrictBy("scenarios"),
-  restrictBy("encounters"),
-  restrictBy("traits"),
-  restrictBy("types"),
-);
-
 const useFilteredCards = (filters: Filters) => {
   const cards = useEncounterCards();
 
   const filteredCards = useMemo(
-    () => cards?.filter((c) => filter(filters, c)) ?? [],
+    () => cards?.filter((c) => filterCard(filters, c)) ?? [],
     [cards, filters],
   );
 
@@ -154,14 +130,8 @@ const useAvailableOptions = (filters: Filters) => {
         traits: [],
         types: [],
       };
-    const restricted = restrict(filters, filterOptions);
-    return {
-      campaigns: toFilterOptions(restricted.campaigns),
-      scenarios: toFilterOptions(restricted.scenarios),
-      encounters: toFilterOptions(restricted.encounters),
-      traits: toFilterOptions(restricted.traits),
-      types: toFilterOptions(restricted.types),
-    };
+    const restricted = restrictFilterOptions(filters, filterOptions);
+    return toFilterOptions(restricted);
   }, [filters, filterOptions]);
 };
 

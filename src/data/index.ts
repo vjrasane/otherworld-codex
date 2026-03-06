@@ -29,14 +29,15 @@ export const cards = buildCards(
 );
 export const campaigns = buildCampaigns(rawCampaigns.data, cards);
 
-const campaignScenarios = rawCampaigns.data.flatMap((cm) =>
+export const campaignScenarios = rawCampaigns.data.flatMap((cm) =>
   cm.scenarios.map((sc) => buildScenario(sc, cm, rawCards.data)),
 );
-const standalones = rawStandalones.data.map((st) =>
+export const standalones = rawStandalones.data.map((st) =>
   buildStandalone(st, rawCards.data),
 );
 
 export const scenarios = [...campaignScenarios, ...standalones];
+
 export const encounterSets = buildEncounterSets(
   rawCards.data,
   rawCampaigns.data,
