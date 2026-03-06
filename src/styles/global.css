@@ -15,7 +15,7 @@
   --color-warning: #ebcb8b;
   --color-success: #a3be8c;
 
-  --color-encounter: oklch(from theme(--color-yellow-300) l c h / 0.4);
+  --color-encounter: #434c5e;
 }
 
 :root {
