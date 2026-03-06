@@ -7,10 +7,9 @@ import {
 } from "@/src/data/encounter-set";
 import type { RawScenario } from "./scenario";
 
-const IMAGE_BASE = "https://arkhamdb.com";
-
-function imageUrl(src?: string | null): string | undefined {
-  return src ? IMAGE_BASE + src : undefined;
+function imageId(src?: string | null): string | undefined {
+  if (!src) return undefined;
+  return src.split("/").pop();
 }
 
 export const RawCard = z.object({
@@ -72,8 +71,8 @@ export type Card = RawCard & {
 
 interface CardMeta extends Meta {
   parentCard?: Card;
-  imageUrl?: string;
-  backImageUrl?: string;
+  imageId?: string;
+  backImageId?: string;
 }
 
 export type EncounterCard = Card & {
@@ -105,8 +104,8 @@ export function buildCards(
 
   const buildCard = (raw: RawCard): Card => {
     const meta = {
-      imageUrl: imageUrl(raw.imagesrc),
-      backImageUrl: imageUrl(raw.backimagesrc),
+      imageId: imageId(raw.imagesrc),
+      backImageId: imageId(raw.backimagesrc),
       ...buildCardMeta(raw),
     };
     return { ...raw, meta };
