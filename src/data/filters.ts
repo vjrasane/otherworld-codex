@@ -111,7 +111,7 @@ const filterBy =
     if (!Array.isArray(filter)) return true;
     if (!filter.length) return true;
     const meta = card.meta[key];
-    return filter.some((f) => meta?.includes(f.value));
+    return filter.some((f) => meta?.includes(f.value as any));
   };
 
 const filterByText: FilterFunc<Card> = (filters, card) => {
@@ -132,6 +132,43 @@ const combineFilters =
     }
     return true;
   };
+
+export const restrictFromCards = (
+  filters: Filters,
+  opts: FilterOptions,
+  cards: Card[],
+): FilterOptions => {
+  const metaKeys: (keyof FilterOptions & keyof Meta)[] = [
+    "campaigns",
+    "scenarios",
+    "encounters",
+    "traits",
+    "types",
+    "pools",
+  ];
+
+  const hasFilters = metaKeys.some((k) => {
+    const f = filters[k];
+    return Array.isArray(f) && f.length > 0;
+  });
+  if (!hasFilters) return opts;
+
+  return Object.fromEntries(
+    (
+      Object.entries(opts) as [
+        keyof FilterOptions,
+        FilterOptions[keyof FilterOptions],
+      ][]
+    ).map(([optKey, optValues]) => {
+      const otherKeys = metaKeys.filter((k) => k !== optKey);
+      const filter = combineFilters(...otherKeys.map(filterBy));
+      const matching = cards.filter((c) => filter(filters, c));
+      const values = new Set(matching.flatMap((c) => c.meta[optKey] ?? []));
+      const restricted = optValues.filter((o) => values.has(toOptionId(o)));
+      return [optKey, restricted];
+    }),
+  ) as unknown as FilterOptions;
+};
 
 export const filterCard: FilterFunc<Card> = combineFilters(
   filterBy("campaigns"),

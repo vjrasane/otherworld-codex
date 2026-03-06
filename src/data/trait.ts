@@ -30,18 +30,10 @@ export const buildTraits = (
 
   const buildTraitMeta = (trait: string) => {
     const cas = traitsToCards.get(trait) ?? [];
-    const [playerCards, mythosCards] = partition(
-      cas,
-      (ca) => ca.encounter_code,
-    );
-    const pools = compact([
-      playerCards.length && "player",
-      mythosCards.length && "mythos",
-    ]);
+    const [pcas, mcas] = partition(cas, (ca) => !ca.encounter_code);
+    const pools = compact([pcas.length && "player", mcas.length && "mythos"]);
     const ens = uniq(
-      mythosCards
-        .map((c) => c.encounter_code)
-        .filter((enc): enc is string => !!enc),
+      mcas.map((c) => c.encounter_code).filter((enc): enc is string => !!enc),
     );
     const cms = ens
       .flatMap((en) => encountersToCampaigns.get(en!))

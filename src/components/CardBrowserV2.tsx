@@ -24,7 +24,7 @@ import {
   type Filters,
   type FilterOptions,
   filterCard,
-  restrictFilterOptions,
+  restrictFromCards,
 } from "@/src/data/filters";
 
 export const CardBrowser: React.FC = () => {
@@ -120,19 +120,14 @@ const useFilteredCards = (filters: Filters) => {
 
 const useAvailableOptions = (filters: Filters) => {
   const filterOptions = useFilterOptions();
+  const cards = useEncounterCards();
 
   return useMemo(() => {
-    if (!filterOptions)
-      return {
-        campaigns: [],
-        scenarios: [],
-        encounters: [],
-        traits: [],
-        types: [],
-      };
-    const restricted = restrictFilterOptions(filters, filterOptions);
+    if (!filterOptions) return null;
+    if (!cards) return toFilterOptions(filterOptions);
+    const restricted = restrictFromCards(filters, filterOptions, cards);
     return toFilterOptions(restricted);
-  }, [filters, filterOptions]);
+  }, [filters, filterOptions, cards]);
 };
 
 const useFilters = () => {

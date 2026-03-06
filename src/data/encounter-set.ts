@@ -28,7 +28,14 @@ export const getEncounterSet = (
     name: first.encounter_name ?? encounterCode,
     packName: first.pack_name,
     packCode: first.pack_code,
-    meta: {},
+    meta: {
+      campaigns: [],
+      scenarios: [],
+      encounters: [],
+      traits: [],
+      types: [],
+      pools: [],
+    },
   };
 };
 
@@ -48,11 +55,12 @@ export const buildEncounterSets = (
     const cards = encountersToCardsMap.get(enc) ?? [];
     return {
       type: "encounterSet" as const,
-      campaigns: encountersToCampaigns.get(enc),
-      scenarios: encountersToScenarios.get(enc),
+      campaigns: encountersToCampaigns.get(enc) ?? [],
+      scenarios: encountersToScenarios.get(enc) ?? [],
       encounters: [enc],
       traits: uniq(cards.flatMap((c) => c.traits ?? [])),
       types: uniq(cards.map((c) => c.type_code)),
+      pools: ["mythos" as const],
     };
   };
 
