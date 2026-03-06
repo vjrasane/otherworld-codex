@@ -1,4 +1,4 @@
-import { z } from "astro/zod";
+import { z } from "zod";
 
 import cardsJson from "@/data/cards.json";
 import campaignsJson from "@/data/campaigns.json";
@@ -30,9 +30,7 @@ export const campaigns = buildCampaigns(rawCampaigns.data);
 export const campaignScenarios = rawCampaigns.data.flatMap((cm) =>
   cm.scenarios.map((sc) => buildScenario(sc)),
 );
-export const standalones = rawStandalones.data.map((st) =>
-  buildStandalone(st),
-);
+export const standalones = rawStandalones.data.map((st) => buildStandalone(st));
 
 export const scenarios = [...campaignScenarios, ...standalones];
 

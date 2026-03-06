@@ -1,4 +1,4 @@
-import { z } from "astro/zod";
+import { z } from "zod";
 import type { Meta } from "./meta";
 
 export type CardPoolType = "player" | "mythos";

@@ -5,10 +5,13 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
+    "@floating-ui/react": "^0.27.19",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/query-persist-client-core": "^5.92.1",
     "@tanstack/react-query": "^5.90.21",
@@ -22,14 +25,17 @@
     "react-dom": "^18.3.1",
     "react-select": "^5.10.2",
     "recharts": "^3.7.0",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@storybook/react-vite": "^10.2.15",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^25.3.3",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "lodash-es": "^4.17.23",
+    "storybook": "^10.2.15",
     "typescript": "^5.8.0"
   }
 }

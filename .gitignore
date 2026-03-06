@@ -17,3 +17,6 @@ npm-debug.log*
 .devenv.flake.nix
 .direnv/
 .claude/
+
+*storybook.log
+storybook-static

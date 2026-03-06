@@ -3,13 +3,15 @@ import type { Card } from "../data/card";
 import { routes } from "../routes";
 import { css } from "../styles";
 
-
 const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
 
-export const CardImage: React.FC<{ card: Card, back?: boolean }> = ({ card, back }) => {
+export const CardImage: React.FC<{ card: Card; back?: boolean }> = ({
+  card,
+  back,
+}) => {
   const horizontal = HORIZONTAL_TYPES.has(card.type_code);
   const imageId = !back ? card.meta.imageId : card.meta.backImageId;
-  const name = !back ? card.name : card.back_name
+  const name = !back ? card.name : card.back_name;
 
   if (imageId) {
     return (
@@ -23,7 +25,7 @@ export const CardImage: React.FC<{ card: Card, back?: boolean }> = ({ card, back
       <span>{name}</span>
     </div>
   );
-}
+};
 
 const s: Record<string, React.CSSProperties> = {
   cardImage: {
@@ -50,5 +52,4 @@ const s: Record<string, React.CSSProperties> = {
     textAlign: "center",
     color: "var(--text-muted)",
   },
-}
-
+};

@@ -14,6 +14,8 @@
   --color-danger: #bf616a;
   --color-warning: #ebcb8b;
   --color-success: #a3be8c;
+
+  --color-encounter: oklch(from theme(--color-yellow-300) l c h / 0.4);
 }
 
 :root {
@@ -63,11 +65,6 @@ a {
 
 a:hover {
   color: var(--accent-hover);
-}
-
-img {
-  max-width: 100%;
-  height: auto;
 }
 
 @utility input-field {

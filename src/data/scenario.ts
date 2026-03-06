@@ -1,4 +1,4 @@
-import { z } from "astro/zod";
+import { z } from "zod";
 import type { RawCard } from "@/src/data/card";
 
 export const RawScenario = z
