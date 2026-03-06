@@ -4,7 +4,7 @@ set -euo pipefail
 BASE_URL="https://arkhamdb.com"
 OUT_DIR="public/images/cards"
 DATA_FILE="data/cards.json"
-BATCH_SIZE=100
+BATCH_SIZE=10
 
 mkdir -p "$OUT_DIR"
 
@@ -43,11 +43,11 @@ process() {
 
   echo "$label: $total images"
 
-  while (( i < total )); do
+  while ((i < total)); do
     local batch=("${urls[@]:i:BATCH_SIZE}")
     local result
     result=$(download_batch "${batch[@]}")
-    read -r downloaded skipped failed <<< "$result"
+    read -r downloaded skipped failed <<<"$result"
     total_downloaded=$((total_downloaded + downloaded))
     total_skipped=$((total_skipped + skipped))
     total_failed=$((total_failed + failed))
@@ -55,7 +55,7 @@ process() {
     local progress=$((i < total ? i : total))
     printf "\r  %d / %d  (downloaded: %d, skipped: %d, failed: %d)" \
       "$progress" "$total" "$total_downloaded" "$total_skipped" "$total_failed"
-    if (( i < total )); then
+    if ((i < total)); then
       sleep 1
     fi
   done
