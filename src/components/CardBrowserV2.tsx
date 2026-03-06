@@ -143,6 +143,7 @@ const useFilters = () => {
     encounters: [],
     traits: [],
     types: [],
+    pools: [{ label: "mythos", value: "mythos" }],
     text: "",
   }));
 

@@ -51,6 +51,7 @@ const buildCampaignMeta = (campaign: RawCampaign, cards: Card[]) => {
     encounters: encountersMeta,
     traits,
     types,
+    pools: ["mythos"],
   };
 };
 

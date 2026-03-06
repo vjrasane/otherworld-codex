@@ -66,7 +66,8 @@ export const useFilterOptions = () => {
   const scenarios = useCachedQuery(opts.scenarios);
   const encounters = useCachedQuery(opts.encounterSets);
   const traits = useCachedQuery(opts.traits);
-  const types = useCachedQuery(opts.types);
+  const types = useCachedQuery(opts.cardTypes);
+  const pools = useCachedQuery(opts.cardPools);
   const { data } = useQuery({
     queryKey: [
       "filterOptions",
@@ -74,7 +75,7 @@ export const useFilterOptions = () => {
       ...opts.scenarios.queryKey,
       ...opts.encounterSets.queryKey,
       ...opts.traits.queryKey,
-      ...opts.types.queryKey,
+      ...opts.cardTypes.queryKey,
     ],
     queryFn: (): FilterOptions | null => {
       if (!campaigns) return null;
@@ -82,7 +83,8 @@ export const useFilterOptions = () => {
       if (!encounters) return null;
       if (!traits) return null;
       if (!types) return null;
-      return { campaigns, scenarios, encounters, traits, types };
+      if (!pools) return null;
+      return { campaigns, scenarios, encounters, traits, types, pools };
     },
     enabled: !!campaigns && !!scenarios && !!encounters && !!traits && !!types,
   });

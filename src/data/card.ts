@@ -92,13 +92,21 @@ export function buildCards(
 
   const buildCardMeta = (card: RawCard): Meta => {
     const { encounter_code, traits, type_code } = card;
-    const meta = { traits: traits ?? [], types: [type_code] };
+    const meta = {
+      campaigns: [],
+      scenarios: [],
+      encounters: [],
+      traits: traits ?? [],
+      types: [type_code],
+      pools: ["player" as const],
+    };
     if (!encounter_code) return meta;
     return {
       ...meta,
-      campaigns: encountersToCampaigns.get(encounter_code),
-      scenarios: encountersToScenarios.get(encounter_code),
+      campaigns: encountersToCampaigns.get(encounter_code) ?? [],
+      scenarios: encountersToScenarios.get(encounter_code) ?? [],
       encounters: [encounter_code],
+      pools: ["mythos" as const],
     };
   };
 

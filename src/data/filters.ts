@@ -5,6 +5,7 @@ import type { EncounterSet } from "./encounter-set";
 import type { Trait } from "./trait";
 import type { CardType } from "./card-type";
 import type { Meta } from "./meta";
+import type { CardPool } from "./card-pool";
 
 export type ViewMode = "cards" | "stats";
 export type StatFilters = Record<string, string>;
@@ -16,6 +17,7 @@ export interface FilterOptions {
   scenarios: Scenario[];
   encounters: EncounterSet[];
   traits: Trait[];
+  pools: CardPool[];
   types: CardType[];
 }
 
@@ -27,10 +29,11 @@ export interface Filters {
   encounters: Option[];
   traits: Option[];
   types: Option[];
+  pools: Option[];
   text: string;
 }
 
-export const toOptionId = (item: FilterOptionType) => {
+export const toOptionId = (item: FilterOptionType): string => {
   switch (item.__type) {
     case "campaign":
     case "scenario":
@@ -39,6 +42,8 @@ export const toOptionId = (item: FilterOptionType) => {
       return item.code;
     case "trait":
       return item.name;
+    case "cardPool":
+      return item.type;
   }
 };
 
@@ -59,6 +64,11 @@ export const toFilterOption = (item: FilterOptionType): Option => {
       return {
         label: item.name,
         value: item.code,
+      };
+    case "cardPool":
+      return {
+        label: item.type,
+        value: item.type,
       };
     case "trait":
       return {

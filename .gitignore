@@ -1,6 +1,7 @@
 node_modules
 dist
 .astro/
+.astro/types.d.ts
 
 .DS_Store
 *.pem

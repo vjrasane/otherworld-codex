@@ -9,6 +9,7 @@ import { buildEncounterSets } from "./encounter-set";
 import { buildTraits } from "@/src/data/trait";
 import { buildTypes } from "@/src/data/card-type";
 import { buildScenario, buildStandalone, RawScenario } from "./scenario";
+import { buildCardPools } from "./card-pool";
 
 const rawCards = z.array(RawCard).safeParse(cardsJson);
 if (!rawCards.success)
@@ -48,7 +49,17 @@ export const traits = buildTraits(
   rawCampaigns.data,
   rawStandalones.data,
 );
-export const types = buildTypes(cards, rawCampaigns.data, rawStandalones.data);
+export const cardTypes = buildTypes(
+  cards,
+  rawCampaigns.data,
+  rawStandalones.data,
+);
+
+export const cardPools = buildCardPools(
+  cards,
+  rawCampaigns.data,
+  rawStandalones.data,
+);
 
 export type { Card } from "@/src/data/card";
 export type { Campaign } from "@/src/data/campaign";

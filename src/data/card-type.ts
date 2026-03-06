@@ -1,11 +1,12 @@
-import type { RawCampaign, RawScenario } from "./campaign";
+import type { RawCampaign } from "./campaign";
 import type { RawCard } from "./card";
 import {
   buildEncountersToCampaignsMap,
   buildEncountersToScenariosMap,
 } from "./encounter-set";
 import type { Meta } from "./meta";
-import { uniq, uniqBy } from "lodash-es";
+import { uniq, uniqBy, partition, compact } from "lodash-es";
+import type { RawScenario } from "./scenario";
 
 export interface CardType {
   __type: "cardType";
@@ -29,8 +30,18 @@ export const buildTypes = (
 
   const buildTypeMeta = (type: string): Meta => {
     const cas = typesToCards.get(type) ?? [];
+    const [playerCards, mythosCards] = partition(
+      cas,
+      (ca) => ca.encounter_code,
+    );
+    const pools = compact([
+      playerCards.length && "player",
+      mythosCards.length && "mythos",
+    ]);
     const ens = uniq(
-      cas.map((ca) => ca.encounter_code).filter((enc): enc is string => !!enc),
+      mythosCards
+        .map((c) => c.encounter_code)
+        .filter((enc): enc is string => !!enc),
     );
     const cms = ens
       .flatMap((en) => encountersToCampaigns.get(en!))
@@ -45,6 +56,7 @@ export const buildTypes = (
       encounters: ens,
       traits: ts,
       types: [type],
+      pools,
     };
   };
 

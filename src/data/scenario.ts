@@ -73,21 +73,25 @@ export const buildScenario = (
       encounters: scenario.encounterCodes,
       traits: getScenarioTraits([scenario], cards),
       types: getScenarioTypes([scenario], cards),
+      pools: ["mythos"],
     },
   };
 };
 
-export const buildStandalone = (standalone: RawScenario, cards: RawCard[]) => {
+export const buildStandalone = (
+  standalone: RawScenario,
+  cards: RawCard[],
+): Scenario => {
   return {
     ...standalone,
     __type: "scenario" as const,
-    campaignCode: undefined,
     meta: {
       campaigns: [],
       scenarios: [standalone.code],
       encounters: standalone.encounterCodes,
       traits: getScenarioTraits([standalone], cards),
       types: getScenarioTypes([standalone], cards),
+      pools: ["mythos"],
     },
   };
 };

@@ -4,7 +4,8 @@ import * as cards from "@/src/pages/cards.json";
 import * as scenarios from "@/src/pages/scenarios.json";
 import * as encounterSets from "@/src/pages/encounter-sets.json";
 import * as traits from "@/src/pages/traits.json";
-import * as types from "@/src/pages/types.json";
+import * as cardTypes from "@/src/pages/card-types.json";
+import * as cardPools from "@/src/pages/card-pools.json";
 
 export const entrypointQueryOptions: QueryOptionsMap = {
   cards: cards.options,
@@ -12,5 +13,6 @@ export const entrypointQueryOptions: QueryOptionsMap = {
   scenarios: scenarios.options,
   campaigns: campaigns.options,
   traits: traits.options,
-  types: types.options,
+  cardTypes: cardTypes.options,
+  cardPools: cardPools.options,
 };
