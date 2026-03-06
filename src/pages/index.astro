@@ -1,9 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
 import  CardBrowser  from "../components/CardBrowserV2.tsx";
-import { entrypointQueryOptions } from "@/src/data/entrypoints";
+import { queryOptions } from "@/src/pages/_data";
 ---
 
 <Base>
-  <CardBrowser queryOptions={entrypointQueryOptions} client:only="react" />
+  <CardBrowser queryOptions={queryOptions} client:only="react" />
 </Base>

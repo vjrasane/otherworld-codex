@@ -33,6 +33,11 @@ export interface QueryOpts<T> {
 
 export type InferQueryResult<T> = T extends QueryOpts<infer R> ? R : never;
 
+export interface DataEndpoint<K extends keyof QueryOptionsMap, T> {
+  key: K;
+  options: QueryOpts<T>;
+}
+
 export type QueryOptionsMap = {
   cards: QueryOpts<Card[]>;
   encounterSets: QueryOpts<EncounterSet[]>;
