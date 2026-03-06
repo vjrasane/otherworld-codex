@@ -4,7 +4,7 @@ import { campaigns, campaignScenarios, standalones  } from "@/src/data";
 import { routes } from "@/src/routes";
 import { groupBy } from "lodash-es"
 
-const campaignsToScenarios = groupBy(campaignScenarios, (sc) => sc.meta.campaigns?.[0])
+// const campaignsToScenarios = groupBy(campaignScenarios, (sc) => sc.meta.campaigns?.[0])
 ---
 
 <Base title="Campaigns">
@@ -12,7 +12,7 @@ const campaignsToScenarios = groupBy(campaignScenarios, (sc) => sc.meta.campaign
   <div class="campaigns">
     {
     campaigns.map((c) => { 
-   const scs = campaignsToScenarios[c.code]
+   const scs = []
     return (
     <a class="campaign-card">
       <img src={routes.icon(c.code)} alt="" class="campaign-icon" />
