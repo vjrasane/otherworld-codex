@@ -170,6 +170,7 @@ const useFilters = () => {
       const next = typeof updater === "function" ? updater(prev) : updater;
       const params = new URLSearchParams();
       for (const [key, value] of Object.entries(next)) {
+        if (key === "pools") continue;
         if (Array.isArray(value) && value.length) {
           params.set(key, value.map((v) => v.value).join(","));
         }
