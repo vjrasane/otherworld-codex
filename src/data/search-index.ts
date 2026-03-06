@@ -10,7 +10,7 @@ export interface SearchEntry {
   name: string;
   xp?: number;
   subname?: string;
-  imageUrl?: string;
+  imageId?: string;
   typeCode?: string;
   packName?: string;
   campaignName?: string;
@@ -73,7 +73,7 @@ export const buildSearchIndex = (
       name: card.name,
       xp: card.xp ?? undefined,
       subname: card.subname ?? undefined,
-      imageUrl: card.meta.imageUrl ?? undefined,
+      imageId: card.meta.imageId ?? undefined,
       typeCode: card.type_code,
       packName: card.pack_name,
     });

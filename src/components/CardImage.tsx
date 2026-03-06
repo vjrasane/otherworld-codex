@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Card } from "../data/card";
+import { routes } from "../routes";
 import { css } from "../styles";
 
 
@@ -7,13 +8,13 @@ const HORIZONTAL_TYPES = new Set(["act", "agenda", "investigator"]);
 
 export const CardImage: React.FC<{ card: Card, back?: boolean }> = ({ card, back }) => {
   const horizontal = HORIZONTAL_TYPES.has(card.type_code);
-  const imageUrl = !back ? card.meta.imageUrl : card.meta.backImageUrl;
+  const imageId = !back ? card.meta.imageId : card.meta.backImageId;
   const name = !back ? card.name : card.back_name
 
-  if (imageUrl) {
+  if (imageId) {
     return (
       <div style={css(s.cardImage, horizontal && s.horizontal)}>
-        <img src={imageUrl} alt={name ?? ""} style={s.img} />
+        <img src={routes.cardImage(imageId)} alt={name ?? ""} style={s.img} />
       </div>
     );
   }

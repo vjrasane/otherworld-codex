@@ -217,11 +217,11 @@ const CardSearchResultItem: React.FC<{ code: string }> = ({ code }) => {
 };
 
 const CardSearchResultImage: React.FC<{ card: Card }> = ({ card }) => {
-  if (card.meta.imageUrl) {
+  if (card.meta.imageId) {
     const horizontal = HORIZONTAL_TYPES.has(card.type_code);
     return (
       <div style={{ ...s.cardThumb, height: horizontal ? 28 : 56 }}>
-        <img src={card.meta.imageUrl} alt="" style={s.cardThumbImg} />
+        <img src={routes.cardImage(card.meta.imageId)} alt="" style={s.cardThumbImg} />
       </div>
     );
   }
