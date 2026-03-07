@@ -61,7 +61,7 @@ export const CardPreview: React.FC<{ card: Card }> = ({ card }) => {
         </div>
       )}
 
-      <CardKeywords card={card} className="px-3 py-1.5 border-t border-border text-xs" />
+      <CardKeywords card={card} className="px-3 py-1.5 text-xs border-t border-border" />
 
       <div className="flex flex-col gap-0.5 px-3 py-1.5 text-[0.65rem] text-text-muted border-t border-border">
         {card.encounter_name && card.encounter_code && (

@@ -30,12 +30,13 @@ export const CardThumbnail: React.FC<{
   size: ThumbnailSize;
   className?: string;
 }> = ({ card, size, className }) => {
+  if (!card.meta.imageId) return null;
   return (
     <div
       className={`${sizeClasses[size]} rounded overflow-hidden shrink-0 ${className ?? ""}`}
     >
       <img
-        src={routes.cardImage(card.meta.imageId ?? "")}
+        src={routes.cardImage(card.meta.imageId)}
         className="w-full h-full object-cover"
         style={{ objectPosition: objectPosition(card) }}
       />

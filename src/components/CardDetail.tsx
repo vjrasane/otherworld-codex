@@ -74,13 +74,15 @@ export const CardDetail: React.FC<{
               {card.type_code === "location" && <LocationStats card={card} />}
             </div>
 
-            <div className="flex justify-center px-4 py-2 border-t border-border">
-              <img
-                src={routes.cardImage(card.meta.imageId ?? "")}
-                className="rounded-lg border border-border w-2/3"
-                style={{ aspectRatio: isLandscape(card) ? "419/300" : "300/419" }}
-              />
-            </div>
+            {card.meta.imageId && (
+              <div className="flex justify-center px-4 py-2 border-t border-border">
+                <img
+                  src={routes.cardImage(card.meta.imageId)}
+                  className="rounded-lg border border-border w-2/3"
+                  style={{ aspectRatio: isLandscape(card) ? "419/300" : "300/419" }}
+                />
+              </div>
+            )}
 
             {isLandscape(card) && card.flavor && (
               <div className="px-4 py-3 text-sm italic text-text-secondary leading-relaxed border-t border-border">
@@ -102,7 +104,7 @@ export const CardDetail: React.FC<{
               </div>
             )}
 
-            <CardKeywords card={card} className="px-4 py-2 border-t border-border text-sm" />
+            <CardKeywords card={card} className="px-4 py-2 text-sm border-t border-border" />
 
             <div className="flex flex-col gap-1 px-4 py-3 text-xs text-text-muted border-t border-border">
               {card.encounter_name && card.encounter_code && (
