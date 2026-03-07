@@ -6,34 +6,21 @@ const sizeClasses = {
   md: "size-12",
 } as const;
 
-type ThumbnailSize = keyof typeof sizeClasses;
+export type ThumbnailSize = keyof typeof sizeClasses;
 
-function thumbnailTransform(
-  card: Card,
-  size: ThumbnailSize,
-): React.CSSProperties {
-  const zoom = size === "sm" ? 0.8 : 1;
+function objectPosition(card: Card): string {
   switch (card.type_code) {
-    case "treachery":
-      return {
-        transform: `scale(${1.75 * zoom})`,
-        transformOrigin: "50% 5%",
-      };
-    case "location":
-      return {
-        transform: `scale(${2.5 * zoom})`,
-        transformOrigin: "50% 20%",
-      };
     case "enemy":
-      return {
-        transform: `scale(${2.5 * zoom})`,
-        transformOrigin: "50% 100%",
-      };
+      return "center bottom";
+    case "location":
+    case "treachery":
+      return "center top";
+    case "agenda":
+      return "left center";
+    case "act":
+      return "right center";
     default:
-      return {
-        transform: `scale(${1.75 * zoom})`,
-        transformOrigin: "50% 30%",
-      };
+      return "center top";
   }
 }
 
@@ -44,12 +31,12 @@ export const CardThumbnail: React.FC<{
 }> = ({ card, size, className }) => {
   return (
     <div
-      className={`${sizeClasses[size]} rounded overflow-hidden shrink-0 relative ${className ?? ""}`}
+      className={`${sizeClasses[size]} rounded overflow-hidden shrink-0 ${className ?? ""}`}
     >
       <img
         src={routes.cardImage(card.meta.imageId ?? "")}
-        className="absolute w-full h-auto"
-        style={thumbnailTransform(card, size)}
+        className="w-full h-full object-cover"
+        style={{ objectPosition: objectPosition(card) }}
       />
     </div>
   );
