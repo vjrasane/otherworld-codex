@@ -1,6 +1,7 @@
 import { type Card } from "@/src/data/card";
 import { CardThumbnail } from "./CardThumbnail";
 import { CardPreview } from "./CardPreview";
+import { CardDetail } from "./CardDetail";
 import { useCallback, useRef, useState } from "react";
 import {
   useFloating,
@@ -14,6 +15,7 @@ import {
 
 export const CardListItem: React.FC<{ card: Card }> = ({ card }) => {
   const [hovered, setHovered] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const { refs, floatingStyles, context } = useFloating({
@@ -42,9 +44,10 @@ export const CardListItem: React.FC<{ card: Card }> = ({ card }) => {
     <>
       <div
         ref={refs.setReference}
-        className="flex items-center gap-2 py-1.5 border-b border-border"
+        className="flex items-center gap-2 py-1.5 border-b border-border cursor-pointer"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onClick={() => setDetailOpen(true)}
       >
         <CardThumbnail card={card} size="sm" className="border border-border" />
 
@@ -73,6 +76,11 @@ export const CardListItem: React.FC<{ card: Card }> = ({ card }) => {
           </div>
         </FloatingPortal>
       )}
+      <CardDetail
+        card={card}
+        open={detailOpen}
+        onClose={() => setDetailOpen(false)}
+      />
     </>
   );
 };

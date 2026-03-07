@@ -4,6 +4,7 @@ import { routes } from "../routes";
 const sizeClasses = {
   sm: "size-8",
   md: "size-12",
+  lg: "size-24",
 } as const;
 
 export type ThumbnailSize = keyof typeof sizeClasses;
