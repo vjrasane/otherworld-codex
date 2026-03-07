@@ -14,6 +14,21 @@ function imageId(src?: string | null): string | undefined {
   return src.split("/").pop();
 }
 
+export type SpecialValue = "X" | "*" | "?";
+
+const specialValues: Record<number, SpecialValue> = {
+  [-2]: "X",
+  [-3]: "*",
+  [-4]: "?",
+};
+
+function resolveSpecialValue(
+  value: number | null | undefined,
+): SpecialValue | undefined {
+  if (value == null) return undefined;
+  return specialValues[value];
+}
+
 export const RawCard = z.object({
   code: z.string(),
   name: z.string(),
@@ -75,6 +90,14 @@ interface CardMeta extends Meta {
   parentCard?: Card;
   imageId?: string;
   backImageId?: string;
+  specialHealth?: SpecialValue;
+  specialSanity?: SpecialValue;
+  specialEnemyFight?: SpecialValue;
+  specialEnemyEvade?: SpecialValue;
+  specialEnemyDamage?: SpecialValue;
+  specialEnemyHorror?: SpecialValue;
+  specialShroud?: SpecialValue;
+  specialClues?: SpecialValue;
 }
 
 export type EncounterCard = Card & {
@@ -113,9 +136,19 @@ export function buildCards(
   };
 
   const buildCard = (raw: RawCard): Card => {
+    const revealedFront =
+      raw.type_code === "location" && raw.double_sided && raw.backimagesrc;
     const meta = {
-      imageId: imageId(raw.imagesrc),
-      backImageId: imageId(raw.backimagesrc),
+      imageId: imageId(revealedFront ? raw.backimagesrc : raw.imagesrc),
+      backImageId: imageId(revealedFront ? raw.imagesrc : raw.backimagesrc),
+      specialHealth: resolveSpecialValue(raw.health),
+      specialSanity: resolveSpecialValue(raw.sanity),
+      specialEnemyFight: resolveSpecialValue(raw.enemy_fight),
+      specialEnemyEvade: resolveSpecialValue(raw.enemy_evade),
+      specialEnemyDamage: resolveSpecialValue(raw.enemy_damage),
+      specialEnemyHorror: resolveSpecialValue(raw.enemy_horror),
+      specialShroud: resolveSpecialValue(raw.shroud),
+      specialClues: resolveSpecialValue(raw.clues),
       ...buildCardMeta(raw),
     };
     return { ...raw, meta };

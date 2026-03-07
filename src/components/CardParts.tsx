@@ -1,4 +1,4 @@
-import { type Card } from "@/src/data/card";
+import { type Card, type SpecialValue } from "@/src/data/card";
 
 export function isLandscape(card: Card): boolean {
   return card.type_code === "act" || card.type_code === "agenda";
@@ -15,50 +15,51 @@ export const CardText: React.FC<{ text: string }> = ({ text }) => (
   <div dangerouslySetInnerHTML={{ __html: cardTextToHtml(text) }} />
 );
 
-function formatValue(value: number): string {
-  return value < 0 ? "X" : String(value);
+function displayValue(
+  value: number | null | undefined,
+  special: SpecialValue | undefined,
+): string {
+  if (special) return special;
+  if (value == null) return "-";
+  return String(value);
 }
 
 const StatIcon: React.FC<{
   icon: string;
   value: number | null | undefined;
-}> = ({ icon, value }) => {
-  if (value == null) return null;
-  return (
-    <div className="flex items-center gap-1">
-      <i className={`icon-${icon}`} />
-      <span>{formatValue(value)}</span>
-    </div>
-  );
-};
+  special?: SpecialValue;
+}> = ({ icon, value, special }) => (
+  <div className="flex items-center gap-1">
+    <i className={`icon-${icon}`} />
+    <span>{displayValue(value, special)}</span>
+  </div>
+);
 
 const StatLabel: React.FC<{
   label: string;
   value: number | null | undefined;
+  special?: SpecialValue;
   children?: React.ReactNode;
-}> = ({ label, value, children }) => {
-  if (value == null) return null;
-  return (
-    <div className="flex items-center gap-1">
-      <span className="text-text-muted">{label}</span>
-      <span>{formatValue(value)}</span>
-      {children}
-    </div>
-  );
-};
+}> = ({ label, value, special, children }) => (
+  <div className="flex items-center gap-1">
+    <span className="text-text-muted">{label}</span>
+    <span>{displayValue(value, special)}</span>
+    {children}
+  </div>
+);
 
 export const EnemyStats: React.FC<{
   card: Card;
   className?: string;
 }> = ({ card, className }) => (
   <div className={`flex gap-3 text-xs text-text-secondary ${className ?? ""}`}>
-    <StatLabel label="Health" value={card.health}>
+    <StatLabel label="Health" value={card.health} special={card.meta.specialHealth}>
       {card.health_per_investigator && <i className="icon-per_investigator" />}
     </StatLabel>
-    <StatIcon icon="combat" value={card.enemy_fight} />
-    <StatIcon icon="agility" value={card.enemy_evade} />
-    <StatIcon icon="health" value={card.enemy_damage} />
-    <StatIcon icon="sanity" value={card.enemy_horror} />
+    <StatIcon icon="combat" value={card.enemy_fight} special={card.meta.specialEnemyFight} />
+    <StatIcon icon="agility" value={card.enemy_evade} special={card.meta.specialEnemyEvade} />
+    <StatIcon icon="health" value={card.enemy_damage} special={card.meta.specialEnemyDamage} />
+    <StatIcon icon="sanity" value={card.enemy_horror} special={card.meta.specialEnemyHorror} />
   </div>
 );
 
@@ -67,9 +68,9 @@ export const LocationStats: React.FC<{
   className?: string;
 }> = ({ card, className }) => (
   <div className={`flex gap-3 text-xs text-text-secondary ${className ?? ""}`}>
-    <StatLabel label="Shroud" value={card.shroud} />
+    <StatLabel label="Shroud" value={card.shroud} special={card.meta.specialShroud} />
     {card.clues != null && (
-      <StatLabel label="Clues" value={card.clues}>
+      <StatLabel label="Clues" value={card.clues} special={card.meta.specialClues}>
         {!card.clues_fixed && card.clues > 0 && (
           <i className="icon-per_investigator" />
         )}

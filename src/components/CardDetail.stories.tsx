@@ -51,3 +51,41 @@ export const EnemyWithSubname: Story = {
 export const EnemyPerPlayerHealth: Story = {
   args: { card: random(enemies.filter((c) => !!c.health_per_investigator)) },
 };
+
+export const EnemyXFight: Story = {
+  args: { card: random(enemies.filter((c) => c.enemy_fight === -2)) },
+};
+
+export const EnemyXEvade: Story = {
+  args: { card: random(enemies.filter((c) => c.enemy_evade === -2)) },
+};
+
+export const EnemyXHealth: Story = {
+  args: { card: random(enemies.filter((c) => c.health === -2)) },
+};
+
+export const EnemyStarHealth: Story = {
+  args: { card: random(enemies.filter((c) => c.health === -3)) },
+};
+
+export const EnemyNullHealth: Story = {
+  args: { card: random(enemies.filter((c) => c.health == null)) },
+};
+
+const locations = mythosCards.filter((c: Card) => c.type_code === "location");
+
+export const LocationXShroud: Story = {
+  args: { card: random(locations.filter((c) => c.shroud === -2)) },
+};
+
+export const LocationPerPlayerClues: Story = {
+  args: { card: random(locations.filter((c) => !c.clues_fixed && c.clues != null && c.clues > 0)) },
+};
+
+export const LocationFixedClues: Story = {
+  args: { card: random(locations.filter((c) => c.clues_fixed === true && c.clues != null && c.clues > 0)) },
+};
+
+export const LocationDoubleSided: Story = {
+  args: { card: random(locations.filter((c) => c.double_sided && !!c.backimagesrc)) },
+};
