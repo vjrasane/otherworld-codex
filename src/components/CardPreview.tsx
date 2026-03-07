@@ -1,7 +1,7 @@
 import { type Card } from "@/src/data/card";
 import { routes } from "../routes";
 import { CardThumbnail } from "./CardThumbnail";
-import { CardText, EnemyStats, LocationStats, isLandscape } from "./CardParts";
+import { CardText, CardKeywords, EnemyStats, LocationStats, isLandscape } from "./CardParts";
 
 export const CardPreview: React.FC<{ card: Card }> = ({ card }) => {
   return (
@@ -61,11 +61,7 @@ export const CardPreview: React.FC<{ card: Card }> = ({ card }) => {
         </div>
       )}
 
-      {card.victory != null && card.victory > 0 && (
-        <div className="px-3 py-1.5 border-t border-border text-xs text-warning">
-          Victory {card.victory}
-        </div>
-      )}
+      <CardKeywords card={card} className="px-3 py-1.5 border-t border-border text-xs" />
 
       <div className="flex flex-col gap-0.5 px-3 py-1.5 text-[0.65rem] text-text-muted border-t border-border">
         {card.encounter_name && card.encounter_code && (

@@ -1,6 +1,6 @@
 import { type Card } from "@/src/data/card";
 import { routes } from "../routes";
-import { CardText, EnemyStats, LocationStats, isLandscape } from "./CardParts";
+import { CardText, CardKeywords, EnemyStats, LocationStats, isLandscape } from "./CardParts";
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -102,11 +102,7 @@ export const CardDetail: React.FC<{
               </div>
             )}
 
-            {card.victory != null && card.victory > 0 && (
-              <div className="px-4 py-2 border-t border-border text-sm text-warning">
-                Victory {card.victory}
-              </div>
-            )}
+            <CardKeywords card={card} className="px-4 py-2 border-t border-border text-sm" />
 
             <div className="flex flex-col gap-1 px-4 py-3 text-xs text-text-muted border-t border-border">
               {card.encounter_name && card.encounter_code && (

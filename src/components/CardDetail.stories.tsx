@@ -89,3 +89,19 @@ export const LocationFixedClues: Story = {
 export const LocationDoubleSided: Story = {
   args: { card: random(locations.filter((c) => c.double_sided && !!c.backimagesrc)) },
 };
+
+export const LocationWithVengeance: Story = {
+  args: { card: random(locations.filter((c) => c.vengeance != null && c.vengeance > 0)) },
+};
+
+export const EnemyWithVengeance: Story = {
+  args: { card: random(enemies.filter((c) => c.vengeance != null && c.vengeance > 0)) },
+};
+
+export const LocationWithVictory: Story = {
+  args: { card: random(locations.filter((c) => c.victory != null && c.victory > 0)) },
+};
+
+export const AgendaWithDoom: Story = {
+  args: { card: random(mythosCards.filter((c) => c.type_code === "agenda" && c.doom != null && c.doom > 0)) },
+};

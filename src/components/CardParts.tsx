@@ -78,3 +78,22 @@ export const LocationStats: React.FC<{
     )}
   </div>
 );
+
+export const CardKeywords: React.FC<{
+  card: Card;
+  className?: string;
+}> = ({ card, className }) => {
+  const keywords: string[] = [];
+  if (card.victory != null && card.victory > 0)
+    keywords.push(`Victory ${card.victory}`);
+  if (card.vengeance != null && card.vengeance > 0)
+    keywords.push(`Vengeance ${card.vengeance}`);
+  if (card.doom != null && card.doom > 0)
+    keywords.push(`Doom ${displayValue(card.doom, card.meta.specialDoom)}`);
+  if (keywords.length === 0) return null;
+  return (
+    <div className={`text-text-secondary ${className ?? ""}`}>
+      {keywords.join(" · ")}
+    </div>
+  );
+};

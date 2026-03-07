@@ -73,6 +73,8 @@ export const RawCard = z.object({
   clues: z.number().nullish(),
   clues_fixed: z.boolean().nullish(),
   victory: z.number().nullish(),
+  vengeance: z.number().nullish(),
+  doom: z.number().nullish(),
   health_per_investigator: z.boolean().nullish(),
   is_unique: z.boolean(),
   position: z.number(),
@@ -98,6 +100,7 @@ interface CardMeta extends Meta {
   specialEnemyHorror?: SpecialValue;
   specialShroud?: SpecialValue;
   specialClues?: SpecialValue;
+  specialDoom?: SpecialValue;
 }
 
 export type EncounterCard = Card & {
@@ -149,6 +152,7 @@ export function buildCards(
       specialEnemyHorror: resolveSpecialValue(raw.enemy_horror),
       specialShroud: resolveSpecialValue(raw.shroud),
       specialClues: resolveSpecialValue(raw.clues),
+      specialDoom: resolveSpecialValue(raw.doom),
       ...buildCardMeta(raw),
     };
     return { ...raw, meta };
