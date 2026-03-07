@@ -1,18 +1,6 @@
 import { type Card } from "@/src/data/card";
 import { routes } from "../routes";
-
-function thumbnailTransform(card: Card): React.CSSProperties {
-  switch (card.type_code) {
-    case "treachery":
-      return { transform: "scale(1.75)", transformOrigin: "50% 5%" };
-    case "location":
-      return { transform: "scale(2.5)", transformOrigin: "50% 20%" };
-    case "enemy":
-      return { transform: "scale(2.5)", transformOrigin: "50% 100%" };
-    default:
-      return { transform: "scale(1.75)", transformOrigin: "50% 30%" };
-  }
-}
+import { CardThumbnail } from "./CardThumbnail";
 
 function cardTextToHtml(text: string): string {
   return text
@@ -107,13 +95,11 @@ export const CardPreview: React.FC<{ card: Card }> = ({ card }) => {
           {card.type_code === "location" && <LocationStats card={card} />}
         </div>
 
-        <div className="size-12 rounded border-2 border-encounter overflow-hidden shrink-0">
-          <img
-            src={routes.cardImage(card.meta.imageId ?? "")}
-            className="w-full h-auto"
-            style={thumbnailTransform(card)}
-          />
-        </div>
+        <CardThumbnail
+          card={card}
+          size="md"
+          className="border-2 border-encounter"
+        />
       </div>
 
       {card.text && (
