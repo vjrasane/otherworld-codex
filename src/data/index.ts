@@ -7,6 +7,7 @@ import { buildCards, RawCard } from "@/src/data/card";
 import { buildCampaigns, RawCampaign } from "@/src/data/campaign";
 import { buildEncounterSets } from "./encounter-set";
 import { buildScenario, buildStandalone, RawScenario } from "./scenario";
+import { patch } from "./pacthes";
 
 const rawCards = z.array(RawCard).safeParse(cardsJson);
 if (!rawCards.success)
@@ -24,7 +25,8 @@ export const cards = buildCards(
   rawCards.data,
   rawCampaigns.data,
   rawStandalones.data,
-);
+).map(patch);
+
 export const campaigns = buildCampaigns(rawCampaigns.data);
 
 export const campaignScenarios = rawCampaigns.data.flatMap((cm) =>

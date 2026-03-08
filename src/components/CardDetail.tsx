@@ -2,6 +2,7 @@ import { useState } from "react";
 import { type Card } from "@/src/data/card";
 import { routes } from "../routes";
 import { CardText, CardKeywords, EnemyStats, LocationStats, isLandscape } from "./CardParts";
+import { hasPatch } from "./card-utils";
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -35,8 +36,10 @@ export const CardDetail: React.FC<{
 
   if (!isMounted) return null;
 
+  const swapped = hasPatch(card, "swappedFrontAndBack");
   const hasBack = !!card.meta.backImageId;
-  const imageId = showBack ? card.meta.backImageId : card.meta.imageId;
+  const imageBack = showBack !== swapped;
+  const imageId = imageBack ? card.meta.backImageId : card.meta.imageId;
   const name = showBack ? (card.back_name ?? card.name) : card.name;
   const text = showBack ? card.back_text : card.text;
   const flavor = showBack ? card.back_flavor : card.flavor;

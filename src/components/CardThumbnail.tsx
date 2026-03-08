@@ -1,5 +1,6 @@
 import { type Card } from "@/src/data/card";
 import { routes } from "../routes";
+import { hasPatch } from "./card-utils";
 
 const sizeClasses = {
   sm: "size-8",
@@ -10,6 +11,7 @@ const sizeClasses = {
 export type ThumbnailSize = keyof typeof sizeClasses;
 
 function imageStyle(card: Card): React.CSSProperties {
+  const flipped = hasPatch(card, "flippedHorizontalLayout");
   switch (card.type_code) {
     case "enemy":
       return {
@@ -30,18 +32,14 @@ function imageStyle(card: Card): React.CSSProperties {
         transform: "scale(1.9)",
         transformOrigin: "center 20%",
       };
-    case "agenda":
-      return {
-        objectPosition: "left center",
-        transform: "scale(1.9)",
-        transformOrigin: "left center",
-      };
-    case "act":
-      return {
-        objectPosition: "right center",
-        transform: "scale(1.9)",
-        transformOrigin: "right center",
-      };
+    case "agenda": {
+      const pos = flipped ? "right center" : "left center";
+      return { objectPosition: pos, transform: "scale(1.9)", transformOrigin: pos };
+    }
+    case "act": {
+      const pos = flipped ? "left center" : "right center";
+      return { objectPosition: pos, transform: "scale(1.9)", transformOrigin: pos };
+    }
     case "scenario":
       return {
         objectPosition: "center top",
@@ -58,13 +56,16 @@ export const CardThumbnail: React.FC<{
   size: ThumbnailSize;
   className?: string;
 }> = ({ card, size, className }) => {
-  if (!card.meta.imageId) return null;
+  const imageId = hasPatch(card, "swappedFrontAndBack")
+    ? card.meta.backImageId
+    : card.meta.imageId;
+  if (!imageId) return null;
   return (
     <div
       className={`${sizeClasses[size]} rounded overflow-hidden shrink-0 ${className ?? ""}`}
     >
       <img
-        src={routes.cardImage(card.meta.imageId)}
+        src={routes.cardImage(imageId)}
         className="w-full h-full object-cover"
         style={imageStyle(card)}
       />

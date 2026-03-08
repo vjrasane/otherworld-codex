@@ -8,6 +8,7 @@ import {
   buildEncountersToScenariosMap,
 } from "@/src/data/encounter-set";
 import type { RawScenario } from "./scenario";
+import type { CardPatch } from "./pacthes";
 
 function imageId(src?: string | null): string | undefined {
   if (!src) return undefined;
@@ -103,6 +104,7 @@ interface CardMeta extends Meta {
   specialShroud?: SpecialValue;
   specialClues?: SpecialValue;
   specialDoom?: SpecialValue;
+  patches?: CardPatch[];
 }
 
 export type EncounterCard = Card & {
