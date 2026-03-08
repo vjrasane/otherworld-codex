@@ -12,14 +12,42 @@ export type ThumbnailSize = keyof typeof sizeClasses;
 function imageStyle(card: Card): React.CSSProperties {
   switch (card.type_code) {
     case "enemy":
-      return { objectPosition: "center bottom" };
-    case "location":
+      return {
+        objectPosition: "center bottom",
+        transform: "scale(2)",
+        transformOrigin: "center bottom",
+      };
     case "treachery":
-      return { objectPosition: "50% 50%", height: "250%" };
+    case "location":
+      return {
+        objectPosition: "center 20%",
+        transform: "scale(2.2)",
+        transformOrigin: "center 20%",
+      };
+    case "asset":
+      return {
+        objectPosition: "center 20%",
+        transform: "scale(1.9)",
+        transformOrigin: "center 20%",
+      };
     case "agenda":
-      return { objectPosition: "left center" };
+      return {
+        objectPosition: "left center",
+        transform: "scale(1.9)",
+        transformOrigin: "left center",
+      };
     case "act":
-      return { objectPosition: "right center" };
+      return {
+        objectPosition: "right center",
+        transform: "scale(1.9)",
+        transformOrigin: "right center",
+      };
+    case "scenario":
+      return {
+        objectPosition: "center top",
+        transform: "scale(2)",
+        transformOrigin: "center top",
+      };
     default:
       return { objectPosition: "center top" };
   }

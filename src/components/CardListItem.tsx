@@ -44,7 +44,7 @@ export const CardListItem: React.FC<{ card: Card }> = ({ card }) => {
     <>
       <div
         ref={refs.setReference}
-        className="flex items-center gap-2 py-1.5 border-b border-border cursor-pointer"
+        className="flex items-center gap-2 py-1.5 px-2 border-b border-border cursor-pointer"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={() => setDetailOpen(true)}
