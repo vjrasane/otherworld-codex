@@ -136,12 +136,12 @@ const CardList: React.FC<{ cards: Card[] }> = ({ cards }) => {
   );
 };
 
-type MobileView = "list" | "stats";
+type View = "list" | "stats";
 
 export const CardBrowser: React.FC = () => {
   const [filters, setFilters] = useFilters();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [mobileView, setMobileView] = useState<MobileView>("list");
+  const [view, setView] = useState<View>("list");
   const isDesktop = useIsDesktop();
 
   const cards = useFilteredCards(filters);
@@ -154,9 +154,9 @@ export const CardBrowser: React.FC = () => {
         if (current.some((o) => o.value === name)) return prev;
         return { ...prev, [kind]: [...current, { label: name, value: name }] };
       });
-      if (!isDesktop) setMobileView("list");
+      setView("list");
     },
-    [setFilters, isDesktop],
+    [setFilters],
   );
 
   return (
@@ -172,16 +172,16 @@ export const CardBrowser: React.FC = () => {
         <span className="text-sm text-text-muted flex-1">
           {cards.length} cards
         </span>
-        <div className="lg:hidden inline-flex rounded border border-border overflow-hidden">
+        <div className="inline-flex rounded border border-border overflow-hidden">
           <button
-            onClick={() => setMobileView("list")}
-            className={`p-1.5 ${mobileView === "list" ? "bg-accent text-bg-0" : "text-text-muted"}`}
+            onClick={() => setView("list")}
+            className={`p-1.5 ${view === "list" ? "bg-accent text-bg-0" : "text-text-muted"}`}
           >
             <List size={16} />
           </button>
           <button
-            onClick={() => setMobileView("stats")}
-            className={`p-1.5 ${mobileView === "stats" ? "bg-accent text-bg-0" : "text-text-muted"}`}
+            onClick={() => setView("stats")}
+            className={`p-1.5 ${view === "stats" ? "bg-accent text-bg-0" : "text-text-muted"}`}
           >
             <BarChart3 size={16} />
           </button>
@@ -212,18 +212,14 @@ export const CardBrowser: React.FC = () => {
           </div>
         )}
 
-        {/* Center: card list (desktop always, mobile when mobileView=list) */}
-        {(isDesktop || mobileView === "list") && (
+        {view === "list" && (
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
             <CardList cards={cards} />
           </div>
         )}
 
-        {/* Right: stats (desktop always, mobile when mobileView=stats) */}
-        {(isDesktop || mobileView === "stats") && (
-          <div
-            className={`overflow-y-auto p-4 ${isDesktop ? "w-80 border-l border-border shrink-0" : "flex-1"}`}
-          >
+        {view === "stats" && (
+          <div className="flex-1 overflow-y-auto p-4">
             <CardStats cards={cards} onChartClick={handleChartClick} />
           </div>
         )}
