@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { type Card } from "@/src/data/card";
 import { routes } from "../routes";
-import { CardText, CardKeywords, EnemyStats, LocationStats, isLandscape } from "./CardParts";
+import {
+  CardText,
+  CardKeywords,
+  EnemyStats,
+  LocationStats,
+  isLandscape,
+} from "./CardParts";
 import { hasPatch } from "./card-utils";
 import {
   FloatingFocusManager,
@@ -21,7 +27,10 @@ export const CardDetail: React.FC<{
   onClose: () => void;
 }> = ({ card, open, onClose }) => {
   const [showBack, setShowBack] = useState(false);
-  const { refs, context } = useFloating({ open, onOpenChange: (v) => !v && onClose() });
+  const { refs, context } = useFloating({
+    open,
+    onOpenChange: (v) => !v && onClose(),
+  });
 
   const click = useClick(context);
   const dismiss = useDismiss(context, { outsidePressEvent: "mousedown" });
@@ -80,7 +89,9 @@ export const CardDetail: React.FC<{
                 </button>
               </div>
               {!showBack && card.subname && (
-                <span className="text-xs italic text-text-muted">{card.subname}</span>
+                <span className="text-xs italic text-text-muted">
+                  {card.subname}
+                </span>
               )}
               <div className="text-sm text-text-secondary">
                 {card.type_name}
@@ -91,16 +102,22 @@ export const CardDetail: React.FC<{
                   </span>
                 )}
               </div>
-              {!showBack && card.type_code === "enemy" && <EnemyStats card={card} />}
-              {!showBack && card.type_code === "location" && <LocationStats card={card} />}
+              {!showBack && card.type_code === "enemy" && (
+                <EnemyStats card={card} />
+              )}
+              {!showBack && card.type_code === "location" && (
+                <LocationStats card={card} />
+              )}
             </div>
 
             {imageId && (
               <div className="flex justify-center px-4 py-2 border-t border-border">
                 <img
                   src={routes.cardImage(imageId)}
-                  className="rounded-lg border border-border w-2/3"
-                  style={{ aspectRatio: isLandscape(card) ? "419/300" : "300/419" }}
+                  className="rounded-2xl border border-border w-2/3"
+                  style={{
+                    aspectRatio: isLandscape(card) ? "419/300" : "300/419",
+                  }}
                 />
               </div>
             )}
@@ -125,7 +142,12 @@ export const CardDetail: React.FC<{
               </div>
             )}
 
-            {!showBack && <CardKeywords card={card} className="px-4 py-2 text-sm border-t border-border" />}
+            {!showBack && (
+              <CardKeywords
+                card={card}
+                className="px-4 py-2 text-sm border-t border-border"
+              />
+            )}
 
             <div className="flex flex-col gap-1 px-4 py-3 text-xs text-text-muted border-t border-border">
               {card.encounter_name && card.encounter_code && (
