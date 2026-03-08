@@ -54,6 +54,8 @@ export const RawCard = z.object({
   double_sided: z.boolean().default(false),
   backimagesrc: z.string().nullish(),
   back_name: z.string().nullish(),
+  back_text: z.string().nullish(),
+  back_flavor: z.string().nullish(),
   text: z.string().nullish(),
   flavor: z.string().nullish(),
   subname: z.string().nullish(),
