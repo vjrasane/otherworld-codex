@@ -89,8 +89,8 @@ export const LocationFixedClues: Story = {
   args: { card: random(locations.filter((c) => c.clues_fixed === true && c.clues != null && c.clues > 0)) },
 };
 
-export const LocationDoubleSidedSameName: Story = {
-  args: { card: random(locations.filter((c) => c.double_sided && !!c.backimagesrc && (!c.back_name || c.back_name === c.name))) },
+export const LocationDoubleSided: Story = {
+  args: { card: random(locations.filter((c) => c.double_sided && !!c.backimagesrc)) },
 };
 
 export const LocationDoubleSidedDifferentBackName: Story = {

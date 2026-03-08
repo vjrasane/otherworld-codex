@@ -99,23 +99,22 @@ const BATCH = 100;
 
 const CardList: React.FC<{ cards: Card[] }> = ({ cards }) => {
   const [count, setCount] = useState(BATCH);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver>();
+
+  const sentinelRef = useCallback((el: HTMLDivElement | null) => {
+    observerRef.current?.disconnect();
+    if (!el) return;
+    observerRef.current = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setCount((c) => c + BATCH);
+    });
+    observerRef.current.observe(el);
+  }, []);
 
   useEffect(() => {
     setCount(BATCH);
     scrollRef.current?.scrollTo(0, 0);
   }, [cards]);
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) setCount((c) => c + BATCH);
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   const visible = useMemo(() => cards.slice(0, count), [cards, count]);
 

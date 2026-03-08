@@ -141,15 +141,9 @@ export function buildCards(
   };
 
   const buildCard = (raw: RawCard): Card => {
-    const swapImages =
-      raw.type_code === "location" &&
-      raw.double_sided &&
-      raw.backimagesrc &&
-      raw.back_name &&
-      raw.back_name !== raw.name;
     const meta = {
-      imageId: imageId(swapImages ? raw.backimagesrc : raw.imagesrc),
-      backImageId: imageId(swapImages ? raw.imagesrc : raw.backimagesrc),
+      imageId: imageId(raw.imagesrc),
+      backImageId: imageId(raw.backimagesrc),
       specialHealth: resolveSpecialValue(raw.health),
       specialSanity: resolveSpecialValue(raw.sanity),
       specialEnemyFight: resolveSpecialValue(raw.enemy_fight),
