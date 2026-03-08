@@ -9,19 +9,19 @@ const sizeClasses = {
 
 export type ThumbnailSize = keyof typeof sizeClasses;
 
-function objectPosition(card: Card): string {
+function imageStyle(card: Card): React.CSSProperties {
   switch (card.type_code) {
     case "enemy":
-      return "center bottom";
+      return { objectPosition: "center bottom" };
     case "location":
     case "treachery":
-      return "center top";
+      return { objectPosition: "50% 50%", height: "250%" };
     case "agenda":
-      return "left center";
+      return { objectPosition: "left center" };
     case "act":
-      return "right center";
+      return { objectPosition: "right center" };
     default:
-      return "center top";
+      return { objectPosition: "center top" };
   }
 }
 
@@ -38,7 +38,7 @@ export const CardThumbnail: React.FC<{
       <img
         src={routes.cardImage(card.meta.imageId)}
         className="w-full h-full object-cover"
-        style={{ objectPosition: objectPosition(card) }}
+        style={imageStyle(card)}
       />
     </div>
   );
