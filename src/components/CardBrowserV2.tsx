@@ -17,7 +17,7 @@ import {
 } from "react";
 import { Filter, List, BarChart3 } from "lucide-react";
 import { CardListItem } from "./CardListItem";
-import CardStats from "./CardStats";
+import CardStats, { matchStatFilter, type StatFilter } from "./CardStats";
 import type { Card } from "@/src/data/card";
 import { useEncounterCards, useFilterOptions } from "../hooks";
 import { set } from "lodash/fp";
@@ -142,9 +142,17 @@ export const CardBrowser: React.FC = () => {
   const [filters, setFilters] = useFilters();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [view, setView] = useState<View>("list");
+  const [statFilter, setStatFilter] = useState<StatFilter | null>(null);
   const isDesktop = useIsDesktop();
 
-  const cards = useFilteredCards(filters);
+  const allCards = useFilteredCards(filters);
+  const cards = useMemo(
+    () =>
+      statFilter
+        ? allCards.filter((c) => matchStatFilter(c, statFilter))
+        : allCards,
+    [allCards, statFilter],
+  );
   const options = useAvailableOptions(filters);
 
   const handleChartClick = useCallback(
@@ -154,9 +162,18 @@ export const CardBrowser: React.FC = () => {
         if (current.some((o) => o.value === name)) return prev;
         return { ...prev, [kind]: [...current, { label: name, value: name }] };
       });
+      setStatFilter(null);
       setView("list");
     },
     [setFilters],
+  );
+
+  const handleCellClick = useCallback(
+    (category: string, stat: string, value: string) => {
+      setStatFilter({ category, stat, value });
+      setView("list");
+    },
+    [],
   );
 
   return (
@@ -171,6 +188,18 @@ export const CardBrowser: React.FC = () => {
         </button>
         <span className="text-sm text-text-muted flex-1">
           {cards.length} cards
+          {statFilter && (
+            <button
+              onClick={() => {
+                setStatFilter(null);
+                setView("stats");
+              }}
+              className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-bg-2 border border-border text-text-secondary hover:text-text-primary text-xs"
+            >
+              {statFilter.stat} = {statFilter.value}
+              <span className="text-text-muted">&times;</span>
+            </button>
+          )}
         </span>
         <div className="inline-flex rounded border border-border overflow-hidden">
           <button
@@ -180,7 +209,10 @@ export const CardBrowser: React.FC = () => {
             <List size={16} />
           </button>
           <button
-            onClick={() => setView("stats")}
+            onClick={() => {
+              setStatFilter(null);
+              setView("stats");
+            }}
             className={`p-1.5 ${view === "stats" ? "bg-accent text-bg-0" : "text-text-muted"}`}
           >
             <BarChart3 size={16} />
@@ -220,7 +252,16 @@ export const CardBrowser: React.FC = () => {
 
         {view === "stats" && (
           <div className="flex-1 overflow-y-auto p-4">
-            <CardStats cards={cards} onChartClick={handleChartClick} />
+            <CardStats
+              cards={allCards}
+              onChartClick={handleChartClick}
+              onCellClick={handleCellClick}
+              activeFilters={
+                statFilter
+                  ? { [statFilter.stat]: statFilter.value }
+                  : undefined
+              }
+            />
           </div>
         )}
       </div>

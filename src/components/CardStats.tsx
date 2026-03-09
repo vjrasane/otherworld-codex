@@ -686,16 +686,29 @@ function LocationStatsChart({
 function TestDifficultyChart({
   cards,
   mode,
+  onCellClick,
+  activeFilters,
 }: {
   cards: Card[];
   mode: CountMode;
+  onCellClick?: (category: string, stat: string, value: string) => void;
+  activeFilters?: Record<string, string>;
 }) {
   const { rows, keys } = useMemo(
     () => buildTestDifficultyData(cards, mode),
     [cards, mode],
   );
   if (rows.length === 0) return null;
-  return <HeatmapChart title="Test Difficulties" rows={rows} keys={keys} />;
+  return (
+    <HeatmapChart
+      title="Test Difficulties"
+      rows={rows}
+      keys={keys}
+      category="test"
+      onCellClick={onCellClick}
+      activeFilters={activeFilters}
+    />
+  );
 }
 
 function remapVictory(
@@ -705,6 +718,78 @@ function remapVictory(
   if (!filters || !(key in filters)) return filters;
   const { [key]: val, ...rest } = filters;
   return { ...rest, Victory: val };
+}
+
+export type StatFilter = {
+  category: string;
+  stat: string;
+  value: string;
+};
+
+const testMetaKeys: Record<string, keyof Card["meta"]> = {
+  Willpower: "willpowerTestDifficulty",
+  Intellect: "intellectTestDifficulty",
+  Combat: "combatTestDifficulty",
+  Agility: "agilityTestDifficulty",
+};
+
+const enemyStatGetters: Record<string, (c: Card) => number | undefined | null> =
+  {
+    Health: (c) => (isVarHealth(c) ? undefined : c.health),
+    Fight: (c) => (isVariable(c.enemy_fight) ? undefined : c.enemy_fight),
+    Evade: (c) => (isVariable(c.enemy_evade) ? undefined : c.enemy_evade),
+    Damage: (c) => (isNegative(c.enemy_damage) ? undefined : (c.enemy_damage ?? 0)),
+    Horror: (c) => (isNegative(c.enemy_horror) ? undefined : (c.enemy_horror ?? 0)),
+    Victory: (c) => c.victory ?? 0,
+  };
+
+const enemyVarChecks: Record<string, (c: Card) => boolean> = {
+  Health: isVarHealth,
+  Fight: (c) => isVariable(c.enemy_fight),
+  Evade: (c) => isVariable(c.enemy_evade),
+  Damage: (c) => isNegative(c.enemy_damage),
+  Horror: (c) => isNegative(c.enemy_horror),
+};
+
+const locationStatGetters: Record<
+  string,
+  (c: Card) => number | undefined | null
+> = {
+  Shroud: (c) => (isVariable(c.shroud) ? undefined : c.shroud),
+  Clues: (c) => (c.clues_fixed === true || c.clues === 0 ? c.clues : undefined),
+  Clues_pp: (c) => (!c.clues_fixed && (c.clues ?? 0) > 0 ? c.clues : undefined),
+  Victory: (c) => c.victory ?? 0,
+};
+
+const locationVarChecks: Record<string, (c: Card) => boolean> = {
+  Shroud: (c) => isVariable(c.shroud),
+};
+
+export function matchStatFilter(card: Card, filter: StatFilter): boolean {
+  const { category, stat, value } = filter;
+
+  if (category === "test") {
+    const metaKey = testMetaKeys[stat];
+    if (!metaKey) return false;
+    const arr = card.meta[metaKey] as number[] | undefined;
+    return arr?.includes(Number(value)) ?? false;
+  }
+
+  if (category === "enemy") {
+    if (card.type_code !== "enemy") return false;
+    if (value === "?") return enemyVarChecks[stat]?.(card) ?? false;
+    const getter = enemyStatGetters[stat];
+    return getter ? getter(card) === Number(value) : false;
+  }
+
+  if (category === "location") {
+    if (card.type_code !== "location") return false;
+    if (value === "?") return locationVarChecks[stat]?.(card) ?? false;
+    const getter = locationStatGetters[stat];
+    return getter ? getter(card) === Number(value) : false;
+  }
+
+  return false;
 }
 
 export default function CardStats({
@@ -783,7 +868,12 @@ export default function CardStats({
         onCellClick={onCellClick}
         activeFilters={remapVictory(activeFilters, "LocationVictory")}
       />
-      <TestDifficultyChart cards={cards} mode={mode} />
+      <TestDifficultyChart
+        cards={cards}
+        mode={mode}
+        onCellClick={onCellClick}
+        activeFilters={activeFilters}
+      />
       <BarSection
         title="Traits"
         data={traitCounts}
