@@ -451,6 +451,44 @@ function buildLocationData(
   return { rows, keys };
 }
 
+function buildTestDifficultyData(
+  cards: Card[],
+  mode: CountMode,
+): { rows: StatRow[]; keys: string[] } {
+  const skillTypes = [
+    { name: "Willpower", key: "willpowerTestDifficulty", color: "180, 142, 173" },
+    { name: "Intellect", key: "intellectTestDifficulty", color: "94, 129, 172" },
+    { name: "Combat", key: "combatTestDifficulty", color: "191, 97, 106" },
+    { name: "Agility", key: "agilityTestDifficulty", color: "163, 190, 140" },
+  ] as const;
+
+  const allVals = new Set<number>();
+  const dists = skillTypes.map(({ name, key, color }) => {
+    const dist = new Map<number, number>();
+    for (const card of cards) {
+      const vals = card.meta[key];
+      if (!vals) continue;
+      const weight = mode === "total" ? card.quantity : 1;
+      for (const v of vals) {
+        dist.set(v, (dist.get(v) ?? 0) + weight);
+        allVals.add(v);
+      }
+    }
+    return { name, color, dist };
+  });
+
+  if (allVals.size === 0) return { rows: [], keys: [] };
+
+  const sortedVals = [...allVals].sort((a, b) => a - b);
+  const keys = sortedVals.map(String);
+  const rows: StatRow[] = dists.map((d) => {
+    const row: StatRow = { name: d.name, color: d.color };
+    for (const val of sortedVals) row[String(val)] = d.dist.get(val) ?? 0;
+    return row;
+  });
+  return { rows, keys };
+}
+
 const BG_RGB = [46, 52, 64]; // --bg-0 / Nord polar night
 
 function relativeLuminance(r: number, g: number, b: number): number {
@@ -645,6 +683,21 @@ function LocationStatsChart({
   );
 }
 
+function TestDifficultyChart({
+  cards,
+  mode,
+}: {
+  cards: Card[];
+  mode: CountMode;
+}) {
+  const { rows, keys } = useMemo(
+    () => buildTestDifficultyData(cards, mode),
+    [cards, mode],
+  );
+  if (rows.length === 0) return null;
+  return <HeatmapChart title="Test Difficulties" rows={rows} keys={keys} />;
+}
+
 function remapVictory(
   filters: Record<string, string> | undefined,
   key: string,
@@ -730,6 +783,7 @@ export default function CardStats({
         onCellClick={onCellClick}
         activeFilters={remapVictory(activeFilters, "LocationVictory")}
       />
+      <TestDifficultyChart cards={cards} mode={mode} />
       <BarSection
         title="Traits"
         data={traitCounts}

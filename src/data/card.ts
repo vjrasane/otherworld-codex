@@ -105,11 +105,35 @@ interface CardMeta extends Meta {
   specialClues?: SpecialValue;
   specialDoom?: SpecialValue;
   patches?: CardPatch[];
+  willpowerTestDifficulty?: number[];
+  intellectTestDifficulty?: number[];
+  combatTestDifficulty?: number[];
+  agilityTestDifficulty?: number[];
 }
 
 export type EncounterCard = Card & {
   encounter_code: string;
 };
+
+const skillTestPattern = /\[(willpower|intellect|combat|agility)\] \((\d+)\)/g;
+
+type SkillTestKey =
+  | "willpowerTestDifficulty"
+  | "intellectTestDifficulty"
+  | "combatTestDifficulty"
+  | "agilityTestDifficulty";
+
+function extractTestDifficulties(
+  text: string | null | undefined,
+): Partial<Record<SkillTestKey, number[]>> {
+  if (!text) return {};
+  const result: Partial<Record<SkillTestKey, number[]>> = {};
+  for (const match of text.matchAll(skillTestPattern)) {
+    const key = `${match[1]}TestDifficulty` as SkillTestKey;
+    (result[key] ??= []).push(Number(match[2]));
+  }
+  return result;
+}
 
 export function buildCards(
   raws: RawCard[],
@@ -155,6 +179,7 @@ export function buildCards(
       specialShroud: resolveSpecialValue(raw.shroud),
       specialClues: resolveSpecialValue(raw.clues),
       specialDoom: resolveSpecialValue(raw.doom),
+      ...extractTestDifficulties(raw.text),
       ...buildCardMeta(raw),
     };
     return { ...raw, meta };
